@@ -19,6 +19,8 @@ public enum PersistenceManager {
         // 2 persistent units are defined, one for each database
         emFactoryWeitblick = Persistence.createEntityManagerFactory("jpa-weitblick");
         emFactoryApp = Persistence.createEntityManagerFactory("jpa-app");
+        // @debug
+        //System.out.println("Hello");
     }
 
     // EntityManager is chosen depending on user request

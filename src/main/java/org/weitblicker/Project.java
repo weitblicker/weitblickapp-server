@@ -54,11 +54,11 @@ public class Project {
         this.host = host;
         return this;
     }
-    public Project setdescriptionShort( String descriptionShort ) {
+    public Project setDescriptionShort( String descriptionShort ) {
         this.descriptionShort = descriptionShort;
         return this;
     }
-    public Project setdescriptionLong( String descriptionLong ) {
+    public Project setDescriptionLong( String descriptionLong ) {
         this.descriptionShort = descriptionLong;
         return this;
     }

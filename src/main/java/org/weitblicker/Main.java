@@ -14,7 +14,7 @@ import java.net.URI;
  */
 public class Main {
     // Base URI the Grizzly HTTP server will listen on
-    public static final String BASE_URI = "http://localhost:8080/";
+    public static final String BASE_URI = "http://localhost:8180/";
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
@@ -36,20 +36,21 @@ public class Main {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-        final HttpServer server = startServer();
-        System.out.println(String.format("Jersey app started with WADL available at "
-                + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
-        System.in.read();
-        server.stop();
 
         Project project = new Project();
         project.setHost("Muenster")
                 .setName("Uni-baut-Uni")
-                .setDescrShort("Tolles Projekt")
-                .setDescrLong("Noch besseres Projekt");
+                .setDescriptionShort("Tolles Projekt")
+                .setDescriptionLong("Noch besseres Projekt");
 
         EntityManager emWeitblick = PersistenceManager.INSTANCE.getEntityManager( "weitblick" );
-        EntityManager emApp = PersistenceManager.INSTANCE.getEntityManager( "app" );
+        /* try {
+            emWeitblick = PersistenceManager.INSTANCE.getEntityManager( "weitblick" );
+        } catch (Error E) {
+            System.out.println(E.getMessage());
+            return;
+        }*/
+        //EntityManager emApp = PersistenceManager.INSTANCE.getEntityManager( "app" );
 
         emWeitblick.getTransaction().begin();
         emWeitblick.persist(project);
@@ -57,6 +58,14 @@ public class Main {
         emWeitblick.close();
 
         PersistenceManager.INSTANCE.close();
+
+        final HttpServer server = startServer();
+        System.out.println(String.format("Jersey app started with WADL available at "
+                + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
+        System.in.read();
+        server.stop();
+
+
     }
 }
 
