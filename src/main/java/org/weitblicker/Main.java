@@ -4,6 +4,7 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
+import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.net.URI;
 
@@ -40,6 +41,22 @@ public class Main {
                 + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
         System.in.read();
         server.stop();
+
+        Project project = new Project();
+        project.setHost("Muenster")
+                .setName("Uni-baut-Uni")
+                .setDescrShort("Tolles Projekt")
+                .setDescrLong("Noch besseres Projekt");
+
+        EntityManager emWeitblick = PersistenceManager.INSTANCE.getEntityManager( "weitblick" );
+        EntityManager emApp = PersistenceManager.INSTANCE.getEntityManager( "app" );
+
+        emWeitblick.getTransaction().begin();
+        emWeitblick.persist(project);
+        emWeitblick.getTransaction().commit();
+        emWeitblick.close();
+
+        PersistenceManager.INSTANCE.close();
     }
 }
 

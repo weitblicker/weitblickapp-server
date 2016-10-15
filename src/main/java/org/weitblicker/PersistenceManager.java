@@ -1,4 +1,4 @@
-/**
+package org.weitblicker; /**
  * Created by benedikt on 15.10.16.
  */
 
