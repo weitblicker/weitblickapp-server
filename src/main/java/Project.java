@@ -18,11 +18,12 @@ public class Project {
 
     }
 
-    Project(String name, String descrShort, String descrLong, String host) {
+    Project(String name, String descrShort, String descrLong, String host, Integer locationId) {
         this.name = name;
         this.descrShort = descrShort;
         this.descrLong = descrLong;
         this.host = host;
+        this.locationId = locationId;
     }
 
     public Integer getId() {
@@ -41,7 +42,12 @@ public class Project {
     public String getHost() {
         return this.host;
     }
+    public Integer getLocationId() {return this.locationId; }
 
+    public Project setName( Integer locationId ) {
+        this.locationId = locationId;
+        return this;
+    }
     public Project setName( String name ) {
         this.name = name;
         return this;
@@ -68,6 +74,7 @@ public class Project {
     private String descrShort;
     private String descrLong;
     private String host;
+    private Integer locationId;
 
 
 }
