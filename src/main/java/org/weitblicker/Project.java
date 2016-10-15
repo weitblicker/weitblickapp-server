@@ -1,8 +1,6 @@
-/**
+package org.weitblicker; /**
  * Created by benedikt on 15.10.16.
  */
-
-import com.sun.javafx.beans.IDProperty;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
