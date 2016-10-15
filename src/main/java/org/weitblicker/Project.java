@@ -16,7 +16,7 @@ public class Project {
 
     }
 
-    Project(String name, String descriptionShort, String descriptionLong, String host, Long locationId) {
+    Project(String name, String descriptionShort, String descriptionLong, String host, long locationId) {
         this.name = name;
         this.descriptionShort = descriptionShort;
         this.descriptionLong = descriptionLong;
@@ -24,7 +24,7 @@ public class Project {
         this.locationId = locationId;
     }
 
-    public Long getId() {
+    public long getId() {
         return this.id;
     }
 
@@ -42,7 +42,12 @@ public class Project {
     }
     public Long getLocationId() {return this.locationId; }
 
-    public Project setName( Long locationId ) {
+    public Project setId( long id ) {
+        this.id = id;
+        return this;
+    }
+
+    public Project setName( long locationId ) {
         this.locationId = locationId;
         return this;
     }
@@ -54,11 +59,11 @@ public class Project {
         this.host = host;
         return this;
     }
-    public Project setdescriptionShort( String descriptionShort ) {
+    public Project setDescrShort( String descriptionShort ) {
         this.descriptionShort = descriptionShort;
         return this;
     }
-    public Project setdescriptionLong( String descriptionLong ) {
+    public Project setDescrLong( String descriptionLong ) {
         this.descriptionShort = descriptionLong;
         return this;
     }

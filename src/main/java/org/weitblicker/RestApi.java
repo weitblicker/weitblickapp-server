@@ -1,10 +1,14 @@
 package org.weitblicker;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.util.LinkedList;
 import java.util.UUID;
 
 /**
@@ -23,14 +27,41 @@ public class RestApi
     @Path("liste")
     @Produces("application/json")
     public String getProjectIds() {
-        return "return projects";
+
+        try
+        {
+            Project project = new Project("name", "desc", "long", "host", 0);
+            project.setId(0);
+            LinkedList<Long> liste = new LinkedList<Long>();
+            liste.add(new Long(0));
+            liste.add(new Long(1));
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            return mapper.writeValueAsString(liste);
+        } catch (JsonProcessingException e)
+        {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     @GET
     @Path("{id}")
     @Produces("application/json")
-    public String getProject(@PathParam("id") final String id) {
-//        UUID uuid = UUID.fromString(id);
-        return "return project ".concat(id);
+    public String getProject(@PathParam("id") final String id)
+    {
+        try
+        {
+            Project project = new Project("name", "desc", "long", "host", 0);
+            project.setId(0);
+            ObjectMapper mapper = new ObjectMapper();
+
+            return mapper.writeValueAsString(project);
+        } catch (JsonProcessingException e)
+        {
+            e.printStackTrace();
+        }
+        return "";
     }
 }
