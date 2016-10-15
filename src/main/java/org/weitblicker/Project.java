@@ -16,33 +16,33 @@ public class Project {
 
     }
 
-    Project(String name, String descrShort, String descrLong, String host, Integer locationId) {
+    Project(String name, String descriptionShort, String descriptionLong, String host, Long locationId) {
         this.name = name;
-        this.descrShort = descrShort;
-        this.descrLong = descrLong;
+        this.descriptionShort = descriptionShort;
+        this.descriptionLong = descriptionLong;
         this.host = host;
         this.locationId = locationId;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return this.id;
     }
 
     public String getName() {
         return this.name;
     }
-    public String getDescrShort() {
-        return this.descrShort;
+    public String getdescriptionShort() {
+        return this.descriptionShort;
     }
-    public String getDescrLong() {
-        return this.descrLong;
+    public String getdescriptionLong() {
+        return this.descriptionLong;
     }
     public String getHost() {
         return this.host;
     }
-    public Integer getLocationId() {return this.locationId; }
+    public Long getLocationId() {return this.locationId; }
 
-    public Project setName( Integer locationId ) {
+    public Project setName( Long locationId ) {
         this.locationId = locationId;
         return this;
     }
@@ -54,25 +54,25 @@ public class Project {
         this.host = host;
         return this;
     }
-    public Project setDescrShort( String descrShort ) {
-        this.descrShort = descrShort;
+    public Project setdescriptionShort( String descriptionShort ) {
+        this.descriptionShort = descriptionShort;
         return this;
     }
-    public Project setDescrLong( String descrLong ) {
-        this.descrShort = descrLong;
+    public Project setdescriptionLong( String descriptionLong ) {
+        this.descriptionShort = descriptionLong;
         return this;
     }
     //Private stuff
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
 
     private String name;
-    private String descrShort;
-    private String descrLong;
+    private String descriptionShort;
+    private String descriptionLong;
     private String host;
-    private Integer locationId;
+    private Long locationId;
 
 
 }
