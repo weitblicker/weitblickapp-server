@@ -1,4 +1,4 @@
-package com.example;
+package org.weitblicker;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
