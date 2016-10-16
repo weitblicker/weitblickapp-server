@@ -30,25 +30,23 @@ public class Project {
     public long getNameNo() {
         return this.nameNo;
     }
-    public String getNameText() {
-        return "coming soon";
-        //return sql_getText(languageId,this.nameNo)
+
+    public String getName(int languageId) {
+        return PersistenceHelper.getText(languageId,this.nameNo)
     }
 
-    public long getDescriptionShortNo() {
+    public long getDescriptionShortNo(int languageId) {
         return this.descriptionShortNo;
     }
-    public String getDescriptionShortText() {
-        return "coming soon";
-        //return sql_getText(languageNo,this.descriptionShortNo)
+    public String getDescriptionShort() {
+        return PersistenceHelper.getText(languageId,this.descriptionShortNo);
     }
 
     public long getDescriptionLongNo() {
         return this.descriptionLongNo;
     }
-    public String getDescriptionLongText() {
-        return "coming soon";
-        //return sql_getText(languageNo,this.descriptionLongNo)
+    public String getDescriptionLong(int languageId) {
+        return PersistenceHelper.getText(languageId,this.descriptionLongNo);
     }
 
     public long getLocationId() {
@@ -68,16 +66,16 @@ public class Project {
         this.nameNo = nameNo;
         return this;
     }
-    public Project setNameText( String nameText ) {
-        //this.nameNo = sql_setText(languageNo,nameText)
+    public Project setName( int languageId, String nameText ) {
+        this.nameNo = PersistenceHelper.setText(languageId,nameText,this.nameNo);
         return this;
     }
     public Project setDescriptionShortNo( long descriptionShortNo ) {
         this.descriptionShortNo = descriptionShortNo;
         return this;
     }
-    public Project setDescriptionShort( String descriptionShortText ) {
-        //this.descriptionShortNo = sql_setText(languageNo,descriptionShortText);
+    public Project setDescriptionShort( int languageId, String descriptionShortText ) {
+        this.descriptionShortNo = PersistenceHelper.setText(languageId,descriptionShortText,this.descriptionShortNo);
         return this;
     }
 
@@ -85,8 +83,8 @@ public class Project {
         this.descriptionLongNo = descriptionLongNo;
         return this;
     }
-    public Project setDescriptionLong( String descriptionShortText ) {
-        //this.descriptionLong = sql_setText(languageNo,descriptionShortText)
+    public Project setDescriptionLong( int languageId, String descriptionLongText ) {
+        this.descriptionLongNo = PersistenceHelper.setText(languageId,descriptionLongText,this.descriptionLongNo);
         return this;
     }
     //Private stuff
