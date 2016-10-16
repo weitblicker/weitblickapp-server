@@ -14,7 +14,14 @@ import javax.persistence.Table;
 @Table( name = "texts" )
 public class Text {
 
-    // Constructor
+    @Id
+    @GeneratedValue
+    private long id;
+
+    private int languageId;
+    private String text;
+    private long no;
+
     Text() {
 
     }
@@ -38,13 +45,23 @@ public class Text {
         return this.no;
     }
 
-    // members
-    @Id
-    @GeneratedValue
-    private long id;
+    public void setId(long id)
+    {
+        this.id = id;
+    }
 
-    private int languageId;
-    private String text;
-    private long no;
+    public void setLanguageId(int languageId)
+    {
+        this.languageId = languageId;
+    }
 
+    public void setText(String text)
+    {
+        this.text = text;
+    }
+
+    public void setNo(long no)
+    {
+        this.no = no;
+    }
 }

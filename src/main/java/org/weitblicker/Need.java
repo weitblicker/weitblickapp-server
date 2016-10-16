@@ -57,7 +57,7 @@ public class Need {
         return this.descriptionLongNo;
     }
     public String getDescriptionLong(int languageId) {
-        return sql_getText(languageId,this.descriptionLongNo);
+        return PersistenceHelper.getText(languageId, this.descriptionLongNo);
     }
 
     public long getProjectId() {
@@ -95,8 +95,8 @@ public class Need {
         this.descriptionLongNo = descriptionLongNo;
         return this;
     }
-    public Need setDescriptionLong( int languageId, String descriptionShort ) {
-        this.descriptionLongNo = PersistenceHelper.setText(languageId,descriptionShort);
+    public Need setDescriptionLong( int languageId, String descriptionLong ) {
+        this.descriptionLongNo = PersistenceHelper.setText(languageId, descriptionLong, this.descriptionLongNo);
         return this;
     }
 
