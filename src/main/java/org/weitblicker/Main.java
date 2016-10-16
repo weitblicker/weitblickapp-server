@@ -43,14 +43,15 @@ public class Main {
                .setDescriptionLongNo( 345 )
                .setLocationId( 1 );
 
-        EntityManager emWeitblick = PersistenceManager.INSTANCE.getEntityManager( "weitblick" );
-        /* try {
+        EntityManager emWeitblick;
+        EntityManager emApp;
+        try {
             emWeitblick = PersistenceManager.INSTANCE.getEntityManager( "weitblick" );
+            emApp = PersistenceManager.INSTANCE.getEntityManager( "app" );
         } catch (Error E) {
             System.out.println(E.getMessage());
             return;
-        }*/
-        //EntityManager emApp = PersistenceManager.INSTANCE.getEntityManager( "app" );
+        }
 
         emWeitblick.getTransaction().begin();
         emWeitblick.persist(project);
