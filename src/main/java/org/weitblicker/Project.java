@@ -11,7 +11,17 @@ import javax.persistence.Table;
 @Table( name = "projects" )
 public class Project {
 
-    // Constructor
+    // LOCAL VARIABLES
+    @Id
+    @GeneratedValue
+    private long id;
+
+    private long nameNo;
+    private long descriptionShortNo;
+    private long descriptionLongNo;
+    private long locationId;
+
+    // CONSTRUCTOR
     Project() {
 
     }
@@ -32,13 +42,13 @@ public class Project {
     }
 
     public String getName(int languageId) {
-        return PersistenceHelper.getText(languageId,this.nameNo)
+        return PersistenceHelper.getText(languageId,this.nameNo);
     }
 
-    public long getDescriptionShortNo(int languageId) {
+    public long getDescriptionShortNo() {
         return this.descriptionShortNo;
     }
-    public String getDescriptionShort() {
+    public String getDescriptionShort(int languageId) {
         return PersistenceHelper.getText(languageId,this.descriptionShortNo);
     }
 
@@ -66,16 +76,16 @@ public class Project {
         this.nameNo = nameNo;
         return this;
     }
-    public Project setName( int languageId, String nameText ) {
-        this.nameNo = PersistenceHelper.setText(languageId,nameText,this.nameNo);
+    public Project setName( int languageId, String name ) {
+        this.nameNo = PersistenceHelper.setText(languageId,name,this.nameNo);
         return this;
     }
     public Project setDescriptionShortNo( long descriptionShortNo ) {
         this.descriptionShortNo = descriptionShortNo;
         return this;
     }
-    public Project setDescriptionShort( int languageId, String descriptionShortText ) {
-        this.descriptionShortNo = PersistenceHelper.setText(languageId,descriptionShortText,this.descriptionShortNo);
+    public Project setDescriptionShort( int languageId, String descriptionShort ) {
+        this.descriptionShortNo = PersistenceHelper.setText(languageId,descriptionShort,this.descriptionShortNo);
         return this;
     }
 
@@ -83,19 +93,10 @@ public class Project {
         this.descriptionLongNo = descriptionLongNo;
         return this;
     }
-    public Project setDescriptionLong( int languageId, String descriptionLongText ) {
-        this.descriptionLongNo = PersistenceHelper.setText(languageId,descriptionLongText,this.descriptionLongNo);
+    public Project setDescriptionLong( int languageId, String descriptionLong ) {
+        this.descriptionLongNo = PersistenceHelper.setText(languageId,descriptionLong,this.descriptionLongNo);
         return this;
     }
-    //Private stuff
 
-    @Id
-    @GeneratedValue
-    private long id;
-
-    private long nameNo;
-    private long descriptionShortNo;
-    private long descriptionLongNo;
-    private long locationId;
 
 }

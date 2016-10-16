@@ -11,7 +11,17 @@ import javax.persistence.Table;
 @Table( name = "needs" )
 public class Need {
 
-    // Constructor
+    // LOCAL VARIABLES
+    @Id
+    @GeneratedValue
+    private long id;
+
+    private long nameNo;
+    private long descriptionShortNo;
+    private long descriptionLongNo;
+    private long projectId;
+
+    // CONSTRUCTOR
     Need() {
 
     }
@@ -21,9 +31,9 @@ public class Need {
         this.descriptionShortNo = descriptionShortNo;
         this.descriptionLongNo = descriptionLongNo;
         this.projectId = projectId;
-
     }
 
+    // GETTER
     public long getId() {
         return this.id;
     }
@@ -31,31 +41,30 @@ public class Need {
     public long getNameNo() {
         return this.nameNo;
     }
-    public String getNameText() {
-        return "coming soon";
-        //return sql_getText(languageId,this.nameNo)
+
+    public String getName(int languageId) {
+        return PersistenceHelper.getText(languageId,this.nameNo);
     }
 
     public long getDescriptionShortNo() {
         return this.descriptionShortNo;
     }
-    public String getDescriptionShortText() {
-        return "coming soon";
-        //return sql_getText(languageNo,this.descriptionShortNo)
+    public String getDescriptionShort(int languageId) {
+        return PersistenceHelper.getText(languageId,this.descriptionShortNo);
     }
 
     public long getDescriptionLongNo() {
         return this.descriptionLongNo;
     }
-    public String getDescriptionLongText() {
-        return "coming soon";
-        //return sql_getText(languageNo,this.descriptionLongNo)
+    public String getDescriptionLong(int languageId) {
+        return sql_getText(languageId,this.descriptionLongNo);
     }
 
     public long getProjectId() {
         return this.projectId;
     }
 
+    // SETTER
     public Need setId( long id ) {
         this.id = id;
         return this;
@@ -69,16 +78,16 @@ public class Need {
         this.nameNo = nameNo;
         return this;
     }
-    public Need setNameText( String nameText ) {
-        //this.nameNo = sql_setText(languageNo,nameText)
+    public Need setNameText( int languageId, String name ) {
+        this.nameNo = PersistenceHelper.setText(languageId,name,this.nameNo);
         return this;
     }
     public Need setDescriptionShortNo( Integer descriptionShortNo ) {
         this.descriptionShortNo = descriptionShortNo;
         return this;
     }
-    public Need setDescriptionShort( String descriptionShortText ) {
-        //this.descriptionShortNo = sql_setText(languageNo,descriptionShortText);
+    public Need setDescriptionShort( int languageId, String descriptionShort ) {
+        this.descriptionShortNo = PersistenceHelper.setText(languageId,descriptionShort,this.nameNo);
         return this;
     }
 
@@ -86,20 +95,9 @@ public class Need {
         this.descriptionLongNo = descriptionLongNo;
         return this;
     }
-    public Need setDescriptionLong( String descriptionShortText ) {
-        //this.descriptionLong = sql_setText(languageNo,descriptionShortText)
+    public Need setDescriptionLong( int languageId, String descriptionShort ) {
+        this.descriptionLongNo = PersistenceHelper.setText(languageId,descriptionShort);
         return this;
     }
-    //Private stuff
-
-    @Id
-    @GeneratedValue
-    private long id;
-
-    private long nameNo;
-    private long descriptionShortNo;
-    private long descriptionLongNo;
-    private long projectId;
-
 
 }
