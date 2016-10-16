@@ -30,7 +30,7 @@ public class RestApi
 
         try
         {
-            Project project = new Project("name", "desc", "long", "host", 0);
+            Project project = new Project( 123 , 234, 345, 1);
             project.setId(0);
             LinkedList<Long> liste = new LinkedList<Long>();
             liste.add(new Long(0));
@@ -53,7 +53,7 @@ public class RestApi
     {
         try
         {
-            Project project = new Project("name", "desc", "long", "host", 0);
+            Project project = new Project( 123 , 234, 345, 1);
             project.setId(0);
             ObjectMapper mapper = new ObjectMapper();
 

@@ -61,7 +61,7 @@ public class Need {
         return this;
     }
 
-    public Need setprojectId( long projectId ) {
+    public Need setProjectId( long projectId ) {
         this.projectId = projectId;
         return this;
     }

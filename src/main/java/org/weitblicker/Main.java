@@ -38,10 +38,10 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         Project project = new Project();
-        project.setHost("Muenster")
-                .setName("Uni-baut-Uni")
-                .setDescriptionShort("Tolles Projekt")
-                .setDescriptionLong("Noch besseres Projekt");
+        project.setNameNo( 123 )
+               .setDescriptionShortNo( 234 )
+               .setDescriptionLongNo( 345 )
+               .setLocationId( 1 );
 
         EntityManager emWeitblick = PersistenceManager.INSTANCE.getEntityManager( "weitblick" );
         /* try {
