@@ -1,5 +1,5 @@
 package org.weitblicker; /**
- * Created by benedikt on 15.10.16.
+ * Created by nizzke on 15.10.16.
  */
 
 import javax.persistence.Entity;
@@ -8,19 +8,20 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table( name = "projects" )
-public class Project {
+@Table( name = "needs" )
+public class Need {
 
     // Constructor
-    Project() {
+    Need() {
 
     }
 
-    Project(long nameNo, long descriptionShortNo, long descriptionLongNo, long locationId) {
+    Need(long nameNo, long descriptionShortNo, long descriptionLongNo, long projectId) {
         this.nameNo = nameNo;
         this.descriptionShortNo = descriptionShortNo;
         this.descriptionLongNo = descriptionLongNo;
-        this.locationId = locationId;
+        this.projectId = projectId;
+
     }
 
     public long getId() {
@@ -51,41 +52,41 @@ public class Project {
         //return sql_getText(languageNo,this.descriptionLongNo)
     }
 
-    public long getLocationId() {
-        return this.locationId;
+    public long getProjectId() {
+        return this.projectId;
     }
 
-    public Project setId( long id ) {
+    public Need setId( long id ) {
         this.id = id;
         return this;
     }
 
-    public Project setLocationId( long locationId ) {
-        this.locationId = locationId;
+    public Need setprojectId( long projectId ) {
+        this.projectId = projectId;
         return this;
     }
-    public Project setNameNo( long nameNo ) {
+    public Need setNameNo( int nameNo ) {
         this.nameNo = nameNo;
         return this;
     }
-    public Project setNameText( String nameText ) {
+    public Need setNameText( String nameText ) {
         //this.nameNo = sql_setText(languageNo,nameText)
         return this;
     }
-    public Project setDescriptionShortNo( long descriptionShortNo ) {
+    public Need setDescriptionShortNo( Integer descriptionShortNo ) {
         this.descriptionShortNo = descriptionShortNo;
         return this;
     }
-    public Project setDescriptionShort( String descriptionShortText ) {
+    public Need setDescriptionShort( String descriptionShortText ) {
         //this.descriptionShortNo = sql_setText(languageNo,descriptionShortText);
         return this;
     }
 
-    public Project setDescriptionLongNo( long descriptionLongNo ) {
+    public Need setDescriptionLongNo( Integer descriptionLongNo ) {
         this.descriptionLongNo = descriptionLongNo;
         return this;
     }
-    public Project setDescriptionLong( String descriptionShortText ) {
+    public Need setDescriptionLong( String descriptionShortText ) {
         //this.descriptionLong = sql_setText(languageNo,descriptionShortText)
         return this;
     }
@@ -98,7 +99,7 @@ public class Project {
     private long nameNo;
     private long descriptionShortNo;
     private long descriptionLongNo;
-    private long locationId;
+    private long projectId;
 
 
 }
