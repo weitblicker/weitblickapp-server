@@ -98,5 +98,4 @@ public class Project {
     private long descriptionLongNo;
     private long locationId;
 
-
 }

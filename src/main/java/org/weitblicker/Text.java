@@ -19,8 +19,8 @@ public class Text {
 
     }
 
-    Text(String language, String text, long no) {
-        this.language = language;
+    Text(int languageId, String text, long no) {
+        this.languageId = languageId;
         this.text = text;
         this.no = no;
     }
@@ -31,8 +31,8 @@ public class Text {
     public String getText() {
         return this.text;
     }
-    public String getLanguage() {
-        return this.language;
+    public int getLanguageId() {
+        return this.languageId;
     }
     public long getNo() {
         return this.no;
@@ -43,7 +43,7 @@ public class Text {
     @GeneratedValue
     private long id;
 
-    private String language;
+    private int languageId;
     private String text;
     private long no;
 
