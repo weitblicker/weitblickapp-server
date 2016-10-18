@@ -10,6 +10,9 @@ import javax.persistence.Table;
  * @author Janis
  * @since 16.10.16
  */
+
+// TODO: 18.10.16 responsible: Bene V
+
 @Entity
 @Table( name = "projects_hosts" )
 public class Project_Host

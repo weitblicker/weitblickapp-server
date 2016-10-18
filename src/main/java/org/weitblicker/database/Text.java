@@ -10,6 +10,9 @@ import javax.persistence.Table;
  * @author benedikt
  * @since 16.10.16
  */
+
+// TODO: 18.10.16 responsible: Bene V
+
 @Entity
 @Table( name = "texts" )
 public class Text {
@@ -18,7 +21,7 @@ public class Text {
     @GeneratedValue
     private long id;
 
-    private int languageId;
+    private long languageId;
     private String text;
     private long no;
 
@@ -38,7 +41,7 @@ public class Text {
     public String getText() {
         return this.text;
     }
-    public int getLanguageId() {
+    public long getLanguageId() {
         return this.languageId;
     }
     public long getNo() {
@@ -50,7 +53,7 @@ public class Text {
         this.id = id;
     }
 
-    public void setLanguageId(int languageId)
+    public void setLanguageId(long languageId)
     {
         this.languageId = languageId;
     }

@@ -10,6 +10,9 @@ import javax.persistence.Table;
  * @author nizzke
  * @since 15.10.16
  */
+
+// TODO: 18.10.16 responsible: Bene V
+
 @Entity
 @Table( name = "needs" )
 public class Need {
@@ -23,17 +26,26 @@ public class Need {
     private long descriptionShortNo;
     private long descriptionLongNo;
     private long projectId;
+    private long languageId;
+    private long amount;
+    private long current;
 
     // CONSTRUCTOR
     Need() {
 
     }
 
-    Need(long nameNo, long descriptionShortNo, long descriptionLongNo, long projectId) {
+    Need(long nameNo, long descriptionShortNo, long descriptionLongNo, long projectId, long languageId) {
         this.nameNo = nameNo;
         this.descriptionShortNo = descriptionShortNo;
         this.descriptionLongNo = descriptionLongNo;
         this.projectId = projectId;
+        this.languageId = languageId;
+    }
+
+    // TODO: 18.10.16 how to get and define the nameNo and others? Where to get the information and how can you decide which number to get?
+            Need( String name, String descriptionShort, String descriptionLong, long projectId, long languageId ) {
+        //Need( PersistenceHelper.setText( languageId, name ))
     }
 
     // GETTER
@@ -77,29 +89,29 @@ public class Need {
         this.projectId = projectId;
         return this;
     }
-    public Need setNameNo( int nameNo ) {
+    public Need setNameNo( long nameNo ) {
         this.nameNo = nameNo;
         return this;
     }
-    public Need setNameText( int languageId, String name ) {
+    public Need setNameText( long languageId, String name ) {
         this.nameNo = PersistenceHelper.setText(languageId,name,this.nameNo);
         return this;
     }
-    public Need setDescriptionShortNo( Integer descriptionShortNo ) {
+    public Need setDescriptionShortNo( long descriptionShortNo ) {
         this.descriptionShortNo = descriptionShortNo;
         return this;
     }
-    public Need setDescriptionShort( int languageId, String descriptionShort ) {
+    public Need setDescriptionShort( long languageId, String descriptionShort ) {
         this.descriptionShortNo = PersistenceHelper.setText(languageId,descriptionShort,this.nameNo);
         return this;
     }
 
-    public Need setDescriptionLongNo( Integer descriptionLongNo ) {
+    public Need setDescriptionLongNo( long descriptionLongNo ) {
         this.descriptionLongNo = descriptionLongNo;
         return this;
     }
-    public Need setDescriptionLong( int languageId, String descriptionLong ) {
-        this.descriptionLongNo = PersistenceHelper.setText(languageId, descriptionLong, this.descriptionLongNo);
+    public Need setDescriptionLong( long languageId, String descriptionLong ) {
+        this.descriptionLongNo = PersistenceHelper.setText( languageId, descriptionLong, this.descriptionLongNo );
         return this;
     }
 

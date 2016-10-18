@@ -10,6 +10,9 @@ import javax.persistence.Table;
  * @author Janis
  * @since 16.10.2016.
  */
+
+// TODO: 18.10.16 responsible: Bene V
+
 @Entity
 @Table( name = "donations" )
 public class Donation

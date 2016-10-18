@@ -5,12 +5,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
 /**
  * Weitblick-DB table object, lists all Weitblick projects
  * @author benedikt
  * @since 15.10.16
  */
+
+// TODO: 18.10.16 responsible: Bene V
+
 @Entity
 @Table( name = "projects" )
 public class Project {
@@ -26,7 +28,7 @@ public class Project {
     private long locationId;
 
     // CONSTRUCTOR
-    Project() {
+    public Project() {
 
     }
 

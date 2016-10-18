@@ -6,6 +6,8 @@ package org.weitblicker.database;
  * @since 16.10.16
  */
 
+// TODO: 18.10.16 responsible: Bene V
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;

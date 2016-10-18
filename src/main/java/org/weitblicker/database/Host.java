@@ -1,5 +1,7 @@
 package org.weitblicker.database;
 
+
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -10,6 +12,9 @@ import javax.persistence.Table;
  * @author Janis
  * @since 16.10.2016
  */
+
+// TODO: 18.10.16 responsible: Bene V
+
 @Entity
 @Table( name = "hosts" )
 public class Host
@@ -18,10 +23,17 @@ public class Host
     @GeneratedValue
     private long id;
     private String name;
+    private String email;
     private long locationId;
 
     public Host()
     {
+    }
+
+    Host( String name, String email, long locationId ) {
+        this.name = name;
+        this.email = email;
+        this.locationId = locationId;
     }
 
     public long getId()
@@ -29,7 +41,7 @@ public class Host
         return id;
     }
 
-    public void setId(long id)
+    public void setId( long id )
     {
         this.id = id;
     }
@@ -39,9 +51,19 @@ public class Host
         return name;
     }
 
-    public void setName(String name)
+    public void setName( String name )
     {
         this.name = name;
+    }
+
+    public String getEmail()
+    {
+        return email;
+    }
+
+    public void setEmail( String email )
+    {
+        this.email = email;
     }
 
     public long getLocationId()
@@ -49,7 +71,7 @@ public class Host
         return locationId;
     }
 
-    public void setLocationId(long locationId)
+    public void setLocationId( long locationId )
     {
         this.locationId = locationId;
     }
