@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+// TODO: 18.10.16 responsible (class + helper): nizzke
+
 /**
  * Weitblick-DB table object, associates projects with hosts
  * @author Janis

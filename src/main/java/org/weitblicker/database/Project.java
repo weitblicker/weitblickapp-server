@@ -1,10 +1,13 @@
 package org.weitblicker.database;
+package PersistenceHelper;
+package location
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+// TODO: 18.10.16 responsible (class + helper): benedikt
 
 /**
  * Weitblick-DB table object, lists all Weitblick projects
@@ -15,7 +18,7 @@ import javax.persistence.Table;
 @Table( name = "projects" )
 public class Project {
 
-    // LOCAL VARIABLES
+    // --------------------------- LOCAL VARIABLES ----------------------------------------
     @Id
     @GeneratedValue
     private long id;
@@ -25,18 +28,21 @@ public class Project {
     private long descriptionLongNo;
     private long locationId;
 
-    // CONSTRUCTOR
+    // -------------------------- MAIN CONSTRUCTOR ----------------------------------------
+    // MAIN CONSTRUCTOR - New project dataset
+    Project(long languageId, String nameNo, String descriptionShort, String descriptionLong, long locationId) {
+        this.nameNo = nameNo;
+        this.descriptionShortNo = PersistenceHelper.setText(languageId, descriptionShort);
+        this.descriptionLongNo = PersistenceHelper.setText(languageId, descriptionLong);
+        this.locationId = locationId;
+    }
+
+    // -------------------------- NULL CONSTRUCTOR ----------------------------------------
     Project() {
 
     }
 
-    Project(long nameNo, long descriptionShortNo, long descriptionLongNo, long locationId) {
-        this.nameNo = nameNo;
-        this.descriptionShortNo = descriptionShortNo;
-        this.descriptionLongNo = descriptionLongNo;
-        this.locationId = locationId;
-    }
-
+    // ------------------------------- GETTER ---------------------------------------------
     public long getId() {
         return this.id;
     }
@@ -67,15 +73,13 @@ public class Project {
         return this.locationId;
     }
 
+
+    // ------------------------------- SETTER ---------------------------------------------
     public Project setId( long id ) {
         this.id = id;
         return this;
     }
 
-    public Project setLocationId( long locationId ) {
-        this.locationId = locationId;
-        return this;
-    }
     public Project setNameNo( long nameNo ) {
         this.nameNo = nameNo;
         return this;
@@ -99,6 +103,11 @@ public class Project {
     }
     public Project setDescriptionLong( int languageId, String descriptionLong ) {
         this.descriptionLongNo = PersistenceHelper.setText(languageId,descriptionLong,this.descriptionLongNo);
+        return this;
+    }
+
+    public Project setLocationId( long locationId ) {
+        this.locationId = locationId;
         return this;
     }
 
