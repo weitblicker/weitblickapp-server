@@ -1,8 +1,9 @@
 package org.weitblicker;
 
 /**
- * Created by nizzke on 16.10.16.
- * @Purpose: Convert Database Objects to export them as json for the app
+ * Convert Database Objects to export them as json for the app and import json as database objects
+ * @author nizzke
+ * @since 16.10.16
  */
 
 public class ObjectConverter {

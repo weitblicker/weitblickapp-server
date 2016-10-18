@@ -1,15 +1,15 @@
 package org.weitblicker;
 
-/**
- * Created by benedikt on 16.10.16.
- */
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
+/**
+ * Weitblick-DB table object, contains all language depeding texts in the app
+ * @author benedikt
+ * @since 16.10.16
+ */
 @Entity
 @Table( name = "texts" )
 public class Text {

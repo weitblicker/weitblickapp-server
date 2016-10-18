@@ -6,7 +6,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Created by Janis on 16.10.2016.
+ * App-DB Donation Table Object
+ * @author Janis
+ * @since 16.10.2016.
  */
 @Entity
 @Table( name = "donations" )

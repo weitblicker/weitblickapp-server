@@ -1,12 +1,15 @@
-package org.weitblicker; /**
- * Created by nizzke on 15.10.16.
- */
+package org.weitblicker;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Weitblick-DB Need Table Object, Defines demands in projects
+ * @author nizzke
+ * @since 15.10.16
+ */
 @Entity
 @Table( name = "needs" )
 public class Need {

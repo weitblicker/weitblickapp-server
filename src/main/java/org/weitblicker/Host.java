@@ -6,7 +6,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Created by Janis on 16.10.2016.
+ * Weitblick-DB Host Table Object, Lists Weitblick cities
+ * @author Janis
+ * @since 16.10.2016
  */
 @Entity
 @Table( name = "hosts" )

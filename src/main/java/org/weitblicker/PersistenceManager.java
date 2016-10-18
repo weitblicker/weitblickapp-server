@@ -1,12 +1,15 @@
-package org.weitblicker; /**
- * Created by benedikt on 15.10.16.
- */
+package org.weitblicker;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-
+/**
+ * Database Connection Object
+ * @see {JPA}
+ * @author benedikt
+ * @since 15.10.16
+ */
 public enum PersistenceManager {
 
     INSTANCE;

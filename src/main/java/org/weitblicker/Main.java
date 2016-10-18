@@ -9,9 +9,11 @@ import java.io.IOException;
 import java.net.URI;
 
 /**
- * Main class.
- *
+ * Main Class for Weitblick App Server
+ * @author benedikt, nizzke, Janis
+ * @since 14.10.2016
  */
+
 public class Main {
     // Base URI the Grizzly HTTP server will listen on
     public static final String BASE_URI = "http://localhost:8180/";

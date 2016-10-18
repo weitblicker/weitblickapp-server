@@ -6,11 +6,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Created by Janis on 16.10.2016.
+ * Weitblick-DB table object, associates projects with hosts
+ * @author Janis
+ * @since 16.10.16
  */
 @Entity
 @Table( name = "projects_hosts" )
-public class Projects_Hosts
+public class Project_Host
 {
     @Id
     @GeneratedValue
@@ -18,7 +20,7 @@ public class Projects_Hosts
     private long projectId;
     private long locationId;
 
-    public Projects_Hosts()
+    public Project_Host()
     {
     }
 }

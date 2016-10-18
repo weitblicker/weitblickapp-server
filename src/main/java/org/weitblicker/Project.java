@@ -1,12 +1,16 @@
-package org.weitblicker; /**
- * Created by benedikt on 15.10.16.
- */
+package org.weitblicker;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+
+/**
+ * Weitblick-DB table object, lists all Weitblick projects
+ * @author benedikt
+ * @since 15.10.16
+ */
 @Entity
 @Table( name = "projects" )
 public class Project {

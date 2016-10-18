@@ -5,13 +5,23 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 
 /**
- * Created by Janis on 16.10.2016.
+ * Concrete and general Helper functions with direct database access
+ * @see {Persistence Manager}
+ * @author
+ * @since
  */
 public class PersistenceHelper
 {
     static EntityManager emWeitblick = PersistenceManager.INSTANCE.getEntityManager( "weitblick" );
     //static EntityManager emApp = PersistenceManager.INSTANCE.getEntityManager( "app" );
 
+
+    /**
+     * Reads a text from DB
+     * @param textNo
+     * @param languageId
+     * @return string text
+     */
     public static String getText(long languageId, long textNo)
     {
         TypedQuery<Text> query = emWeitblick.createQuery(
@@ -23,10 +33,10 @@ public class PersistenceHelper
 
     /**
      * This method adds or changes text
-     * @param text
-     * @param languageId
-     * @param textNo nullable
-     * @return textNo
+     * @param string text
+     * @param long languageId
+     * @param long textNo nullable
+     * @return long textNo
      */
     public static long setText(int languageId, String text, long textNo)
     {
@@ -42,6 +52,11 @@ public class PersistenceHelper
         return textObject.getId();
     }
 
+    /**
+     * Gets a project object from DB
+     * @param long projectId
+     * @return project project
+     */
     public static Project getProject(long projectId)
     {
         return emWeitblick.find(Project.class, projectId);
@@ -62,10 +77,10 @@ public class PersistenceHelper
         return emWeitblick.find(Donation.class, donationId);
     }
 
-    public static List<Projects_Hosts> getProjektHostIds(long projectId)
+    public static List<Project_Host> getProjektHostIds(long projectId)
     {
-        TypedQuery<Projects_Hosts> query = emWeitblick.createQuery(
-                "SELECT c FROM Text c WHERE c.projectId = :projectId", Projects_Hosts.class);
+        TypedQuery<Project_Host> query = emWeitblick.createQuery(
+                "SELECT c FROM Text c WHERE c.projectId = :projectId", Project_Host.class);
         query.setParameter("projectId", projectId);
         return query.getResultList();
     }
