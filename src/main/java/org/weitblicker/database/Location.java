@@ -1,4 +1,4 @@
-package org.weitblicker;
+package org.weitblicker.database;
 
 /**
  * Weitblick-DB Location Table Object, Defines all locations (currently projects & hosts)

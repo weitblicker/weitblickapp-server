@@ -1,4 +1,4 @@
-package org.weitblicker;
+package org.weitblicker.database;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +10,6 @@ import javax.persistence.Table;
  * @since 18.10.16.
  */
 @Entity
-@Table( name = "sponsors" )
-public class Sponsor {
+@Table( name = "tracks" )
+public class Track {
 }

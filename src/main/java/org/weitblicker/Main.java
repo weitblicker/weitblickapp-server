@@ -3,6 +3,8 @@ package org.weitblicker;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.weitblicker.database.PersistenceManager;
+import org.weitblicker.database.Project;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;

@@ -2,14 +2,13 @@ package org.weitblicker;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.weitblicker.database.Project;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import java.util.LinkedList;
-import java.util.UUID;
 
 /**
  * Root resource (exposed at "rest" path)

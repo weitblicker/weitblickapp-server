@@ -1,4 +1,4 @@
-package org.weitblicker;
+package org.weitblicker.database;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

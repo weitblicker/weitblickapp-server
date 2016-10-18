@@ -1,4 +1,4 @@
-package org.weitblicker;
+package org.weitblicker.database;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
