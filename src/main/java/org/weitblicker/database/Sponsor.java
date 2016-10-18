@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+// TODO: 18.10.16 responsible (class + helper): nizzke
+
 /**
  * @author nizzke
  * @since 18.10.16.

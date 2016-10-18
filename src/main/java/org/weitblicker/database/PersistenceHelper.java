@@ -61,6 +61,7 @@ public class PersistenceHelper
     public static Project getProject(long projectId)
     {
         return emWeitblick.find(Project.class, projectId);
+        return emWeitblick.
     }
 
     public static Need getNeed(long needId)
