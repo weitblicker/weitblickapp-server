@@ -13,10 +13,17 @@ import java.util.List;
 
 public class PersistenceHelper
 {
+    // --------------------------- LOCAL VARIABLES ----------------------------------------
     static EntityManager emWeitblick = PersistenceManager.INSTANCE.getEntityManager( "weitblick" );
     //static EntityManager emApp = PersistenceManager.INSTANCE.getEntityManager( "app" );
 
+    // ----------------------------- USER HELPER ------------------------------------------
+    public static String getUser(long userId){
+        return this;
+    }
 
+
+    // ----------------------------- TEXT HELPER ------------------------------------------
     /**
      * Reads a text from DB
      * @param textNo
@@ -53,38 +60,7 @@ public class PersistenceHelper
         return textObject.getId();
     }
 
-    /**
-     * Gets a project object from DB
-     * @param long projectId
-     * @return project project
-     */
-    public static Project getProject(long projectId)
-    {
-        return emWeitblick.find(Project.class, projectId);
-        return emWeitblick.
-    }
-
-    public static Need getNeed(long needId)
-    {
-        return emWeitblick.find(Need.class, needId);
-    }
-
-    public static long setNeed( String name, String descriptionShort, String descriptionLong, long projectId, long languageId ) {
-        Need need = new Need( name, descriptionShort, descriptionLong, projectId, languageId );
-        emWeitblick.persist( need );
-        emWeitblick.flush();
-        return need.getId();
-    }
-
-    public static Location getLocation(long locationId)
-    {
-        return emWeitblick.find(Location.class, locationId);
-    }
-
-    public static Donation getDonation(long donationId)
-    {
-        return emWeitblick.find(Donation.class, donationId);
-    }
+    // ----------------------------- HOST HELPER ------------------------------------------
 
     public static List<Project_Host> getProjektHostIds(long projectId)
     {
@@ -115,4 +91,50 @@ public class PersistenceHelper
         //setHost( name, email, id );
         return 1;
     }
+
+    // ---------------------------- PROJECT HELPER ----------------------------------------
+    /**
+     * Gets a project object from DB
+     * @param long projectId
+     * @return project project
+     */
+    public static Project getProject(long projectId)
+    {
+        return emWeitblick.find(Project.class, projectId);
+        return emWeitblick.
+    }
+
+    // ----------------------------- NEED HELPER ------------------------------------------
+
+    public static Need getNeed(long needId)
+    {
+        return emWeitblick.find(Need.class, needId);
+    }
+
+    public static long setNeed( String name, String descriptionShort, String descriptionLong, long projectId, long languageId ) {
+        Need need = new Need( name, descriptionShort, descriptionLong, projectId, languageId );
+        emWeitblick.persist( need );
+        emWeitblick.flush();
+        return need.getId();
+    }
+
+    // --------------------------- LOCATION HELPER ----------------------------------------
+
+    public static Location getLocation(long locationId)
+    {
+        return emWeitblick.find(Location.class, locationId);
+    }
+
+    // --------------------------- DONATION HELPER ----------------------------------------
+
+    public static Donation getDonation(long donationId)
+    {
+        return emWeitblick.find(Donation.class, donationId);
+    }
+
+
+
+
+
 }
+
