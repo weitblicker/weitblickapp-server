@@ -1,24 +1,17 @@
 package org.weitblicker.database;
-package PersistenceHelper;
-package location
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-<<<<<<< HEAD
-=======
 // TODO: 18.10.16 responsible (class + helper): benedikt
 
->>>>>>> c303e49bfd6e51700b13fe0eb5a2f1a6b6499c15
 /**
  * Weitblick-DB table object, lists all Weitblick projects
  * @author benedikt
  * @since 15.10.16
  */
-
-// TODO: 18.10.16 responsible: Bene V
 
 @Entity
 @Table( name = "projects" )
@@ -34,12 +27,7 @@ public class Project {
     private long descriptionLongNo;
     private long locationId;
 
-    // CONSTRUCTOR
-    public Project() {
-
-    }
-
-    Project(long nameNo, long descriptionShortNo, long descriptionLongNo, long locationId) {
+    public Project(long nameNo, long descriptionShortNo, long descriptionLongNo, long locationId) {
 
     // -------------------------- MAIN CONSTRUCTOR ----------------------------------------
     // MAIN CONSTRUCTOR - New project dataset
@@ -51,7 +39,7 @@ public class Project {
     }
 
     // -------------------------- NULL CONSTRUCTOR ----------------------------------------
-    Project() {
+    public Project() {
 
     }
 

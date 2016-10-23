@@ -52,25 +52,21 @@ public class Main {
         try {
             emWeitblick = PersistenceManager.INSTANCE.getEntityManager( "weitblick" );
             emApp = PersistenceManager.INSTANCE.getEntityManager( "app" );
+            emWeitblick.getTransaction().begin();
+            emWeitblick.persist(project);
+            emWeitblick.getTransaction().commit();
+            emWeitblick.close();
+            PersistenceManager.INSTANCE.close();
         } catch (Error E) {
             System.out.println(E.getMessage());
-            return;
+            E.printStackTrace();
         }
-
-        emWeitblick.getTransaction().begin();
-        emWeitblick.persist(project);
-        emWeitblick.getTransaction().commit();
-        emWeitblick.close();
-
-        PersistenceManager.INSTANCE.close();
 
         final HttpServer server = startServer();
         System.out.println(String.format("Jersey app started with WADL available at "
                 + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
         System.in.read();
         server.stop();
-
-
     }
 }
 

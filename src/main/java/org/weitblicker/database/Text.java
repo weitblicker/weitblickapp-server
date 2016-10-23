@@ -25,7 +25,7 @@ public class Text {
     private String text;
     private long no;
 
-    Text() {
+    public Text() {
 
     }
 

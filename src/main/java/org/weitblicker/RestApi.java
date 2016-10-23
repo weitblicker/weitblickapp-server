@@ -29,8 +29,6 @@ public class RestApi
 
         try
         {
-            Project project = new Project( 123 , 234, 345, 1);
-            project.setId(0);
             LinkedList<Long> liste = new LinkedList<Long>();
             liste.add(new Long(0));
             liste.add(new Long(1));

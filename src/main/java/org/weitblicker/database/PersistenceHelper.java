@@ -19,7 +19,7 @@ public class PersistenceHelper
 
     // ----------------------------- USER HELPER ------------------------------------------
     public static String getUser(long userId){
-        return this;
+        return "this";
     }
 
 
@@ -101,7 +101,7 @@ public class PersistenceHelper
     public static Project getProject(long projectId)
     {
         return emWeitblick.find(Project.class, projectId);
-        return emWeitblick.
+//        return emWeitblick.
     }
 
     // ----------------------------- NEED HELPER ------------------------------------------
