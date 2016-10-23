@@ -25,22 +25,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-http-servlet-server:2.3.28" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-http-server-core:2.3.28" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-core:2.3.28" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-framework:2.3.28" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-portunif:2.3.28" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-http-server:2.3.23" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-http:2.3.23" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-http-ajp:2.3.28" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-spdy:2.3.28" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-npn-api:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-http-server-multipart:2.3.28" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-http-servlet:2.3.28" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-http-servlet-extras:2.3.28" level="project" />
-    <orderEntry type="library" name="Maven: javax.servlet:javax.servlet-api:3.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.jersey.containers:jersey-container-grizzly2-http:2.23.2" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.hk2.external:javax.inject:2.5.0-b05" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-http-server:2.3.23" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-http:2.3.23" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish.grizzly:grizzly-framework:2.3.23" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.jersey.core:jersey-common:2.23.2" level="project" />
     <orderEntry type="library" name="Maven: javax.ws.rs:javax.ws.rs-api:2.0.1" level="project" />
     <orderEntry type="library" name="Maven: javax.annotation:javax.annotation-api:1.2" level="project" />
