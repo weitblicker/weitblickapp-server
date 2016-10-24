@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -25,13 +26,13 @@ public class Campaign {
     private long nameNo;
     private long descriptionShortNo;
     private long descriptionLongNo;
-    private Date start;
-    private Date end;
+    private LocalDateTime start;
+    private LocalDateTime end;
     private long amount;
     private long needId;
 
     // -------------------------- MAIN CONSTRUCTOR ----------------------------------------
-    Campaign(long languageId, long nameNo, long descriptionShortNo, long descriptionLongNo, Date start, Date end, long amount, long needId) {
+    Campaign(long languageId, long nameNo, long descriptionShortNo, long descriptionLongNo, LocalDateTime start, LocalDateTime end, long amount, long needId) {
         this.nameNo = nameNo;
         this.descriptionShortNo = descriptionShortNo;
         this.descriptionLongNo = descriptionLongNo;
@@ -73,11 +74,11 @@ public class Campaign {
         return PersistenceHelper.getText(languageId,this.descriptionLongNo);
     }
 
-    public Date getStart() {
+    public LocalDateTime getStart() {
         return this.start;
     }
 
-    public Date getEnd() {
+    public LocalDateTime getEnd() {
         return this.end;
     }
 
@@ -122,12 +123,12 @@ public class Campaign {
         return this;
     }
 
-    public Campaign setStart( Date start ) {
+    public Campaign setStart( LocalDateTime start ) {
         this.start = start;
         return this;
     }
 
-    public Campaign setEnd( Date end ) {
+    public Campaign setEnd( LocalDateTime end ) {
         this.end = end;
         return this;
     }

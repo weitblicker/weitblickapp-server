@@ -2,6 +2,7 @@ package org.weitblicker.database;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -14,8 +15,8 @@ import java.util.List;
 public class PersistenceHelper
 {
     // --------------------------- LOCAL VARIABLES ----------------------------------------
-    static EntityManager emWeitblick = PersistenceManager.INSTANCE.getEntityManager( "weitblick" );
-    //static EntityManager emApp = PersistenceManager.INSTANCE.getEntityManager( "app" );
+    static EntityManager emWeitblick = new PersistenceManager().getEntityManager( "weitblick" );
+    //static EntityManager emApp = PersistenceManager.getEntityManager( "app" );
 
     // ----------------------------- USER HELPER ------------------------------------------
     public static String getUser(long userId){
@@ -93,6 +94,19 @@ public class PersistenceHelper
     }
 
     // ---------------------------- PROJECT HELPER ----------------------------------------
+
+
+    /**
+     * Gets the project list from DB
+     * @return list of projectIds
+     */
+    public static List<Long> getProjectList()
+    {
+        TypedQuery<Long> query = emWeitblick.createQuery(
+                "SELECT c.id FROM Project c", Long.class);
+        return query.getResultList();
+    }
+
     /**
      * Gets a project object from DB
      * @param long projectId
@@ -101,7 +115,6 @@ public class PersistenceHelper
     public static Project getProject(long projectId)
     {
         return emWeitblick.find(Project.class, projectId);
-//        return emWeitblick.
     }
 
     // ----------------------------- NEED HELPER ------------------------------------------
@@ -131,10 +144,5 @@ public class PersistenceHelper
     {
         return emWeitblick.find(Donation.class, donationId);
     }
-
-
-
-
-
 }
 

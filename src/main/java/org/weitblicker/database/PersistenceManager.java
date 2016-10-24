@@ -10,20 +10,16 @@ import javax.persistence.Persistence;
  * @author benedikt
  * @since 15.10.16
  */
-public enum PersistenceManager {
-
-    INSTANCE;
-
+public class PersistenceManager
+{
     private EntityManagerFactory emFactoryWeitblick;
     private EntityManagerFactory emFactoryApp;
 
-    private PersistenceManager() {
-
+    public PersistenceManager()
+    {
         // 2 persistent units are defined, one for each database
         emFactoryWeitblick = Persistence.createEntityManagerFactory("jpa-weitblick");
         emFactoryApp = Persistence.createEntityManagerFactory("jpa-app");
-        // @debug
-        //System.out.println("Hello");
     }
 
     // EntityManager is chosen depending on user request

@@ -2,13 +2,14 @@ package org.weitblicker;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.weitblicker.database.PersistenceHelper;
 import org.weitblicker.database.Project;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Root resource (exposed at "rest" path)
@@ -16,6 +17,9 @@ import java.util.LinkedList;
 @Path("rest/projekt")
 public class RestApi
 {
+    private ObjectMapper jsonMapper = new ObjectMapper();
+
+
     /**
      * Method handling HTTP GET requests. The returned object will be sent
      * to the client as "text/plain" media type.
@@ -29,13 +33,8 @@ public class RestApi
 
         try
         {
-            LinkedList<Long> liste = new LinkedList<Long>();
-            liste.add(new Long(0));
-            liste.add(new Long(1));
-
-            ObjectMapper mapper = new ObjectMapper();
-
-            return mapper.writeValueAsString(liste);
+            List<Long> liste = PersistenceHelper.getProjectList();
+            return jsonMapper.writeValueAsString(liste);
         } catch (JsonProcessingException e)
         {
             e.printStackTrace();
@@ -50,11 +49,9 @@ public class RestApi
     {
         try
         {
-            Project project = new Project( 123 , 234, 345, 1);
-            project.setId(0);
-            ObjectMapper mapper = new ObjectMapper();
-
-            return mapper.writeValueAsString(project);
+            Long projectId = Long.valueOf(id);
+            Project project = PersistenceHelper.getProject(projectId);
+            return jsonMapper.writeValueAsString(project);
         } catch (JsonProcessingException e)
         {
             e.printStackTrace();

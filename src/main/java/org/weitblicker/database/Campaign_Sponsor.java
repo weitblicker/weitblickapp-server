@@ -14,4 +14,7 @@ import javax.persistence.Table;
 @Entity
 @Table( name = "campaigns_sponsors" )
 public class Campaign_Sponsor {
+    @Id
+    @GeneratedValue
+    private long id;
 }

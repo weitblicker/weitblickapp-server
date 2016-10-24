@@ -19,6 +19,7 @@ import java.net.URI;
 public class Main {
     // Base URI the Grizzly HTTP server will listen on
     public static final String BASE_URI = "http://localhost:8180/";
+//    public static final String BASE_URI = "http://81.169.211.111:8180/";
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
@@ -47,19 +48,20 @@ public class Main {
                .setDescriptionLongNo( 345 )
                .setLocationId( 1 );
 
-        EntityManager emWeitblick;
-        EntityManager emApp;
         try {
-            emWeitblick = PersistenceManager.INSTANCE.getEntityManager( "weitblick" );
-            emApp = PersistenceManager.INSTANCE.getEntityManager( "app" );
+            PersistenceManager persistenceManager = new PersistenceManager();
+            EntityManager emWeitblick = persistenceManager.getEntityManager("weitblick");
+//            EntityManager emApp = persistenceManager.getEntityManager( "app" );
             emWeitblick.getTransaction().begin();
             emWeitblick.persist(project);
             emWeitblick.getTransaction().commit();
             emWeitblick.close();
-            PersistenceManager.INSTANCE.close();
+            persistenceManager.close();
         } catch (Error E) {
             System.out.println(E.getMessage());
             E.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         final HttpServer server = startServer();
