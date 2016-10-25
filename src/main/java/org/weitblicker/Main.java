@@ -16,23 +16,22 @@ import java.net.URI;
  * @since 14.10.2016
  */
 
-public class Main {
-    // Base URI the Grizzly HTTP server will listen on
-    public static final String BASE_URI = "http://localhost:8180/";
-//    public static final String BASE_URI = "http://81.169.211.111:8180/";
+public class Main
+{
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
      * @return Grizzly HTTP server.
      */
-    public static HttpServer startServer() {
+    public static HttpServer startServer()
+    {
         // create a resource config that scans for JAX-RS resources and providers
         // in org.weitblicker package
         final ResourceConfig rc = new ResourceConfig().packages("org.weitblicker");
 
         // create and start a new instance of grizzly http server
         // exposing the Jersey application at BASE_URI
-        return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
+        return GrizzlyHttpServerFactory.createHttpServer(URI.create(Options.BASE_URI), rc);
     }
 
     /**
@@ -40,7 +39,10 @@ public class Main {
      * @param args
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException
+    {
+        if (Options.BASE_URI == null)
+            Options.BASE_URI = "http://localhost:8180";
 
         Project project = new Project();
         project.setNameNo( 123 )
@@ -66,7 +68,7 @@ public class Main {
 
         final HttpServer server = startServer();
         System.out.println(String.format("Jersey app started with WADL available at "
-                + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
+                + "%sapplication.wadl\nHit enter to stop it...", Options.BASE_URI));
         System.in.read();
         server.stop();
     }
