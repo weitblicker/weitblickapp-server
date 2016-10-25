@@ -5,8 +5,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.Date;
-
 
 // TODO: 18.10.16 responsible (class + helper): nizzke
 
