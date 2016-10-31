@@ -1,116 +1,115 @@
 package org.weitblicker.database;
 
+import java.io.Serializable;
+import java.util.Locale;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.GenerationType;
+/*
+private long id;
 
-// TODO: 18.10.16 responsible (class + helper): benedikt
+private long nameNo;
+private long descriptionShortNo;
+private long descriptionLongNo;
+private long locationId;
 
-/**
- * Weitblick-DB table object, lists all Weitblick projects
- * @author benedikt
- * @since 15.10.16
- */
 
+*/
 @Entity
-@Table( name = "projects" )
-public class Project {
-
-    // --------------------------- LOCAL VARIABLES ----------------------------------------
+@Table(name = "projects")
+public class Project implements Serializable{
+	
     @Id
-    @GeneratedValue
-    private long id;
-
-    private long nameNo;
-    private long descriptionShortNo;
-    private long descriptionLongNo;
-    private long locationId;
-
-    public Project(long nameNo, long descriptionShortNo, long descriptionLongNo, long locationId) {
-
-    // -------------------------- MAIN CONSTRUCTOR ----------------------------------------
-    // MAIN CONSTRUCTOR - New project dataset
-
-        this.nameNo = nameNo;
-        this.descriptionShortNo = descriptionShortNo;
-        this.descriptionLongNo = descriptionLongNo;
-        this.locationId = locationId;
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CUST_SEQ")
+    Long id;
+    
+    @Transient
+    final Locale DEFAULT_LANGUAGE = Locale.GERMAN;
+    
+    @Transient
+    private Locale currentLanguage = DEFAULT_LANGUAGE;
+    public void setCurrentLanguage(Locale language){
+    	currentLanguage = language;
     }
+	
+	@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "key_name")
+	private LanguageString name;
 
-    // -------------------------- NULL CONSTRUCTOR ----------------------------------------
-    public Project() {
+	public void setName(final String name, final Locale language) {
+		name().addText(language.toString(), name);
+	}
+	
+	public String getName(){
+		return getName(currentLanguage);
+	}
 
-    }
+	public String getName(final Locale language) {
+		return name().getText(language.toString());
+	}
 
-    // ------------------------------- GETTER ---------------------------------------------
-    public long getId() {
-        return this.id;
-    }
+	private LanguageString name() {
+		return name != null ? name : (name = new LanguageString());
+	}
+	
+	@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "key_description")
+	private LanguageString desc;
+	
+	public void setDesc(final String name, final Locale language) {
+		desc().addText(language.toString(), name);
+	}
+	
+	public String getDesc(){
+		return getDesc(currentLanguage);
+	}
 
-    public long getNameNo() {
-        return this.nameNo;
-    }
+	public String getDesc(final Locale language) {
+		return desc().getText(language.toString());
+	}
 
-    public String getName(int languageId) {
-        return PersistenceHelper.getText(languageId,this.nameNo);
-    }
+	private LanguageString desc() {
+		return desc != null ? desc : (desc = new LanguageString());
+	}
+	
+	@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "key_abstract")
+	private LanguageString abst;
+	
+	public void setAbst(final String name, final Locale language) {
+		abst().addText(language.toString(), name);
+	}
+	
+	public String getAbst(){
+		return getAbst(currentLanguage);
+	}
 
-    public long getDescriptionShortNo() {
-        return this.descriptionShortNo;
-    }
-    public String getDescriptionShort(int languageId) {
-        return PersistenceHelper.getText(languageId,this.descriptionShortNo);
-    }
+	public String getAbst(final Locale language) {
+		return abst().getText(language.toString());
+	}
 
-    public long getDescriptionLongNo() {
-        return this.descriptionLongNo;
-    }
-    public String getDescriptionLong(int languageId) {
-        return PersistenceHelper.getText(languageId,this.descriptionLongNo);
-    }
-
-    public long getLocationId() {
-        return this.locationId;
-    }
-
-
-    // ------------------------------- SETTER ---------------------------------------------
-    public Project setId( long id ) {
-        this.id = id;
-        return this;
-    }
-
-    public Project setNameNo( long nameNo ) {
-        this.nameNo = nameNo;
-        return this;
-    }
-    public Project setName( int languageId, String name ) {
-        this.nameNo = PersistenceHelper.setText(languageId,name,this.nameNo);
-        return this;
-    }
-    public Project setDescriptionShortNo( long descriptionShortNo ) {
-        this.descriptionShortNo = descriptionShortNo;
-        return this;
-    }
-    public Project setDescriptionShort( int languageId, String descriptionShort ) {
-        this.descriptionShortNo = PersistenceHelper.setText(languageId,descriptionShort,this.descriptionShortNo);
-        return this;
-    }
-
-    public Project setDescriptionLongNo( long descriptionLongNo ) {
-        this.descriptionLongNo = descriptionLongNo;
-        return this;
-    }
-    public Project setDescriptionLong( int languageId, String descriptionLong ) {
-        this.descriptionLongNo = PersistenceHelper.setText(languageId,descriptionLong,this.descriptionLongNo);
-        return this;
-    }
-
-    public Project setLocationId( long locationId ) {
-        this.locationId = locationId;
-        return this;
-    }
-
-
+	private LanguageString abst() {
+		return abst != null ? abst : (abst = new LanguageString());
+	}
+	
+	@ManyToOne
+	private Location location;
+	
+	public Location getLocation(){
+		return location;
+	}
+	
+	public void setLocation(Location location){
+		this.location = location;
+	}
+	
 }

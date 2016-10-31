@@ -58,21 +58,21 @@ public class Need {
     }
 
     public String getName(int languageId) {
-        return PersistenceHelper.getText(languageId,this.nameNo);
+        return null; // PersistenceHelper.getText(languageId,this.nameNo);
     }
 
     public long getDescriptionShortNo() {
         return this.descriptionShortNo;
     }
     public String getDescriptionShort(int languageId) {
-        return PersistenceHelper.getText(languageId,this.descriptionShortNo);
+        return null; //PersistenceHelper.getText(languageId,this.descriptionShortNo);
     }
 
     public long getDescriptionLongNo() {
         return this.descriptionLongNo;
     }
     public String getDescriptionLong(int languageId) {
-        return PersistenceHelper.getText(languageId, this.descriptionLongNo);
+        return null;// PersistenceHelper.getText(languageId, this.descriptionLongNo);
     }
 
     public long getProjectId() {
@@ -94,15 +94,15 @@ public class Need {
         return this;
     }
     public Need setNameText( long languageId, String name ) {
-        this.nameNo = PersistenceHelper.setText(languageId,name,this.nameNo);
+        //this.nameNo = PersistenceHelper.setText(languageId,name,this.nameNo);
         return this;
     }
     public Need setDescriptionShortNo( long descriptionShortNo ) {
-        this.descriptionShortNo = descriptionShortNo;
+        //this.descriptionShortNo = descriptionShortNo;
         return this;
     }
     public Need setDescriptionShort( long languageId, String descriptionShort ) {
-        this.descriptionShortNo = PersistenceHelper.setText(languageId,descriptionShort,this.nameNo);
+        //this.descriptionShortNo = PersistenceHelper.setText(languageId,descriptionShort,this.nameNo);
         return this;
     }
 
@@ -111,7 +111,7 @@ public class Need {
         return this;
     }
     public Need setDescriptionLong( long languageId, String descriptionLong ) {
-        this.descriptionLongNo = PersistenceHelper.setText( languageId, descriptionLong, this.descriptionLongNo );
+        //this.descriptionLongNo = PersistenceHelper.setText( languageId, descriptionLong, this.descriptionLongNo );
         return this;
     }
 

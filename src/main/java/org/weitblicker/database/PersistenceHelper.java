@@ -23,44 +23,6 @@ public class PersistenceHelper
         return "this";
     }
 
-
-    // ----------------------------- TEXT HELPER ------------------------------------------
-    /**
-     * Reads a text from DB
-     * @param textNo
-     * @param languageId
-     * @return string text
-     */
-    public static String getText(long languageId, long textNo)
-    {
-        TypedQuery<Text> query = emWeitblick.createQuery(
-                "SELECT c FROM Text c WHERE c.textNo = :textNo AND c.languageNo = : languageNo", Text.class);
-        query.setParameter("textNo", textNo);
-        query.setParameter("languageId", languageId);
-        return query.getSingleResult().getText();
-    }
-
-    /**
-     * This method adds or changes text
-     * @param string text
-     * @param long languageId
-     * @param long textNo nullable
-     * @return long textNo
-     */
-    public static long setText( long languageId, String text, long textNo)
-    {
-        textNo = 0;
-        Text textObject = new Text();
-        textObject.setLanguageId( languageId );
-        textObject.setText(text);
-        if (textNo != 0)
-            textObject.setNo(textNo);
-
-        emWeitblick.persist(textObject);
-        emWeitblick.flush();
-        return textObject.getId();
-    }
-
     // ----------------------------- HOST HELPER ------------------------------------------
 
     public static List<Project_Host> getProjektHostIds(long projectId)

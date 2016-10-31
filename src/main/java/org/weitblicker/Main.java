@@ -3,12 +3,14 @@ package org.weitblicker;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.weitblicker.database.Location;
 import org.weitblicker.database.PersistenceManager;
 import org.weitblicker.database.Project;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Locale;
 
 /**
  * Main Class for Weitblick App Server
@@ -45,17 +47,28 @@ public class Main
             Options.BASE_URI = "http://localhost:8180";
 
         Project project = new Project();
-        project.setNameNo( 123 )
-               .setDescriptionShortNo( 234 )
-               .setDescriptionLongNo( 345 )
-               .setLocationId( 1 );
+        project.setName("Projekt in Osnabrück", Locale.GERMAN);
+        project.setName("Project in Osnabrück", Locale.ENGLISH);
+        project.setDesc("Mein Zuhause", Locale.GERMAN);
+        project.setDesc("My Home", Locale.ENGLISH);
+        project.setAbst("Hier wohne ich.", Locale.GERMAN);
+        project.setAbst("I live here.", Locale.ENGLISH);
+        Location location = new Location();
+        location.setCountry("Deutschland");
+        location.setLatitude(52.2704912f);
+        location.setLongitude(8.0423217f);
+        location.setStreet("Neuer Graben");
+        location.setNumber(5);
+        project.setLocation(location);
 
+        
         try {
             PersistenceManager persistenceManager = new PersistenceManager();
             EntityManager emWeitblick = persistenceManager.getEntityManager("weitblick");
 //            EntityManager emApp = persistenceManager.getEntityManager( "app" );
             emWeitblick.getTransaction().begin();
-            emWeitblick.persist(project);
+            emWeitblick.merge(location);
+            emWeitblick.merge(project);
             emWeitblick.getTransaction().commit();
             emWeitblick.close();
             persistenceManager.close();

@@ -17,12 +17,19 @@ import javax.persistence.Table;
 @Table( name = "locations" )
 public class Location {
 
-    // Constructor
-    Location() {
+    private String town;
+	private int postalCode;
+    private String street;
+    private int number;
+    private double longitude;
+    private double latitude;
+    private String country;
+    private String addition;
+    //public long commentNo;
 
-    }
-
-    Location(String town, Integer postalCode, String street,Integer number, Integer longitude, Integer latitude, String country, String addition, long commentNo) {
+    public Location(){}
+	
+    public Location(String town, Integer postalCode, String street,Integer number, Integer longitude, Integer latitude, String country, String addition) {
         this.town = town;
         this.postalCode = postalCode;
         this.street = street;
@@ -31,8 +38,7 @@ public class Location {
         this.latitude = latitude;
         this.country = country;
         this.addition = addition;
-        this.commentNo = commentNo;
-
+       // this.commentNo = commentNo;
     }
 
     public String getTown() {
@@ -44,13 +50,71 @@ public class Location {
     @GeneratedValue
     private long id;
 
-    private String town;
-    private Integer postalCode;
-    private String street;
-    private Integer number;
-    private Integer longitude;
-    private Integer latitude;
-    private String country;
-    private String addition;
-    private long commentNo;
+    public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public int getPostalCode() {
+		return postalCode;
+	}
+
+	public void setPostalCode(int postalCode) {
+		this.postalCode = postalCode;
+	}
+
+	public String getStreet() {
+		return street;
+	}
+
+	public void setStreet(String street) {
+		this.street = street;
+	}
+
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getAddition() {
+		return addition;
+	}
+
+	public void setAddition(String addition) {
+		this.addition = addition;
+	}
+
+	public void setTown(String town) {
+		this.town = town;
+	}
 }
