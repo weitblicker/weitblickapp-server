@@ -2,3 +2,9 @@
 target/
 .class
 options.properties
+.DS_Store
+.classpath
+.project
+.settings
+output.txt
+bin
