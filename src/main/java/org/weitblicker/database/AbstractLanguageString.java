@@ -1,6 +1,7 @@
 package org.weitblicker.database;
 
 import java.io.Serializable;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.persistence.GeneratedValue;
@@ -24,13 +25,12 @@ public abstract class AbstractLanguageString implements Serializable {
 
 	protected abstract Map<String, String> getMap();
 
-	public void addText(String lang, String text) {
-		System.out.println("Language String" + lang);
-		getMap().put(lang, text);
+	public void addText(Locale language, String text) {
+		getMap().put(language.toString(), text);
 	}
 	
-    public String getText(String language){
-    	return getMap().get(language);
+    public String getText(Locale language){
+    	return getMap().get(language.toString());
     }
 }
 

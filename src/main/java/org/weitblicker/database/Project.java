@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Locale;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -13,6 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.weitblicker.Options;
+
 import javax.persistence.GenerationType;
 /*
 private long id;
@@ -30,13 +34,12 @@ public class Project implements Serializable{
 	
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CUST_SEQ")
+	@Column(name = "id")
     Long id;
     
     @Transient
-    final Locale DEFAULT_LANGUAGE = Locale.GERMAN;
+    private Locale currentLanguage = Options.DEFAULT_LANGUAGE;
     
-    @Transient
-    private Locale currentLanguage = DEFAULT_LANGUAGE;
     public void setCurrentLanguage(Locale language){
     	currentLanguage = language;
     }
@@ -46,7 +49,7 @@ public class Project implements Serializable{
 	private LanguageString name;
 
 	public void setName(final String name, final Locale language) {
-		name().addText(language.toString(), name);
+		name().addText(language, name);
 	}
 	
 	public String getName(){
@@ -54,7 +57,7 @@ public class Project implements Serializable{
 	}
 
 	public String getName(final Locale language) {
-		return name().getText(language.toString());
+		return name().getText(language);
 	}
 
 	private LanguageString name() {
@@ -66,7 +69,7 @@ public class Project implements Serializable{
 	private LanguageString desc;
 	
 	public void setDesc(final String name, final Locale language) {
-		desc().addText(language.toString(), name);
+		desc().addText(language, name);
 	}
 	
 	public String getDesc(){
@@ -74,7 +77,7 @@ public class Project implements Serializable{
 	}
 
 	public String getDesc(final Locale language) {
-		return desc().getText(language.toString());
+		return desc().getText(language);
 	}
 
 	private LanguageString desc() {
@@ -86,7 +89,7 @@ public class Project implements Serializable{
 	private LanguageString abst;
 	
 	public void setAbst(final String name, final Locale language) {
-		abst().addText(language.toString(), name);
+		abst().addText(language, name);
 	}
 	
 	public String getAbst(){
@@ -94,7 +97,7 @@ public class Project implements Serializable{
 	}
 
 	public String getAbst(final Locale language) {
-		return abst().getText(language.toString());
+		return abst().getText(language);
 	}
 
 	private LanguageString abst() {
@@ -102,6 +105,7 @@ public class Project implements Serializable{
 	}
 	
 	@ManyToOne
+	@JoinColumn(name = "key_location")
 	private Location location;
 	
 	public Location getLocation(){

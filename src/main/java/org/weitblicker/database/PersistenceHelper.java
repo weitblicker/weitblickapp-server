@@ -2,6 +2,7 @@ package org.weitblicker.database;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,46 +15,39 @@ import java.util.List;
 
 public class PersistenceHelper
 {
-    // --------------------------- LOCAL VARIABLES ----------------------------------------
     static EntityManager emWeitblick = new PersistenceManager().getEntityManager( "weitblick" );
     //static EntityManager emApp = PersistenceManager.getEntityManager( "app" );
 
-    // ----------------------------- USER HELPER ------------------------------------------
-    public static String getUser(long userId){
-        return "this";
+
+    public static User getUserByEmail(String email){
+        TypedQuery<User> query = emWeitblick.createQuery(
+                "SELECT u FROM User u WHERE u.email = :email", User.class);
+        query.setParameter("email", email);
+        return query.getSingleResult();
     }
+    
+	public static User getUserByName(String name) {
+        TypedQuery<User> query = emWeitblick.createQuery(
+                "SELECT u FROM User u WHERE u.name = :name", User.class);
+        query.setParameter("name", name);
+        return query.getSingleResult();
+	}
 
-    // ----------------------------- HOST HELPER ------------------------------------------
-
-    public static List<Project_Host> getProjektHostIds(long projectId)
+    public static Host getHostByEmail(String email)
     {
-        TypedQuery<Project_Host> query = emWeitblick.createQuery(
-                "SELECT c FROM Text c WHERE c.projectId = :projectId", Project_Host.class);
-        query.setParameter("projectId", projectId);
-        return query.getResultList();
+        TypedQuery<Host> query = emWeitblick.createQuery(
+        		"SELECT h FROM Host h WHERE h.email = :email", Host.class);
+        query.setParameter("email", email);
+        return query.getSingleResult();
     }
 
-    public static Host getHost(long hostId)
-    {
-        return emWeitblick.find( Host.class, hostId );
-    }
-
-    public static long setHost( String name, String email, long locationId ) {
-        Host host = new Host(name, email, locationId);
-        emWeitblick.persist( host );
+    public static void setHost( LanguageString name, String email, Location location ) {
+        Host host = new Host(name, email, location);
+        emWeitblick.persist(location);
+        emWeitblick.persist(host);
         emWeitblick.flush();
-        return host.getId();
     }
 
-    // TODO: 18.10.16 finish this one
-    public static long setHost( String name, String email, Location location ) {
-        //
-        emWeitblick.persist( location );
-        emWeitblick.flush();
-        //long id = location.getId();
-        //setHost( name, email, id );
-        return 1;
-    }
 
     // ---------------------------- PROJECT HELPER ----------------------------------------
 

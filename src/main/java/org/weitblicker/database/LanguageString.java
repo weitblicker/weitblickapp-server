@@ -1,6 +1,7 @@
 package org.weitblicker.database;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.persistence.CollectionTable;
@@ -27,7 +28,7 @@ public class LanguageString extends AbstractLanguageString {
         super();
     }
 
-    public LanguageString(final String language, final String text) {
+    public LanguageString(Locale language, final String text) {
         addText(language, text);
     }
 

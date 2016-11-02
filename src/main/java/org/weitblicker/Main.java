@@ -6,6 +6,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.weitblicker.database.Location;
 import org.weitblicker.database.PersistenceManager;
 import org.weitblicker.database.Project;
+import org.weitblicker.database.User;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;
@@ -60,6 +61,11 @@ public class Main
         location.setStreet("Neuer Graben");
         location.setNumber(5);
         project.setLocation(location);
+        
+        User user = new User();
+        user.setEmail("spuetz@uos.de");
+        user.setName("spuetz");
+        user.setPassword("123");
 
         
         try {
@@ -69,6 +75,7 @@ public class Main
             emWeitblick.getTransaction().begin();
             emWeitblick.merge(location);
             emWeitblick.merge(project);
+            emWeitblick.persist(user);
             emWeitblick.getTransaction().commit();
             emWeitblick.close();
             persistenceManager.close();

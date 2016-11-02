@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -53,4 +54,6 @@ public class Options
     public static String DB_USER = getString("weitblickapp-server.DB.user");
     public static String DB_PASSWORD = getString("weitblickapp-server.DB.password");
     public static String DB_DDL_GENERATION = getString("weitblickapp-server.DB.ddl-generation");
+    public static String DEFAULT_LANGUGAE_STR = getString("weitblickapp-server.DEFAULT_LANGUAGE");
+    public static Locale DEFAULT_LANGUAGE = new Locale(DEFAULT_LANGUGAE_STR);
 }
