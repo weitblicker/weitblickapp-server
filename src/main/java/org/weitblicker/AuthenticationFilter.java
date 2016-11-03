@@ -1,18 +1,12 @@
 package org.weitblicker;
 
 import java.io.IOException;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 import java.security.Principal;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import javax.annotation.Priority;
-import javax.ws.rs.NameBinding;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -43,10 +37,10 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 		}
 		
 		boolean isExpired(){
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(stamp);
-			cal.add(Calendar.HOUR_OF_DAY, 1);
-		    Date expire = cal.getTime(); 
+			Calendar expireCal = Calendar.getInstance();
+			expireCal.setTime(stamp);
+			expireCal.add(Calendar.HOUR_OF_DAY, 1);
+		    expire = expireCal.getTime(); 
 		    
 		    boolean expired = calendar.getTime().after(expire);
 		    if(!expired)
@@ -54,9 +48,16 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 		    return expired;
 		}
 		
+		public String toString(){
+			return "Session for user " + user + ". "
+					+ "\n The session expires at " + expire.toString() + "."
+					+ "\n The session is granted with the token: " + token;
+		}
+		
 		String token;
 		User user;
 		Date stamp;
+		Date expire;
 	}
 	
     
@@ -75,12 +76,15 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {	
 
+    	
+    	System.out.println("Authentication with token");
+
         // Get the HTTP Authorization header from the request
         String authorizationHeader = 
             requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 
         // Check if the HTTP Authorization header is present and formatted correctly 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader == null) {
         	System.out.println(authorizationHeader);
             throw new NotAuthorizedException("Authorization header must be provided");
         }
@@ -93,6 +97,8 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             // Validate the token
             Session session = validateToken(token);
             
+            System.out.println("Found session: \n" + session);
+            
     		requestContext.setSecurityContext(new SecurityContext() {
     			
     		    @Override
@@ -102,17 +108,17 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     		
     		    @Override
     		    public boolean isUserInRole(String role) {
-    		        return true;
+    		        return true; // TODO
     		    }
     		
     		    @Override
     		    public boolean isSecure() {
-    		        return false;
+    		        return false; // TODO
     		    }
     		
     		    @Override
     		    public String getAuthenticationScheme() {
-    		        return null;
+    		        return null; // TODO
     		    }
     		});
 
@@ -121,7 +127,6 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 Response.status(Response.Status.UNAUTHORIZED).build());
         }
         
-
     }
     
 

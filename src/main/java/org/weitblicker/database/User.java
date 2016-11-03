@@ -33,10 +33,10 @@ public class User implements Comparable<User>, Principal {
 	@ManyToMany(mappedBy="maintainer")
 	private Set<Host> hosts;
 	
-	@Column(name = "name")
+	@Column(name = "name", unique=true)
 	private String name;
 	
-	@Column(name = "email")
+	@Column(name = "email", unique=true)
 	private String email;
 	
     @JsonIgnore	

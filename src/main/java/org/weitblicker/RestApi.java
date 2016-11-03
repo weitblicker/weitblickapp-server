@@ -25,9 +25,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import java.security.Key;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Root resource (exposed at "rest" path)
@@ -93,7 +91,7 @@ public class RestApi
 
     	System.out.println("Authentication");
         try {
-
+        	
             // Authenticate the user using the credentials provided
             User user = authenticate(username, password);
         	System.out.println("login user: " + user);
