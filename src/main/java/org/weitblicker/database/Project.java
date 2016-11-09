@@ -116,4 +116,8 @@ public class Project implements Serializable{
 		this.location = location;
 	}
 	
+	public String toString(){
+		return "id: " + this.id + " name: " + this.getName(); 
+	}
+	
 }

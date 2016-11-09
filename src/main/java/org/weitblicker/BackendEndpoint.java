@@ -7,6 +7,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.ws.rs.Consumes;
@@ -19,16 +22,63 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.tika.Tika;
+import org.weitblicker.database.PersistenceHelper;
+import org.weitblicker.database.Project;
+
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheFactory;
 
 @Path("backend/")
 public class BackendEndpoint {
+	
+	class BackendInfo{
+		List<Project> projects;
+		
+	}
 
 	@GET
 	@Path("admin/")
 	@Produces("text/html")
 	public Response login(){
-		return Response.ok("<html><h1>Test</h1></html>").build();
+		System.out.println("All projects...");
+		BackendInfo info = new BackendInfo();
+		info.projects = PersistenceHelper.getAllProjects();
+		for(Project p : info.projects){
+			System.out.println(p);
+		}
+	    MustacheFactory mf = new DefaultMustacheFactory();
+	    Mustache mustache = mf.compile("files/projects.mustache");
+	    StringWriter stringWriter = new StringWriter();
+	    try {
+			mustache.execute(stringWriter, info).flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return Response.ok(stringWriter.getBuffer().toString()).build();
 	}
+	
+	@GET
+	@Path("admin/edit/{id}")
+	@Produces("text/html")
+	public Response editProject(@PathParam("id") Long id){
+		System.out.println("Project with id:" + id);
+		BackendInfo info = new BackendInfo();
+		Project project = PersistenceHelper.getProject(id);
+
+	    MustacheFactory mf = new DefaultMustacheFactory();
+	    Mustache mustache = mf.compile("files/projects.mustache");
+	    StringWriter stringWriter = new StringWriter();
+	    try {
+			mustache.execute(stringWriter, info).flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return Response.ok(stringWriter.getBuffer().toString()).build();
+	}
+	
+	
+	
 	
 	@GET
 	@Path("download/{file:.*}")

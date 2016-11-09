@@ -51,6 +51,16 @@ public class PersistenceHelper
 
     // ---------------------------- PROJECT HELPER ----------------------------------------
 
+    /**
+     * Gets the project list from DB
+     * @return list of projectIds
+     */
+    public static List<Project> getAllProjects()
+    {
+        TypedQuery<Project> query = emWeitblick.createQuery(
+                "SELECT c FROM Project c", Project.class);
+        return query.getResultList();
+    }
 
     /**
      * Gets the project list from DB
