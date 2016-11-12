@@ -48,9 +48,9 @@ public class Location {
     // members
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
 
-    public long getId() {
+    public Long getId() {
 		return id;
 	}
 
@@ -116,5 +116,11 @@ public class Location {
 
 	public void setTown(String town) {
 		this.town = town;
+	}
+	
+	public String toString(){
+		return "id: " + getId() + " – " + getStreet() 
+			+ " " + getNumber() + ", " + getPostalCode()
+			+ " " + getTown() + ", " + getCountry();
 	}
 }

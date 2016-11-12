@@ -1,6 +1,7 @@
 package org.weitblicker.database;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
 
 import java.util.LinkedList;
@@ -81,6 +82,20 @@ public class PersistenceHelper
     public static Project getProject(long projectId)
     {
         return emWeitblick.find(Project.class, projectId);
+    }
+    
+    public static Long createOrUpdateProject(Project project){
+    	try{
+	        EntityTransaction transaction = emWeitblick.getTransaction();
+	        transaction.begin();
+	        emWeitblick.persist(project);
+	        emWeitblick.flush();
+	        transaction.commit();
+	        return project.getId();
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    	return null;
     }
 
     // ----------------------------- NEED HELPER ------------------------------------------

@@ -1,1 +1,27 @@
-// TODO hier Template einbauen zum editieren von Projekten...
+<!DOCTYPE html>
+<html lang="en">
+  {{>header}}
+
+  <body>
+
+  	<script type="text/javascript">
+  		$.fn.editable.defaults.mode = 'inline';
+    
+	    $(document).ready(function() {
+	        $('.editable').editable({url: '/edit/{{id}}'});
+	    });
+
+    </script>
+
+    <h1>Weitblick Projekte</h1>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">Projekt</div>
+
+	    <a href="#" class="editable" id="name" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">{{name}}</a>
+
+	    <a href="#" class="editable" id="abst" data-type="text" data-pk="2" data-url="/post" data-title="Enter username">{{abst}}</a>
+
+	</div>
+  </body>
+</html>

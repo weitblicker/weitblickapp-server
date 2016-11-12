@@ -10,6 +10,7 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
 import org.weitblicker.database.PersistenceHelper;
 import org.weitblicker.database.Project;
 import org.weitblicker.database.User;
+import org.weitblicker.database.Location;
 
 import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
@@ -20,12 +21,17 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import java.io.IOException;
 import java.security.Key;
+import java.util.IllformedLocaleException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Root resource (exposed at "rest" path)
@@ -42,8 +48,8 @@ public class RestApi
      * @return String that will be returned as a text/plain response.
      */
     @GET
-    @Path("projekt/liste")
-    @Produces("application/json")
+    @Path("project/list")
+    @Produces(MediaType.APPLICATION_JSON)
     public String getProjectIds() {
 
         try
@@ -58,9 +64,8 @@ public class RestApi
     }
 
     @GET
-    @Secured
-    @Path("projekt/{id}")
-    @Produces("application/json")
+    @Path("project/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public String getProject(@PathParam("id") final String id, @Context SecurityContext securityContext)
     {
         try
@@ -81,6 +86,145 @@ public class RestApi
         }
         return "";
     }
+    
+	
+	@POST
+	@Path("project/new")
+    @Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createProject(@QueryParam("language") String language, String jsonProject){
+		
+		System.out.println("create new project...");
+		
+		Locale currentLanguage = Options.DEFAULT_LANGUAGE;
+		
+		// read language
+		if(language != null){
+			Locale.Builder languageBuilder = new Locale.Builder();
+			try{
+				languageBuilder.setLanguage(language);
+				currentLanguage = languageBuilder.build();
+			}catch(IllformedLocaleException e){
+				// TODO maybe response bad request
+				e.printStackTrace();
+			}
+		}
+		
+		// set current language
+		Project project = new Project();
+		project.setCurrentLanguage(currentLanguage);
+		
+		// parse json 
+		try {
+			project = jsonMapper.readerForUpdating(project).readValue(jsonProject);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		// set location by id - the location has to be exist already.
+		Long locationId = project.getLocation().getId();
+		if(locationId == null){
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		
+		Location location = PersistenceHelper.getLocation(locationId);
+		project.setLocation(location);
+		
+		System.out.println("Project: " + project);
+		System.out.println("Location: " + project.getLocation());
+		if(project.getId() == null){
+			System.out.println("no id given, project is new...");
+			long id = PersistenceHelper.createOrUpdateProject(project);
+			System.out.println("created new project with id: " + id);
+			try {
+				String jsonResponse = jsonMapper.writeValueAsString(project);
+				return Response.ok(jsonResponse).build();
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			}
+		}else{
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		
+	}
+	
+	@POST
+	@Path("project/update")
+    @Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateProject(@QueryParam("language") String language, String jsonProject){
+		
+		System.out.println("update project...");
+		
+		Locale currentLanguage = Options.DEFAULT_LANGUAGE;
+		
+		// read language
+		if(language != null){
+			Locale.Builder languageBuilder = new Locale.Builder();
+			try{
+				languageBuilder.setLanguage(language);
+				currentLanguage = languageBuilder.build();
+			}catch(IllformedLocaleException e){
+				// TODO maybe response bad request
+				e.printStackTrace();
+			}
+		}
+		
+		System.out.println("language: " + currentLanguage.getLanguage());
+		
+		Project receivedProject = null;
+		
+		try {
+			receivedProject = jsonMapper.readValue(jsonProject, Project.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+		
+		Long id = receivedProject.getId();
+		
+		// no id given -> bad request
+		if(id == null){
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		
+		// set current language
+		Project dbProject = PersistenceHelper.getProject(id);
+		dbProject.setCurrentLanguage(currentLanguage);
+		
+		// parse json 
+		try {
+			dbProject = jsonMapper.readerForUpdating(dbProject).readValue(jsonProject);
+		} catch (IOException e) {
+			// TODO maybe response bad request or what?
+			e.printStackTrace();
+		}
+		
+		// set location by id - the location has to be exist already.
+		Long locationId = dbProject.getLocation().getId();
+		// TODO Fix that.. does not work... why?
+		if(locationId == null){
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		
+		Location location = PersistenceHelper.getLocation(locationId);
+		dbProject.setLocation(location);
+		
+		System.out.println("Project: " + dbProject);
+		System.out.println("Location: " + dbProject.getLocation());
+		System.out.println("id given, update project...");
+		id = PersistenceHelper.createOrUpdateProject(dbProject);
+		System.out.println("updated project with id: " + id);
+		try {
+			String jsonResponse = jsonMapper.writeValueAsString(dbProject);
+			return Response.ok(jsonResponse).build();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+		
+	}
     
     @POST
     @Path("authentication")

@@ -37,6 +37,10 @@ public class Project implements Serializable{
 	@Column(name = "id")
     Long id;
     
+    public Long getId(){
+		return id;
+    }
+    
     @Transient
     private Locale currentLanguage = Options.DEFAULT_LANGUAGE;
     
@@ -50,6 +54,10 @@ public class Project implements Serializable{
 
 	public void setName(final String name, final Locale language) {
 		name().addText(language, name);
+	}
+	
+	public void setName(String name){
+		setName(name, currentLanguage);
 	}
 	
 	public String getName(){
@@ -68,8 +76,12 @@ public class Project implements Serializable{
 	@JoinColumn(name = "key_description")
 	private LanguageString desc;
 	
-	public void setDesc(final String name, final Locale language) {
-		desc().addText(language, name);
+	public void setDesc(String desc, final Locale language) {
+		desc().addText(language, desc);
+	}
+	
+	public void setDesc(String desc){
+		setDesc(desc, currentLanguage);
 	}
 	
 	public String getDesc(){
@@ -88,8 +100,12 @@ public class Project implements Serializable{
 	@JoinColumn(name = "key_abstract")
 	private LanguageString abst;
 	
-	public void setAbst(final String name, final Locale language) {
-		abst().addText(language, name);
+	public void setAbst(final String abst, final Locale language) {
+		abst().addText(language, abst);
+	}
+	
+	public void setAbst(String abst){
+		setAbst(abst, currentLanguage);
 	}
 	
 	public String getAbst(){
