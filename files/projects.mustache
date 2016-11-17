@@ -3,6 +3,23 @@
   {{>header}}
   <body>
     <h1>Weitblick Projekte</h1>
+    <h2>Language – {{language}}</h2>
+
+	<a href="/backend/projects/add">
+		<i class="fa fa-plus-circle" aria-hidden="true"></i> add new project
+	</a>
+	<a href="/backend/projects/de">
+		<i class="fa fa-flag" aria-hidden="true"></i> DE
+	</a>
+	<a href="/backend/projects/en">
+		<i class="fa fa-flag" aria-hidden="true"></i> EN
+	</a>
+	<a href="/backend/projects/fr">
+		<i class="fa fa-flag" aria-hidden="true"></i> FR
+	</a>
+
+
+
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -29,7 +46,7 @@
 					<td>{{abst}}</td>
 					<td>{{desc}}</td>
 					<td>
-						<a href="admin/edit/{{id}}">
+						<a href="/backend/projects/{{language}}/edit/{{id}}">
 							<i class="fa fa-pencil" aria-hidden="true"></i>
 						</a>
 					</td>

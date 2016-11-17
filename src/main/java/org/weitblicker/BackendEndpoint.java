@@ -43,33 +43,28 @@ public class BackendEndpoint {
 	class BackendInfo{
 		List<Project> projects;
 		Project project;
+		String language;
 	}
 
 	@GET
-	@Path("projects/")
+	@Path("projects/{language}")
 	@Produces("text/html")
-	public Response projects(@QueryParam("language") String language){
+	public Response projects(@PathParam("language") final String language){
 		System.out.println("All projects...");
 		
 		Locale currentLanguage = Options.DEFAULT_LANGUAGE;
 		
-		// read language
-		if(language != null){
-			Locale.Builder languageBuilder = new Locale.Builder();
-			try{
-				languageBuilder.setLanguage(language);
-				currentLanguage = languageBuilder.build();
-			}catch(IllformedLocaleException e){
-				// TODO maybe response bad request
-				e.printStackTrace();
-			}
-		}
-		
-		System.out.println("language: " + currentLanguage.getLanguage());
-		
+		try{
+			currentLanguage = RestApi.getLanguage(language);
+			System.out.println("language: " + currentLanguage.getLanguage());			
+		} catch(IllformedLocaleException e){
+        	e.printStackTrace();
+        	return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+			
 		BackendInfo info = new BackendInfo();
 		info.projects = PersistenceHelper.getAllProjects();
-		
+		info.language = currentLanguage.getLanguage();
 		// set language for response
 		for(Project project : info.projects){
 			project.setCurrentLanguage(currentLanguage);
@@ -87,17 +82,45 @@ public class BackendEndpoint {
 	}
 	
 	@GET
-	@Path("projects/edit/{id}")
+	@Path("projects/{language}/edit/{id}")
 	@Produces("text/html")
-	public Response editProject(@PathParam("id") Long id){
+	public Response editProject(@PathParam("id") Long id, @PathParam("language") final String language){
+
+
+		Locale currentLanguage = Options.DEFAULT_LANGUAGE;
+		
+		try{
+			currentLanguage = RestApi.getLanguage(language);
+			System.out.println("language: " + currentLanguage.getLanguage());			
+		} catch(IllformedLocaleException e){
+        	e.printStackTrace();
+        	return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+		
 		System.out.println("Project with id:" + id);
 		Project project = PersistenceHelper.getProject(id);
-
+		project.setCurrentLanguage(currentLanguage);
+		
 	    MustacheFactory mf = new DefaultMustacheFactory();
 	    Mustache mustache = mf.compile("files/edit_project.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
-			mustache.execute(stringWriter, new PersistenceHelper()).flush();
+			mustache.execute(stringWriter, project).flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return Response.ok(stringWriter.getBuffer().toString()).build();
+	}	
+	
+	@GET
+	@Path("projects/add")
+	@Produces("text/html")
+	public Response addProject(){
+	    MustacheFactory mf = new DefaultMustacheFactory();
+	    Mustache mustache = mf.compile("files/add_project.mustache");
+	    StringWriter stringWriter = new StringWriter();
+	    try {
+			mustache.execute(stringWriter, new Object()).flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

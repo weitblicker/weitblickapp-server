@@ -118,6 +118,12 @@ public class PersistenceHelper
     {
         return emWeitblick.find(Location.class, locationId);
     }
+    
+
+	public static List<Location> getAllLocations() {
+        TypedQuery<Location> query = emWeitblick.createQuery(
+                "SELECT c FROM Location c", Location.class);
+        return query.getResultList();	}
 
     // --------------------------- DONATION HELPER ----------------------------------------
 
@@ -125,5 +131,6 @@ public class PersistenceHelper
     {
         return emWeitblick.find(Donation.class, donationId);
     }
+
 }
 

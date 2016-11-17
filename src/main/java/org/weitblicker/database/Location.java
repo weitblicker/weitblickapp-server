@@ -40,6 +40,10 @@ public class Location {
         this.addition = addition;
        // this.commentNo = commentNo;
     }
+    
+    public static Location location(String id){
+    	return PersistenceHelper.getLocation(Long.valueOf(id));
+    }
 
     public String getTown() {
         return this.town;

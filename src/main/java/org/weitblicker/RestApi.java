@@ -29,9 +29,12 @@ import javax.ws.rs.core.SecurityContext;
 
 import java.io.IOException;
 import java.security.Key;
+import java.util.HashSet;
 import java.util.IllformedLocaleException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Root resource (exposed at "rest" path)
@@ -39,22 +42,21 @@ import java.util.Locale;
 @Path("rest")
 public class RestApi
 {
+    public static Locale getLanguage(String language) throws IllformedLocaleException{
+    	Locale.Builder languageBuilder = new Locale.Builder();
+		languageBuilder.setLanguage(language);
+		return languageBuilder.build();
+    }
+	
     private ObjectMapper jsonMapper = new ObjectMapper();
 
-    /**
-     * Method handling HTTP GET requests. The returned object will be sent
-     * to the client as "text/plain" media type.
-     *
-     * @return String that will be returned as a text/plain response.
-     */
     @GET
-    @Path("project/list")
+    @Path("location/list")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getProjectIds() {
-
+    public String getLocations() {
         try
         {
-            List<Long> liste = PersistenceHelper.getProjectList();
+            List<Location> liste = PersistenceHelper.getAllLocations();
             return jsonMapper.writeValueAsString(liste);
         } catch (JsonProcessingException e)
         {
@@ -62,14 +64,63 @@ public class RestApi
         }
         return "";
     }
+    
+    @GET
+    @Path("project/list{noop: (/)?}{language : ((?<=/)\\w+)?}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getProjectIds(@PathParam("language") final String language) {
+
+    	// TODO put this to the config 
+    	Set<Locale> languages = new HashSet();
+    	languages.add(Locale.GERMAN);
+    	languages.add(Locale.ENGLISH);
+    	languages.add(Locale.FRENCH);
+    	languages.add(Options.DEFAULT_LANGUAGE);
+    	
+        try
+        {
+        	Locale currentLanguage = Options.DEFAULT_LANGUAGE;
+        	System.out.println("given language: \"" + language + "\"");
+        	if(language == null || language.equals("")){
+        		System.out.println("no language specified! - return with default language");
+        	}else{        	
+	        	// set response language
+	        	currentLanguage = getLanguage(language);
+	        	System.out.println("language: " + currentLanguage.getLanguage());
+	        	
+	        	// check if language is allowed
+	        	if(! languages.contains(currentLanguage)){
+	            	System.out.println("language: " + currentLanguage.getLanguage() + " ist not allowed!");
+	            	return Response.status(Response.Status.BAD_REQUEST).build();
+	        	}
+        	}
+        	
+            List<Project> list = PersistenceHelper.getAllProjects();
+            for(Project project : list){
+            	project.setCurrentLanguage(currentLanguage);
+            }
+
+            // response ok with json content
+            return Response.ok(jsonMapper.writeValueAsString(list)).build();
+        } catch(IllformedLocaleException e){
+        	e.printStackTrace();
+        	return Response.status(Response.Status.BAD_REQUEST).build();
+        } catch (JsonProcessingException e)
+        {
+            e.printStackTrace();
+        	return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
     @GET
-    @Path("project/{id}")
+    @Path("project/{id}/{language}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getProject(@PathParam("id") final String id, @Context SecurityContext securityContext)
+    public Response getProject(@PathParam("id") final String id, @PathParam("language") final String language, @Context SecurityContext securityContext)
     {
         try
         {
+        	Locale currentLanguage = getLanguage(language);
+        	
         	// TODO use these examples
         	// get the user
         	User user = (User) securityContext.getUserPrincipal();
@@ -79,14 +130,17 @@ public class RestApi
         	
             Long projectId = Long.valueOf(id);
             Project project = PersistenceHelper.getProject(projectId);
-            return jsonMapper.writeValueAsString(project);
+            project.setCurrentLanguage(currentLanguage);
+            return Response.ok(jsonMapper.writeValueAsString(project)).build();
+        } catch(IllformedLocaleException e){
+        	e.printStackTrace();
+        	return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (JsonProcessingException e)
         {
             e.printStackTrace();
+        	return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-        return "";
     }
-    
 	
 	@POST
 	@Path("project/new")
@@ -113,21 +167,25 @@ public class RestApi
 		// set current language
 		Project project = new Project();
 		project.setCurrentLanguage(currentLanguage);
+		System.out.println("language: " + currentLanguage.getLanguage());
+		System.out.println("json:" + jsonProject);
 		
 		// parse json 
 		try {
 			project = jsonMapper.readerForUpdating(project).readValue(jsonProject);
+			System.out.println(project);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		// set location by id - the location has to be exist already.
-		Long locationId = project.getLocation().getId();
-		if(locationId == null){
+		Location location = project.getLocation();
+		
+		if(location == null || location.getId() == null){
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 		
-		Location location = PersistenceHelper.getLocation(locationId);
+		location = PersistenceHelper.getLocation(location.getId());
 		project.setLocation(location);
 		
 		System.out.println("Project: " + project);
@@ -150,80 +208,63 @@ public class RestApi
 	}
 	
 	@POST
-	@Path("project/update")
+	@Path("project/update/{language}")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateProject(@QueryParam("language") String language, String jsonProject){
+	public Response updateProject(@PathParam("language") final String language, String jsonProject){
 		
 		System.out.println("update project...");
+
+		try{		
+			Locale currentLanguage = getLanguage(language);
+			System.out.println("language: " + currentLanguage.getLanguage());
 		
-		Locale currentLanguage = Options.DEFAULT_LANGUAGE;
-		
-		// read language
-		if(language != null){
-			Locale.Builder languageBuilder = new Locale.Builder();
-			try{
-				languageBuilder.setLanguage(language);
-				currentLanguage = languageBuilder.build();
-			}catch(IllformedLocaleException e){
-				// TODO maybe response bad request
-				e.printStackTrace();
-			}
-		}
-		
-		System.out.println("language: " + currentLanguage.getLanguage());
-		
-		Project receivedProject = null;
-		
-		try {
-			receivedProject = jsonMapper.readValue(jsonProject, Project.class);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-		}
-		
-		Long id = receivedProject.getId();
-		
-		// no id given -> bad request
-		if(id == null){
-			return Response.status(Response.Status.BAD_REQUEST).build();
-		}
-		
-		// set current language
-		Project dbProject = PersistenceHelper.getProject(id);
-		dbProject.setCurrentLanguage(currentLanguage);
-		
-		// parse json 
-		try {
+			Project receivedProject = jsonMapper.readValue(jsonProject, Project.class);
+			Long id = receivedProject.getId();
+			
+			// no id given -> bad request
+			if(id == null) 
+				return Response.status(Response.Status.BAD_REQUEST).build();
+			
+			// get project from database
+			Project dbProject = PersistenceHelper.getProject(id);
+			
+			// set current language
+			dbProject.setCurrentLanguage(currentLanguage);
+			
+			// merge project with changes
 			dbProject = jsonMapper.readerForUpdating(dbProject).readValue(jsonProject);
-		} catch (IOException e) {
-			// TODO maybe response bad request or what?
-			e.printStackTrace();
-		}
-		
-		// set location by id - the location has to be exist already.
-		Long locationId = dbProject.getLocation().getId();
-		// TODO Fix that.. does not work... why?
-		if(locationId == null){
-			return Response.status(Response.Status.BAD_REQUEST).build();
-		}
-		
-		Location location = PersistenceHelper.getLocation(locationId);
-		dbProject.setLocation(location);
-		
-		System.out.println("Project: " + dbProject);
-		System.out.println("Location: " + dbProject.getLocation());
-		System.out.println("id given, update project...");
-		id = PersistenceHelper.createOrUpdateProject(dbProject);
-		System.out.println("updated project with id: " + id);
-		try {
+
+			// TODO Fix that.. does not work... why?
+			// set location by id - the location has to be exist already.
+			Long locationId = dbProject.getLocation().getId();
+			if(locationId == null)
+				return Response.status(Response.Status.BAD_REQUEST).build();
+			
+			// get location object by id
+			Location location = PersistenceHelper.getLocation(locationId);
+			dbProject.setLocation(location);
+
+			// update project in database
+			System.out.println("Project: " + dbProject);
+			System.out.println("Location: " + dbProject.getLocation());
+			id = PersistenceHelper.createOrUpdateProject(dbProject);
+			System.out.println("updated project with id: " + id);
+			
+			// return the updated project as json
 			String jsonResponse = jsonMapper.writeValueAsString(dbProject);
 			return Response.ok(jsonResponse).build();
+			
+		} catch(IllformedLocaleException e){
+			e.printStackTrace();
+			return Response.status(Response.Status.BAD_REQUEST).build();
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		} catch (IOException e) {
+			e.printStackTrace();
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-		}
-		
+		} 
 	}
     
     @POST

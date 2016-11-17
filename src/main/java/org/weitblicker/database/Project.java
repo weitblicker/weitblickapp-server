@@ -1,6 +1,7 @@
 package org.weitblicker.database;
 
 import java.io.Serializable;
+import java.util.IllformedLocaleException;
 import java.util.Locale;
 
 import javax.persistence.CascadeType;
@@ -43,6 +44,10 @@ public class Project implements Serializable{
     
     @Transient
     private Locale currentLanguage = Options.DEFAULT_LANGUAGE;
+    
+    public String getLanguage(){
+    	return currentLanguage.getLanguage();
+    }    
     
     public void setCurrentLanguage(Locale language){
     	currentLanguage = language;
@@ -126,6 +131,10 @@ public class Project implements Serializable{
 	
 	public Location getLocation(){
 		return location;
+	}
+	
+	public void setLocation(String id){
+		this.location = Location.location(id);
 	}
 	
 	public void setLocation(Location location){
