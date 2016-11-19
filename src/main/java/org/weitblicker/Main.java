@@ -2,6 +2,7 @@ package org.weitblicker;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.weitblicker.database.Location;
 import org.weitblicker.database.PersistenceManager;
@@ -31,6 +32,7 @@ public class Main
         // create a resource config that scans for JAX-RS resources and providers
         // in org.weitblicker package
         final ResourceConfig rc = new ResourceConfig().packages("org.weitblicker");
+        rc.register(new MultiPartFeature());
 
         // create and start a new instance of grizzly http server
         // exposing the Jersey application at BASE_URI
