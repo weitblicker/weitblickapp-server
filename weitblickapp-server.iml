@@ -49,8 +49,8 @@
     <orderEntry type="library" name="Maven: org.glassfish.jersey.ext:jersey-mvc-mustache:2.23.2" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.jersey.ext:jersey-mvc:2.23.2" level="project" />
     <orderEntry type="library" name="Maven: javax.servlet:servlet-api:2.4" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.jersey.media:jersey-media-multipart:2.19" level="project" />
-    <orderEntry type="library" name="Maven: org.jvnet.mimepull:mimepull:1.9.5" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish.jersey.media:jersey-media-multipart:2.24" level="project" />
+    <orderEntry type="library" name="Maven: org.jvnet.mimepull:mimepull:1.9.6" level="project" />
     <orderEntry type="library" name="Maven: com.github.spullara.mustache.java:compiler:0.9.2" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.8.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.8.0" level="project" />
