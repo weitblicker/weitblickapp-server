@@ -1,27 +1,17 @@
 package org.weitblicker;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.IllformedLocaleException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.imageio.ImageIO;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -30,7 +20,6 @@ import org.apache.tika.Tika;
 import org.weitblicker.database.PersistenceHelper;
 import org.weitblicker.database.Project;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
@@ -38,9 +27,7 @@ import com.github.mustachejava.MustacheFactory;
 @Path("backend/")
 public class BackendEndpoint {
 	
-    private ObjectMapper jsonMapper = new ObjectMapper();
-	
-	class BackendInfo{
+    class BackendInfo{
 		List<Project> projects;
 		Project project;
 		String language;

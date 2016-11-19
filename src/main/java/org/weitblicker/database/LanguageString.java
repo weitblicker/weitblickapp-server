@@ -10,6 +10,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 
@@ -18,10 +19,10 @@ import javax.persistence.Table;
 public class LanguageString extends AbstractLanguageString {
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name = "language")
+    @MapKeyColumn(name = "language", length = 50)
     @CollectionTable(name = "texts_lang", joinColumns = @JoinColumn(name = "string_id"))
-    @Column(name = "text")
-    
+    @Column(name = "text", length = 1000000)
+    @Lob
     private Map<String, String> map = new HashMap<String, String>();
 
     public LanguageString() {

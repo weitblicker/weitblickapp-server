@@ -1,12 +1,10 @@
 package org.weitblicker.database;
 
 /**
- * Weitblick-DB Location Table Object, Defines all locations (currently projects & hosts)
- * @author benedikt
+ * Weitblick-DB Location Table
+ * @author Sebastian Pütz <spuetz@uos.de>
  * @since 16.10.16
  */
-
-// TODO: 18.10.16 responsible: Bene V
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

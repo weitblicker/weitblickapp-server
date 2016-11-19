@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.security.Key;
 import java.util.HashSet;
 import java.util.IllformedLocaleException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -71,7 +70,7 @@ public class RestApi
     public Response getProjectIds(@PathParam("language") final String language) {
 
     	// TODO put this to the config 
-    	Set<Locale> languages = new HashSet();
+    	Set<Locale> languages = new HashSet<Locale>();
     	languages.add(Locale.GERMAN);
     	languages.add(Locale.ENGLISH);
     	languages.add(Locale.FRENCH);

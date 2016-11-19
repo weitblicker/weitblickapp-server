@@ -1,11 +1,13 @@
 package org.weitblicker.database;
 
 import java.io.Serializable;
-import java.util.IllformedLocaleException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -19,16 +21,8 @@ import javax.persistence.Transient;
 import org.weitblicker.Options;
 
 import javax.persistence.GenerationType;
-/*
-private long id;
-
-private long nameNo;
-private long descriptionShortNo;
-private long descriptionLongNo;
-private long locationId;
 
 
-*/
 @Entity
 @Table(name = "projects")
 public class Project implements Serializable{
@@ -51,6 +45,9 @@ public class Project implements Serializable{
     
     public void setCurrentLanguage(Locale language){
     	currentLanguage = language;
+    	for(ProjectImage image : images){
+    		image.setCurrentLanguage(language);
+    	}
     }
 	
 	@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
@@ -145,4 +142,15 @@ public class Project implements Serializable{
 		return "id: " + this.id + " name: " + this.getName(); 
 	}
 	
+	@ElementCollection
+	private List<ProjectImage> images = new LinkedList<ProjectImage>();
+	
+	public List<ProjectImage> getImages(){
+		return images;
+	}
+	
+	public void setImages(List<ProjectImage> images){
+		this.images = images;
+	}
+		
 }
