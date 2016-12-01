@@ -85,34 +85,27 @@ public class PersistenceHelper
     }
     
     public static Long createOrUpdateProject(Project project){
-    	try{
-	        EntityTransaction transaction = emWeitblick.getTransaction();
-	        transaction.begin();
-	        emWeitblick.persist(project);
-	        emWeitblick.flush();
-	        transaction.commit();
-	        return project.getId();
-    	}catch(Exception e){
-    		e.printStackTrace();
-    	}
-    	return null;
-    }
-
-    // ----------------------------- NEED HELPER ------------------------------------------
-
-    public static Need getNeed(long needId)
-    {
-        return emWeitblick.find(Need.class, needId);
-    }
-
-    public static long setNeed( String name, String descriptionShort, String descriptionLong, long projectId, long languageId ) {
-        Need need = new Need( name, descriptionShort, descriptionLong, projectId, languageId );
-        emWeitblick.persist( need );
+        EntityTransaction transaction = emWeitblick.getTransaction();
+        transaction.begin();
+        emWeitblick.persist(project);
         emWeitblick.flush();
+        transaction.commit();
+        return project.getId();
+    }
+
+    public static Need getNeed(Long id)
+    {
+        return emWeitblick.find(Need.class, id);
+    }
+
+    public static Long createOrUpdateNeed(Need need) {
+    	EntityTransaction transaction = emWeitblick.getTransaction();
+    	transaction.begin();
+        emWeitblick.persist(need);
+        emWeitblick.flush();
+        transaction.commit();
         return need.getId();
     }
-
-    // --------------------------- LOCATION HELPER ----------------------------------------
 
     public static Location getLocation(long locationId)
     {

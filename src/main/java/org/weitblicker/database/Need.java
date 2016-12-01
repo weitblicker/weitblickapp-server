@@ -1,118 +1,143 @@
 package org.weitblicker.database;
 
+import java.util.Locale;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-/**
- * Weitblick-DB Need Table Object, Defines demands in projects
- * @author nizzke
- * @since 15.10.16
- */
-
-// TODO: 18.10.16 responsible: Bene V
+import org.weitblicker.Options;
 
 @Entity
 @Table( name = "needs" )
 public class Need {
 
-    // LOCAL VARIABLES
-    @Id
-    @GeneratedValue
+    Need() {}
+	
+	@Id
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CUST_SEQ")
+	@Column(name = "id")
     private long id;
-
-    private long nameNo;
-    private long descriptionShortNo;
-    private long descriptionLongNo;
-    private long projectId;
-    private long languageId;
-    private long amount;
-    private long current;
-
-    // CONSTRUCTOR
-    Need() {
-
-    }
-
-    Need(long nameNo, long descriptionShortNo, long descriptionLongNo, long projectId, long languageId) {
-        this.nameNo = nameNo;
-        this.descriptionShortNo = descriptionShortNo;
-        this.descriptionLongNo = descriptionLongNo;
-        this.projectId = projectId;
-        this.languageId = languageId;
-    }
-
-    // TODO: 18.10.16 how to get and define the nameNo and others? Where to get the information and how can you decide which number to get?
-            Need( String name, String descriptionShort, String descriptionLong, long projectId, long languageId ) {
-        //Need( PersistenceHelper.setText( languageId, name ))
-    }
-
-    // GETTER
-    public long getId() {
+	
+    public Long getId() {
         return this.id;
     }
-
-    public long getNameNo() {
-        return this.nameNo;
+    
+    public void setId(Long id){
+    	this.id = id;
     }
 
-    public String getName(int languageId) {
-        return null; // PersistenceHelper.getText(languageId,this.nameNo);
-    }
+	@ManyToOne
+	@JoinColumn(name = "key_project")
+    private Project project;
+	
+	public void setProject(Project project){
+		this.project = project;
+	}
+	
+	public Project getProject(){
+		return this.project;
+	}
+	
+	@Column(name = "amount")
+    private float amount;
+	public void setAmount(float amount){ this.amount = amount; }
+	public float getAmount(){ return amount; }
+	
+	@Column(name = "current")
+    private float current;
+	public void setCurrent(float current){ this.current = current; }
+	public float getCurrent(){ return amount; }
 
-    public long getDescriptionShortNo() {
-        return this.descriptionShortNo;
+    @Transient
+    private Locale currentLanguage = Options.DEFAULT_LANGUAGE;
+    
+    public String getLanguage(){
+    	return currentLanguage.getLanguage();
+    }    
+    
+    public void setCurrentLanguage(Locale language){
+    	currentLanguage = language;
     }
-    public String getDescriptionShort(int languageId) {
-        return null; //PersistenceHelper.getText(languageId,this.descriptionShortNo);
-    }
+	
+	@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "key_name")
+	private LanguageString name;
 
-    public long getDescriptionLongNo() {
-        return this.descriptionLongNo;
-    }
-    public String getDescriptionLong(int languageId) {
-        return null;// PersistenceHelper.getText(languageId, this.descriptionLongNo);
-    }
+	public void setName(final String name, final Locale language) {
+		name().addText(language, name);
+	}
+	
+	public void setName(String name){
+		setName(name, currentLanguage);
+	}
+	
+	public String getName(){
+		return getName(currentLanguage);
+	}
 
-    public long getProjectId() {
-        return this.projectId;
-    }
+	public String getName(final Locale language) {
+		return name().getText(language);
+	}
 
-    // SETTER
-    public Need setId( long id ) {
-        this.id = id;
-        return this;
-    }
+	private LanguageString name() {
+		return name != null ? name : (name = new LanguageString());
+	}
+    
+	@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "key_description")
+	private LanguageString desc;
+	
+	public void setDesc(String desc, final Locale language) {
+		desc().addText(language, desc);
+	}
+	
+	public void setDesc(String desc){
+		setDesc(desc, currentLanguage);
+	}
+	
+	public String getDesc(){
+		return getDesc(currentLanguage);
+	}
 
-    public Need setProjectId( long projectId ) {
-        this.projectId = projectId;
-        return this;
-    }
-    public Need setNameNo( long nameNo ) {
-        this.nameNo = nameNo;
-        return this;
-    }
-    public Need setNameText( long languageId, String name ) {
-        //this.nameNo = PersistenceHelper.setText(languageId,name,this.nameNo);
-        return this;
-    }
-    public Need setDescriptionShortNo( long descriptionShortNo ) {
-        //this.descriptionShortNo = descriptionShortNo;
-        return this;
-    }
-    public Need setDescriptionShort( long languageId, String descriptionShort ) {
-        //this.descriptionShortNo = PersistenceHelper.setText(languageId,descriptionShort,this.nameNo);
-        return this;
-    }
+	public String getDesc(final Locale language) {
+		return desc().getText(language);
+	}
 
-    public Need setDescriptionLongNo( long descriptionLongNo ) {
-        this.descriptionLongNo = descriptionLongNo;
-        return this;
-    }
-    public Need setDescriptionLong( long languageId, String descriptionLong ) {
-        //this.descriptionLongNo = PersistenceHelper.setText( languageId, descriptionLong, this.descriptionLongNo );
-        return this;
-    }
+	private LanguageString desc() {
+		return desc != null ? desc : (desc = new LanguageString());
+	}
 
+	@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "key_abstract")
+	private LanguageString abst;
+	
+	public void setAbst(final String abst, final Locale language) {
+		abst().addText(language, abst);
+	}
+	
+	public void setAbst(String abst){
+		setAbst(abst, currentLanguage);
+	}
+	
+	public String getAbst(){
+		return getAbst(currentLanguage);
+	}
+
+	public String getAbst(final Locale language) {
+		return abst().getText(language);
+	}
+
+	private LanguageString abst() {
+		return abst != null ? abst : (abst = new LanguageString());
+	}
 }

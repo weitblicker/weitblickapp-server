@@ -42,8 +42,8 @@ public class Host
 	@JoinColumn(name = "key_name")
     private LanguageString name;
 	
-	public void setName(final String name, final Locale language) {
-		name().addText(language, name);
+	public void setName(String name) {
+		name().addText(currentLanguage, name);
 	}
 	
 	public String getName(){
@@ -94,6 +94,13 @@ public class Host
         joinColumns=@JoinColumn(name="user_id", referencedColumnName="id"),
         inverseJoinColumns=@JoinColumn(name="host_id", referencedColumnName="id"))
     private Set<User> maintainer;
+    
+    @ManyToMany
+    @JoinTable(
+        name="host_projects",
+        joinColumns=@JoinColumn(name="project_id", referencedColumnName="id"),
+        inverseJoinColumns=@JoinColumn(name="host_id", referencedColumnName="id"))
+    private Set<Project> projects;
     
     @Transient
     public Locale currentLanguage = Options.DEFAULT_LANGUAGE;

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -130,7 +132,7 @@ public class Project implements Serializable{
 		return location;
 	}
 	
-	public void setLocation(String id){
+	public void setLocation(long id){
 		this.location = Location.location(id);
 	}
 	
@@ -152,5 +154,8 @@ public class Project implements Serializable{
 	public void setImages(List<ProjectImage> images){
 		this.images = images;
 	}
+	
+	@ManyToMany(mappedBy="projects")
+	private Set<Host> hosts;
 		
 }

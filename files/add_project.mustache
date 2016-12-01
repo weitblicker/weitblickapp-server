@@ -11,7 +11,7 @@
 	    	$('.msg').hide();
 
 	        $('.editable').not('#location').editable({
-	        	url: '/rest/project/update/en',
+	        	//url: '/rest/project/update/en',
 	        	ajaxOptions: {
 	        		contentType: 'application/json',
 	        		dataType: 'json' 
@@ -121,6 +121,7 @@
 						} else { //validation error (client-side or server-side)
 							$.each(errors, function(k, v) { 
 								$('.msg'+'.'+k).html(v).show();
+								console.log(k, v);
 								msg = 'You need to fill the required fields!';
 							});
 						} 
