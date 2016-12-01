@@ -8,8 +8,10 @@
   		$.fn.editable.defaults.mode = 'inline';
     
 	    $(document).ready(function() {
+	    	$('.msg').hide();
+
 	        $('.editable').not('#location').editable({
-	        	//url: '/rest/project/edit',
+	        	//url: '/rest/project/update/en',
 	        	ajaxOptions: {
 	        		contentType: 'application/json',
 	        		dataType: 'json' 
@@ -25,14 +27,13 @@
 				},
 				validate: function(value) {
         			if($.trim(value) == '') {
-            			return 'This field is required';
+            			return 'This field is required!';
         			}
     			}
 	    	});
 
 
 			$('#location').editable({
-				value: 2,
 		        source: function(){
 		        	var list = [];
 		        	$.ajax({
@@ -48,12 +49,19 @@
 		        				list.push(elemObj);
 		        			});
 		        		}
+
 					});
 
 					var ret = JSON.stringify(list);
 		        	console.log(ret);
 					return ret;
-		        }
+		        },
+
+		        validate: function(value) {
+        			if($.trim(value) == '') {
+            			return 'This field is required!';
+        			}
+    			}
 		    });
 
 	
@@ -88,6 +96,7 @@
 					},
 
 					success: function(data, config) {
+						console.log("success!");
 						if(data && data.id) {  //record created, response like 
 							$(this).editable('option', 'pk', data.id);
 							//remove unsaved class
@@ -104,14 +113,19 @@
 						}               
 	           		},
 	           		error: function(errors) {
+	           			console.log("errors :", errors);
 						var msg = '';
 						if(errors && errors.responseText) {
 							//ajax error,errors = xhr object
 							msg = errors.responseText;
 						} else { //validation error (client-side or server-side)
-							$.each(errors, function(k, v) { msg += k+": "+v+"<br>"; });
+							$.each(errors, function(k, v) { 
+								$('.msg'+'.'+k).html(v).show();
+								console.log(k, v);
+								msg = 'You need to fill the required fields!';
+							});
 						} 
-						$('#msg').removeClass('alert-success').addClass('alert-error').html(msg).show();
+						$('#msg').removeClass('alert-success').addClass('alert-warning').html(msg).show();
 					}
 				});
 			});
@@ -119,39 +133,49 @@
 
     </script>
 
-    <div id="msg" class="alert hide"></div>
+	<div id="msg" class="alert"></div>
 
 	<div class="panel panel-default">
 		<div class="panel panel-default">
 		  <div class="panel-heading">
 		    <h3 class="panel-title">Title</h3>
+		    <p class="msg name"></p>
 		  </div>
 		  <div class="panel-body">
 		    <a href="#" class="editable title" id="name" data-type="text" data-pk="{{id}}" data-title="Enter title">{{name}}</a>
 		  </div>
+		</div>
 
+		<div class="panel panel-default">
 		  <div class="panel-heading">
 		    <h3 class="panel-title">Abstract</h3>
+		    <p class="msg abst"></p>
 		  </div>
 		  <div class="panel-body">
 		    <a href="#" class="editable abstract" id="abst" data-type="textarea" data-pk="{{id}}" data-title="Enter abstract">{{abst}}</a>
 		  </div>
+		</div>
 
+		<div class="panel panel-default">
 		  <div class="panel-heading">
 		    <h3 class="panel-title">Description</h3>
+		    <p class="msg desc"></p>
 		  </div>
 		  <div class="panel-body">
 		    <a href="#" class="editable description" id="desc" data-type="textarea" data-pk="{{id}}" data-title="Enter description">{{desc}}</a>
 		  </div>
+		</div>
 
+		<div class="panel panel-default">
 		  <div class="panel-heading">
 		    <h3 class="panel-title">Location</h3>
+		   	<p class="msg location"></p>
 		  </div>
 		  <div class="panel-body">
 		    <a href="#" class="editable location" id="location" value="{{location.id}}" data-type="select" data-pk="{{id}}" data-title="Select location"></a>
 		  </div>
-
 		</div>
+
 	</div>
 	<button id="save-btn" class="btn btn-primary" style="display: inline-block;">Save new project!</button>
 	<button id="reset-btn" class="btn pull-right">Reset</button>

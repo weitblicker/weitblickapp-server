@@ -1,146 +1,147 @@
 package org.weitblicker.database;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.weitblicker.Options;
+
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
-// TODO: 18.10.16 responsible (class + helper): nizzke
-
-/**
- * @author nizzke
- * @since 18.10.16.
- */
 @Entity
 @Table( name = "campaigns" )
 public class Campaign {
 
-    // LOCAL VARIABLES
-    @Id
-    @GeneratedValue
+	Campaign() {}
+	
+	@Id
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CUST_SEQ")
+	@Column(name = "id")
     private long id;
-
-    private long nameNo;
-    private long descriptionShortNo;
-    private long descriptionLongNo;
-    private LocalDateTime start;
-    private LocalDateTime end;
-    private long amount;
-    private long needId;
-
-    // -------------------------- MAIN CONSTRUCTOR ----------------------------------------
-    Campaign(long languageId, long nameNo, long descriptionShortNo, long descriptionLongNo, LocalDateTime start, LocalDateTime end, long amount, long needId) {
-        this.nameNo = nameNo;
-        this.descriptionShortNo = descriptionShortNo;
-        this.descriptionLongNo = descriptionLongNo;
-        this.start = start;
-        this.end = end;
-        this.amount=amount;
-        this.needId = needId;
-    }
-
-    // -------------------------- NULL CONSTRUCTOR ----------------------------------------
-    Campaign() {
-
-    }
-
-    // ------------------------------- GETTER ---------------------------------------------
-    public long getId() {
+	
+    public Long getId() {
         return this.id;
     }
+    
+    public void setId(Long id){
+    	this.id = id;
+    }
+	
+	@Column(name = "amount")
+    private float amount;
+	public void setAmount(float amount){ this.amount = amount; }
+	public float getAmount(){ return amount; }
+	
+    @Transient
+    private Locale currentLanguage = Options.DEFAULT_LANGUAGE;
+    
+    public String getLanguage(){
+    	return currentLanguage.getLanguage();
+    }    
+    
+    public void setCurrentLanguage(Locale language){
+    	currentLanguage = language;
+    }
+	
+	@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "key_name")
+	private LanguageString name;
 
-    public long getNameNo() {
-        return this.nameNo;
-    }
+	public void setName(final String name, final Locale language) {
+		name().addText(language, name);
+	}
+	
+	public void setName(String name){
+		setName(name, currentLanguage);
+	}
+	
+	public String getName(){
+		return getName(currentLanguage);
+	}
 
-    public String getName(int languageId) {
-        return null;//PersistenceHelper.getText(languageId,this.nameNo);
-    }
+	public String getName(final Locale language) {
+		return name().getText(language);
+	}
 
-    public long getDescriptionShortNo() {
-        return this.descriptionShortNo;
-    }
-    public String getDescriptionShort(int languageId) {
-        return null;//PersistenceHelper.getText(languageId,this.descriptionShortNo);
-    }
+	private LanguageString name() {
+		return name != null ? name : (name = new LanguageString());
+	}
+    
+	@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "key_description")
+	private LanguageString desc;
+	
+	public void setDesc(String desc, final Locale language) {
+		desc().addText(language, desc);
+	}
+	
+	public void setDesc(String desc){
+		setDesc(desc, currentLanguage);
+	}
+	
+	public String getDesc(){
+		return getDesc(currentLanguage);
+	}
 
-    public long getDescriptionLongNo() {
-        return this.descriptionLongNo;
-    }
-    public String getDescriptionLong(int languageId) {
-        return null;//PersistenceHelper.getText(languageId,this.descriptionLongNo);
-    }
+	public String getDesc(final Locale language) {
+		return desc().getText(language);
+	}
 
-    public LocalDateTime getStart() {
-        return this.start;
-    }
+	private LanguageString desc() {
+		return desc != null ? desc : (desc = new LanguageString());
+	}
 
-    public LocalDateTime getEnd() {
-        return this.end;
-    }
+	@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	@JoinColumn(name = "key_abstract")
+	private LanguageString abst;
+	
+	public void setAbst(final String abst, final Locale language) {
+		abst().addText(language, abst);
+	}
+	
+	public void setAbst(String abst){
+		setAbst(abst, currentLanguage);
+	}
+	
+	public String getAbst(){
+		return getAbst(currentLanguage);
+	}
 
-    public long getAmount() {
-        return this.amount;
-    }
+	public String getAbst(final Locale language) {
+		return abst().getText(language);
+	}
 
-    public long getNeedId() {
-        return this.needId;
-    }
-
-
-    // ------------------------------- SETTER ---------------------------------------------
-    public Campaign setId( long id ) {
-        this.id = id;
-        return this;
-    }
-
-    public Campaign setNameNo( long nameNo ) {
-        this.nameNo = nameNo;
-        return this;
-    }
-    public Campaign setName( int languageId, String name ) {
-       // this.nameNo = PersistenceHelper.setText(languageId,name,this.nameNo);
-        return this;
-    }
-    public Campaign setDescriptionShortNo( long descriptionShortNo ) {
-        this.descriptionShortNo = descriptionShortNo;
-        return this;
-    }
-    public Campaign setDescriptionShort( int languageId, String descriptionShort ) {
-       // this.descriptionShortNo = PersistenceHelper.setText(languageId,descriptionShort,this.descriptionShortNo);
-        return this;
-    }
-
-    public Campaign setDescriptionLongNo( long descriptionLongNo ) {
-        this.descriptionLongNo = descriptionLongNo;
-        return this;
-    }
-    public Campaign setDescriptionLong( int languageId, String descriptionLong ) {
-      //  this.descriptionLongNo = PersistenceHelper.setText(languageId,descriptionLong,this.descriptionLongNo);
-        return this;
-    }
-
-    public Campaign setStart( LocalDateTime start ) {
-        this.start = start;
-        return this;
-    }
-
-    public Campaign setEnd( LocalDateTime end ) {
-        this.end = end;
-        return this;
-    }
-
-    public Campaign setAmount( long amount ) {
-        this.amount = amount;
-        return this;
-    }
-
-    public Campaign setNeedId( long needId ) {
-        this.needId = needId;
-        return this;
-    }
-
+	private LanguageString abst() {
+		return abst != null ? abst : (abst = new LanguageString());
+	}
+	
+	@Column(name = "start")
+    private LocalDateTime start;
+    public LocalDateTime getStart() { return start; }
+    public void setStart(LocalDateTime start){ this.start = start; }
+	
+	@Column(name = "end")
+    private LocalDateTime end;
+    public LocalDateTime getEnd() { return end; }
+    public void setEnd(LocalDateTime end){ this.end = end; }
+    
+	@ElementCollection
+	@JoinColumn(name = "key_need")
+	private List<Need> needs = new LinkedList<Need>();
+	public List<Need> getNeeds(){ return needs; } 
 
 }
 
