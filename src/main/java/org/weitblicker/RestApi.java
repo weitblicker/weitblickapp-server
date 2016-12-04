@@ -8,16 +8,24 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 
 import org.weitblicker.database.PersistenceHelper;
+import org.weitblicker.database.PersistenceManager;
 import org.weitblicker.database.Project;
+import org.weitblicker.database.Image;
 import org.weitblicker.database.User;
+import org.apache.tika.Tika;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.weitblicker.database.Location;
 
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -26,8 +34,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.Status;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.Key;
 import java.util.HashSet;
 import java.util.IllformedLocaleException;
@@ -48,6 +62,10 @@ public class RestApi
     }
 	
     private ObjectMapper jsonMapper = new ObjectMapper();
+    
+    @Context
+    UriInfo uri;
+    
 
     @GET
     @Path("location/list")
@@ -67,7 +85,7 @@ public class RestApi
     @GET
     @Path("project/list{noop: (/)?}{language : ((?<=/)\\w+)?}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProjectIds(@PathParam("language") final String language) {
+    public Response getProjects(@PathParam("language") final String language) {
 
     	// TODO put this to the config 
     	Set<Locale> languages = new HashSet<Locale>();
@@ -141,6 +159,189 @@ public class RestApi
         }
     }
 	
+	@DELETE
+	@Path("project/remove/{id}")
+	public Response removeProject(@PathParam("id") final Long id){
+		EntityManager em =PersistenceHelper.getPersistenceManager().getEntityManager();
+		em.getTransaction().begin();
+		try{
+			System.out.println("trying to remove project with the id: " + id);
+			Project project = em.find(Project.class, id);
+			System.out.println("remove project: " + project);
+
+			em.remove(project);
+		} catch(Exception e){
+			e.printStackTrace();
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		em.getTransaction().commit();
+		em.close();
+		
+		return Response.ok().build();
+	}
+	
+	@DELETE
+	@Path("project/{projectId}/remove-image/{imageId}")
+	public Response removeProjectImage(
+			@PathParam("projectId") final Long projectId,
+			@PathParam("imageId") final Long imageId){
+		EntityManager em =PersistenceHelper.getPersistenceManager().getEntityManager();
+		em.getTransaction().begin();
+		try{
+			System.out.println("trying to remove project image with the id: " +
+					imageId + " of the project with the id: " + projectId);
+			Project project = em.find(Project.class, projectId);
+			Image image = project.removeImage(imageId);
+			if(image == null){
+				throw new IllegalArgumentException("The image id \"" + imageId 
+					+ "\" is not referenced in the project with the id \"" + projectId + "\"!");
+			}
+			em.remove(image);
+			System.out.println("remove project image: " + image);
+
+			em.persist(project);
+			System.out.println("update project: " + project);
+		} catch(Exception e){
+			e.printStackTrace();
+			if(em.getTransaction().isActive()){
+				em.getTransaction().rollback();
+			}
+			em.close();
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		em.getTransaction().commit();
+		em.close();
+		System.out.println("removed project image succefully!");
+		
+		return Response.ok().build();
+	}	
+	
+	    
+	@POST
+	@Path("/project/{id}/upload-image")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response uploadFile(
+		@PathParam("id") Long id,
+	    @FormDataParam("file") InputStream uploadedInputStream,
+	    @FormDataParam("file") FormDataContentDisposition fileMetaData){
+	
+		if(id == null || uploadedInputStream == null || fileMetaData == null)
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		
+		System.out.println("upload file with filename \"" 
+				+ fileMetaData.getFileName() + "\" for project \"" + id + "\".");
+		
+		String uploadFileLocation = "project-images/"+ id + "/" + fileMetaData.getFileName();
+		
+		// two dots are not allowed, because of path traversal attacks
+		if(uploadFileLocation.contains("..")){
+			System.out.println("Detected traversal attack! See path: \"" + uploadFileLocation + "\"!");
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		else{
+			System.out.println("target path is: \""+ uploadFileLocation + "\".");
+		}
+		
+		try {
+			File file = new File(uploadFileLocation);
+			if(file.exists()){
+				System.out.println("The file already exists! See path: \"" + file.getPath() + "\"!");
+				return Response.status(Response.Status.BAD_REQUEST).build();			
+			}
+			
+			File parent = file.getParentFile();
+			if(!parent.exists()){
+				if(! parent.mkdir()){
+					// TODO log and print as error!
+					System.out.println("Can not make directories!");
+					return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+				}
+			}
+			saveToFile(uploadedInputStream, file);
+
+			EntityManager em =PersistenceHelper.getPersistenceManager().getEntityManager();
+			em.getTransaction().begin();
+			Image image = new Image();
+			image.setName(fileMetaData.getFileName());
+			
+
+			image.setUri( uri.getBaseUri().toString() + "rest/project/" + id + "/image/" + image.getName());
+			Project project = em.find(Project.class, id);
+			project.addImage(image);
+			em.persist(image);
+			em.persist(project);
+			em.getTransaction().commit();
+			//Long imageId = image.getId();
+			
+			// build response
+			ObjectMapper jsonMapper = new ObjectMapper();
+			//String output = "File uploaded via Jersey based RESTFul Webservice to: " + uploadedFileLocation;
+		    String json = jsonMapper.writeValueAsString(image);
+	        return Response.ok(json).build();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e){
+			e.printStackTrace();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+    // save uploaded file to new location
+    private void saveToFile(InputStream uploadedInputStream,
+        File file) throws IOException{
+
+        OutputStream out = null;
+        int read = 0;
+        byte[] bytes = new byte[1024];
+        
+        out = new FileOutputStream(file);
+        while ((read = uploadedInputStream.read(bytes)) != -1) {
+            out.write(bytes, 0, read);
+        }
+        out.flush();
+        out.close();
+    }
+    
+    
+	@GET
+	@Path("project/{id}/image/{file}")
+	@Produces("*/*")
+	public Response getFile(@PathParam("file") String fileName,
+			@PathParam("id") String id){
+		if (fileName == null) {
+			System.err.println("No such item");
+				return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		
+		if (fileName.contains("..")){
+			// illegal folder traversal 
+			Response.status(Status.BAD_REQUEST).build();
+		}
+		
+		File file = new File("project-images/" + id + "/" + fileName);
+		
+		if(!file.exists()){
+			System.out.println("file does not exist!");
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+				
+		try {
+			Tika tika = new Tika();
+			String mimeType = tika.detect(file);
+			return Response.ok(file, mimeType).build();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		return Response.status(Response.Status.BAD_REQUEST).build();
+	}
+		
+
+    
 	@POST
 	@Path("project/new")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -191,8 +392,13 @@ public class RestApi
 		System.out.println("Location: " + project.getLocation());
 		if(project.getId() == null){
 			System.out.println("no id given, project is new...");
-			long id = PersistenceHelper.createOrUpdateProject(project);
-			System.out.println("created new project with id: " + id);
+			try{
+				long id = PersistenceHelper.createOrUpdateProject(project);
+				System.out.println("created new project with id: " + id);
+
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 			try {
 				String jsonResponse = jsonMapper.writeValueAsString(project);
 				return Response.ok(jsonResponse).build();
@@ -206,7 +412,7 @@ public class RestApi
 		
 	}
 	
-	@POST
+	@PUT
 	@Path("project/update/{language}")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -226,7 +432,9 @@ public class RestApi
 				return Response.status(Response.Status.BAD_REQUEST).build();
 			
 			// get project from database
-			Project dbProject = PersistenceHelper.getProject(id);
+			EntityManager em = PersistenceHelper.getPersistenceManager().getEntityManager();
+			em.getTransaction().begin();
+			Project dbProject = em.find(Project.class, id);
 			
 			// set current language
 			dbProject.setCurrentLanguage(currentLanguage);
@@ -234,21 +442,22 @@ public class RestApi
 			// merge project with changes
 			dbProject = jsonMapper.readerForUpdating(dbProject).readValue(jsonProject);
 
-			// TODO Fix that.. does not work... why?
 			// set location by id - the location has to be exist already.
 			Long locationId = dbProject.getLocation().getId();
 			if(locationId == null)
 				return Response.status(Response.Status.BAD_REQUEST).build();
 			
 			// get location object by id
-			Location location = PersistenceHelper.getLocation(locationId);
+			Location location = em.find(Location.class, locationId);
 			dbProject.setLocation(location);
 
 			// update project in database
 			System.out.println("Project: " + dbProject);
 			System.out.println("Location: " + dbProject.getLocation());
-			id = PersistenceHelper.createOrUpdateProject(dbProject);
-			System.out.println("updated project with id: " + id);
+			em.persist(dbProject);
+			em.getTransaction().commit();
+			em.close();
+			System.out.println("updated project with id: " + dbProject.getId());
 			
 			// return the updated project as json
 			String jsonResponse = jsonMapper.writeValueAsString(dbProject);
@@ -265,6 +474,8 @@ public class RestApi
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		} 
 	}
+	
+	
     
     @POST
     @Path("authentication")

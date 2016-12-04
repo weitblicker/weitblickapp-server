@@ -2,8 +2,10 @@ package org.weitblicker;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.weitblicker.database.Location;
+import org.weitblicker.database.PersistenceHelper;
 import org.weitblicker.database.PersistenceManager;
 import org.weitblicker.database.Project;
 import org.weitblicker.database.User;
@@ -31,7 +33,9 @@ public class Main
         // create a resource config that scans for JAX-RS resources and providers
         // in org.weitblicker package
         final ResourceConfig rc = new ResourceConfig().packages("org.weitblicker");
-
+        //final ResourceConfig resourceConfig = new ResourceConfig(BackendEndpoint.class);
+        rc.register(MultiPartFeature.class);
+        
         // create and start a new instance of grizzly http server
         // exposing the Jersey application at BASE_URI
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(Options.BASE_URI), rc);
@@ -69,16 +73,13 @@ public class Main
 
         
         try {
-            PersistenceManager persistenceManager = new PersistenceManager();
-            EntityManager emWeitblick = persistenceManager.getEntityManager("weitblick");
-//            EntityManager emApp = persistenceManager.getEntityManager( "app" );
-            emWeitblick.getTransaction().begin();
-            emWeitblick.merge(location);
-            emWeitblick.merge(project);
-            emWeitblick.persist(user);
-            emWeitblick.getTransaction().commit();
-            emWeitblick.close();
-            persistenceManager.close();
+        	EntityManager em = PersistenceHelper.getPersistenceManager().getEntityManager();
+        	em.getTransaction().begin();
+            em.merge(location);
+            em.merge(project);
+            em.persist(user);
+            em.getTransaction().commit();
+            em.close();
         } catch (Error E) {
             System.out.println(E.getMessage());
             E.printStackTrace();
@@ -90,7 +91,7 @@ public class Main
         System.out.println(String.format("Jersey app started with WADL available at "
                 + "%sapplication.wadl\nHit enter to stop it...", Options.BASE_URI));
         System.in.read();
-        server.stop();
+        server.shutdown();
     }
 }
 

@@ -16,62 +16,93 @@ import java.util.List;
 
 public class PersistenceHelper
 {
-    static EntityManager emWeitblick = new PersistenceManager().getEntityManager( "weitblick" );
-    //static EntityManager emApp = PersistenceManager.getEntityManager( "app" );
+    public static PersistenceManager persistenceManager = new PersistenceManager();
 
+    public static PersistenceManager getPersistenceManager(){
+    	return persistenceManager;
+    }
+    
 
     public static User getUserByEmail(String email){
-        TypedQuery<User> query = emWeitblick.createQuery(
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        TypedQuery<User> query = em.createQuery(
                 "SELECT u FROM User u WHERE u.email = :email", User.class);
         query.setParameter("email", email);
-        return query.getSingleResult();
+        User user = query.getSingleResult();
+        em.getTransaction().commit();
+        em.close();
+
+        return user;
     }
     
 	public static User getUserByName(String name) {
-        TypedQuery<User> query = emWeitblick.createQuery(
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        TypedQuery<User> query = em.createQuery(
                 "SELECT u FROM User u WHERE u.name = :name", User.class);
         query.setParameter("name", name);
-        return query.getSingleResult();
+        User user = query.getSingleResult();
+        em.getTransaction().commit();
+        em.close();
+        
+        return user;
 	}
 
     public static Host getHostByEmail(String email)
     {
-        TypedQuery<Host> query = emWeitblick.createQuery(
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        TypedQuery<Host> query = em.createQuery(
         		"SELECT h FROM Host h WHERE h.email = :email", Host.class);
         query.setParameter("email", email);
-        return query.getSingleResult();
+        Host host = query.getSingleResult();
+        em.getTransaction().commit();
+        em.close();
+        return host;
     }
 
-    public static void setHost( LanguageString name, String email, Location location ) {
-        Host host = new Host(name, email, location);
-        emWeitblick.persist(location);
-        emWeitblick.persist(host);
-        emWeitblick.flush();
+    public static Long createOrUpdateHost( Host host ) {
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        em.persist(host);
+        em.getTransaction().commit();
+        em.close();
+        return host.id;
     }
 
-
-    // ---------------------------- PROJECT HELPER ----------------------------------------
 
     /**
      * Gets the project list from DB
-     * @return list of projectIds
+     * @return list of all projects
      */
     public static List<Project> getAllProjects()
     {
-        TypedQuery<Project> query = emWeitblick.createQuery(
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        TypedQuery<Project> query = em.createQuery(
                 "SELECT c FROM Project c", Project.class);
-        return query.getResultList();
+        List<Project> projects = query.getResultList();
+        em.getTransaction().commit();
+        em.close();
+        return projects;
     }
 
     /**
      * Gets the project list from DB
-     * @return list of projectIds
+     * @return list of project ids
      */
     public static List<Long> getProjectList()
     {
-        TypedQuery<Long> query = emWeitblick.createQuery(
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+
+        TypedQuery<Long> query = em.createQuery(
                 "SELECT c.id FROM Project c", Long.class);
-        return query.getResultList();
+        List<Long> ids = query.getResultList();
+        em.getTransaction().commit();
+        em.close();
+        return ids;
     }
 
     /**
@@ -81,48 +112,74 @@ public class PersistenceHelper
      */
     public static Project getProject(long projectId)
     {
-        return emWeitblick.find(Project.class, projectId);
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        Project project = em.find(Project.class, projectId);
+        em.getTransaction().commit();
+        em.close();
+        return project;
     }
     
     public static Long createOrUpdateProject(Project project){
-        EntityTransaction transaction = emWeitblick.getTransaction();
-        transaction.begin();
-        emWeitblick.persist(project);
-        emWeitblick.flush();
-        transaction.commit();
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        em.persist(project);
+        em.getTransaction().commit();
+        em.close();
+        
         return project.getId();
     }
 
     public static Need getNeed(Long id)
     {
-        return emWeitblick.find(Need.class, id);
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        Need need = em.find(Need.class, id);
+        em.getTransaction().commit();
+        em.close();
+        return need;
     }
 
     public static Long createOrUpdateNeed(Need need) {
-    	EntityTransaction transaction = emWeitblick.getTransaction();
-    	transaction.begin();
-        emWeitblick.persist(need);
-        emWeitblick.flush();
-        transaction.commit();
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+    	em.merge(need);
+        em.persist(need);
+        em.getTransaction().commit();
         return need.getId();
     }
 
-    public static Location getLocation(long locationId)
+    public static Location getLocation(Long id)
     {
-        return emWeitblick.find(Location.class, locationId);
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        Location location =  em.find(Location.class, id);
+        em.getTransaction().commit();
+        em.close();
+        return location;
     }
     
 
 	public static List<Location> getAllLocations() {
-        TypedQuery<Location> query = emWeitblick.createQuery(
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+
+        TypedQuery<Location> query = em.createQuery(
                 "SELECT c FROM Location c", Location.class);
-        return query.getResultList();	}
+        List<Location> locations = query.getResultList();
+        em.getTransaction().commit();
+        em.close();
+        return locations;
+    }
 
-    // --------------------------- DONATION HELPER ----------------------------------------
-
-    public static Donation getDonation(long donationId)
+    public static Donation getDonation(Long id)
     {
-        return emWeitblick.find(Donation.class, donationId);
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        Donation donation = em.find(Donation.class, id);
+        em.getTransaction().commit();
+        em.close();
+        return donation;
     }
 
 }

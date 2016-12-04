@@ -18,21 +18,14 @@ import java.util.Map;
 public class PersistenceManager
 {
     private EntityManagerFactory emFactoryWeitblick;
-    private EntityManagerFactory emFactoryApp;
 
     public PersistenceManager()
     {
-        // 2 persistent units are defined, one for each database
-        Map properties_jpa_app = createCustomProperties();
-        if (Options.DB_URL_JPA_APP != null)
-            properties_jpa_app.put(PersistenceUnitProperties.JDBC_URL, Options.DB_URL_JPA_APP);
-
         Map properties_jpa_weitblick = createCustomProperties();
         if (Options.DB_URL_JPA_WEITBLICK != null)
             properties_jpa_weitblick.put(PersistenceUnitProperties.JDBC_URL, Options.DB_URL_JPA_WEITBLICK);
 
         emFactoryWeitblick = Persistence.createEntityManagerFactory("jpa-weitblick", properties_jpa_weitblick);
-        emFactoryApp = Persistence.createEntityManagerFactory("jpa-app", properties_jpa_app);
     }
 
     private Map createCustomProperties()
@@ -48,20 +41,12 @@ public class PersistenceManager
     }
 
     // EntityManager is chosen depending on user request
-    public EntityManager getEntityManager( String db ) throws Error {
-        if( db.equals( "weitblick" ) ) {
-            return emFactoryWeitblick.createEntityManager();
-        } else if( db.equals( "app" ) ) {
-            return emFactoryApp.createEntityManager();
-        } else {
-            // Error thrown in case matching EntityManager could not be found
-            throw new Error( "ERROR: Invalid choice for persistence unit. Chose 'weitblick' or 'app' ");
-        }
+    public EntityManager getEntityManager(){
+    	return emFactoryWeitblick.createEntityManager();
     }
 
     public void close() {
         emFactoryWeitblick.close();
-        emFactoryApp.close();
     }
 
 }

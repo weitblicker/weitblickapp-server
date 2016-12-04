@@ -1,6 +1,7 @@
 package org.weitblicker.database;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -14,6 +15,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -47,7 +49,7 @@ public class Project implements Serializable{
     
     public void setCurrentLanguage(Locale language){
     	currentLanguage = language;
-    	for(ProjectImage image : images){
+    	for(Image image : images){
     		image.setCurrentLanguage(language);
     	}
     }
@@ -144,14 +146,37 @@ public class Project implements Serializable{
 		return "id: " + this.id + " name: " + this.getName(); 
 	}
 	
-	@ElementCollection
-	private List<ProjectImage> images = new LinkedList<ProjectImage>();
+	@ManyToMany
+    @JoinTable(
+            name="project_images",
+            joinColumns=@JoinColumn(name="image_id", referencedColumnName="id"),
+            inverseJoinColumns=@JoinColumn(name="project_id", referencedColumnName="id"))
+	private List<Image> images = new LinkedList<Image>();
 	
-	public List<ProjectImage> getImages(){
+	public List<Image> getImages(){
 		return images;
 	}
 	
-	public void setImages(List<ProjectImage> images){
+	public void addImage(Image image){
+		images.add(image);
+	}
+	
+	public Image removeImage(Long id){
+		if(id == null) return null;
+		
+		Iterator<Image> iter = images.iterator();
+		while(iter.hasNext()){
+			Image image = iter.next();
+			if(image.getId().equals(id)){
+				System.out.println("remove project image from project - image: " + image);
+				iter.remove();
+				return image;
+			}
+		}
+		return null;
+	}
+	
+	public void setImages(List<Image> images){
 		this.images = images;
 	}
 	

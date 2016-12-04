@@ -1,113 +1,74 @@
 <!DOCTYPE html>
 <html lang="{{language}}">
-  {{>header}}
+	{{>header}}
+	<body>
+		{{>navbar}}
+    	<div class="row">
+    		{{>sidebar}}
 
-  <body>
+    		<script type="text/javascript" src="/backend/file/updateProject.js"></script>
 
-  	<script type="text/javascript">
-  		$.fn.editable.defaults.mode = 'inline';
-    
-	    $(document).ready(function() {
-	        $('.editable').not('#location').editable({
-	        	url: '/rest/project/update/{{language}}',
-	        	ajaxOptions: {
-	        		contentType: 'application/json',
-	        		dataType: 'json' 
-	        	},
-	        	params: function(params) {
-	        		var ret = {};
-	        		ret['id'] = params.pk;
-	        		ret[params.name] = params.value;
+        	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-	        		console.log(params);
-	        		console.log(ret);
-    				return JSON.stringify(ret);
-				}
-	    	});
+        		<span>current language:{{language}} </span><span> – switch laguage:</span>
 
-	    	$('#location').editable({
-	    		url: '/rest/project/update/{{language}}',
-	        	ajaxOptions: {
-	        		contentType: 'application/json',
-	        		dataType: 'json' 
-	        	},
-	        	params: function(params) {
-	        		var ret = {};
-	        		ret['id'] = params.pk;
-	        		ret[params.name] = params.value;
+			   	<a href="/backend/projects/de/edit/{{id}}">
+			   		<i class="flag-icon flag-icon-de"></i> DE
+				</a>
+				<a href="/backend/projects/en/edit/{{id}}">
+			   		<i class="flag-icon flag-icon-gb"></i> EN
+				</a>
+				<a href="/backend/projects/fr/edit/{{id}}">
+					<i class="flag-icon flag-icon-fr"></i> FR
+				</a>
 
-	        		console.log(params);
-	        		console.log(ret);
-    				return JSON.stringify(ret);
-				},
-		        source: function(){
-		        	var list = [];
-		        	$.ajax({
-		        		url: "/rest/location/list",
-		        		async: false,
-		        		dataType: 'json',
-		        		success: function( data ) {
-		        			data.forEach(function(elem){
-		        				var elemObj = {
-		        					value: elem.id,
-		        					text: "".concat(elem.id, " – ", elem.street, " ", elem.number, ", ", elem.country)
-		        				};
-		        				list.push(elemObj);
-		        			});
-		        		}
-					});
 
-					var ret = JSON.stringify(list);
-		        	console.log(ret);
-					return ret;
-		        }
-		    });
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Title</h3>
+					</div>
+					<div class="panel-body">
+						<a href="#" class="editable" id="name" data-type="text" data-pk="{{id}}" data-title="Enter username" data-url="/rest/project/update/{{language}}">{{name}}</a>
+					</div>
+				</div>
 
-	    });
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Abstract</h3>
+					</div>
+					<div class="panel-body">
+						<a href="#" class="editable" id="abst" data-type="textarea" data-pk="{{id}}" data-title="Enter username" data-url="/rest/project/update/{{language}}">{{abst}}</a>
+					</div>
+				</div>
 
-    </script>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Description</h3>
+					</div>
+					<div class="panel-body">
+						<a href="#" class="editable" id="desc" data-type="textarea" data-pk="{{id}}" data-title="Enter username" data-url="/rest/project/update/{{language}}">{{desc}}</a>
+					</div>
+				</div>
 
-   	<a href="/backend/projects/de/edit/{{id}}">
-		<i class="fa fa-flag" aria-hidden="true"></i> DE
-	</a>
-	<a href="/backend/projects/en/edit/{{id}}">
-		<i class="fa fa-flag" aria-hidden="true"></i> EN
-	</a>
-	<a href="/backend/projects/fr/edit/{{id}}">
-		<i class="fa fa-flag" aria-hidden="true"></i> FR
-	</a>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Location</h3>
+					</div>
+					<div class="panel-body">
+						<a href="#" class="editable location" id="location" value="{{location.id}}" data-type="select" data-pk="{{id}}" data-title="Select location" data-url="/rest/project/update/{{language}}">{{location.id}}</a>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Images</h3>
+					</div>
+					<div class="panel-body">
+						<input id="input-24" name="file" type="file" data-upload-url="/rest/project/{{id}}/upload-image" multiple class="file-loading">
 
-	<div class="panel panel-default">
-		<div class="panel panel-default">
-		  <div class="panel-heading">
-		    <h3 class="panel-title">Title</h3>
-		  </div>
-		  <div class="panel-body">
-		    <a href="#" class="editable" id="name" data-type="text" data-pk="{{id}}" data-title="Enter username">{{name}}</a>
-		  </div>
-
-		  <div class="panel-heading">
-		    <h3 class="panel-title">Abstract</h3>
-		  </div>
-		  <div class="panel-body">
-		    <a href="#" class="editable" id="abst" data-type="textarea" data-pk="{{id}}" data-title="Enter username">{{abst}}</a>
-		  </div>
-
-		  <div class="panel-heading">
-		    <h3 class="panel-title">Description</h3>
-		  </div>
-		  <div class="panel-body">
-		    <a href="#" class="editable" id="desc" data-type="textarea" data-pk="{{id}}" data-title="Enter username">{{desc}}</a>
-		  </div>
-
-		  <div class="panel-heading">
-		    <h3 class="panel-title">Location</h3>
-		  </div>
-		  <div class="panel-body">
-		    <a href="#" class="editable location" id="location" value="{{location.id}}" data-type="select" data-pk="{{id}}" data-title="Select location">{{location.id}}</a>
-		  </div>
+					</div>
+				</div>
+				        
+			</div>
 		</div>
-
-	</div>
-  </body>
+	</body>
 </html>

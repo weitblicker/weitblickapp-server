@@ -1,5 +1,6 @@
 package org.weitblicker.database;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 import javax.persistence.CascadeType;
@@ -19,7 +20,7 @@ import org.weitblicker.Options;
 
 @Entity
 @Table( name = "needs" )
-public class Need {
+public class Need implements Serializable{
 
     Need() {}
 	

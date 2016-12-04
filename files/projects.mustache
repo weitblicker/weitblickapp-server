@@ -1,59 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
   {{>header}}
+
   <body>
-    <h1>Weitblick Projekte</h1>
-    <h2>Language – {{language}}</h2>
+      {{>navbar}}
+      <div class="row">
+        {{>sidebar}}
 
-	<a href="/backend/projects/add">
-		<i class="fa fa-plus-circle" aria-hidden="true"></i> add new project
-	</a>
-	<a href="/backend/projects/de">
-		<i class="fa fa-flag" aria-hidden="true"></i> DE
-	</a>
-	<a href="/backend/projects/en">
-		<i class="fa fa-flag" aria-hidden="true"></i> EN
-	</a>
-	<a href="/backend/projects/fr">
-		<i class="fa fa-flag" aria-hidden="true"></i> FR
-	</a>
+        <script type="text/javascript" src="/backend/file/projectList.js"></script>
 
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+			<h1 class="page-header">Weitblick Projects</h1>
 
+			<div class="row placeholders">
+			  {{#projects}}
+			  <a href="/backend/projects/{{language}}/edit/{{id}}">
+			  <div class="col-xs-6 col-sm-3 placeholder">
+			    <img src="https://weitblicker.org/sites/default/files/styles/tmbthumb_custom_user_normal_1x/public/projekttische.jpeg" width="200" height="200" class="img-responsive" alt="{{name}}">
+			    <h4>{{name}}</h4>
+			    <span class="text-muted">{{abst}}</span>
+			  </div>
+			  </a>
+			  {{/projects}}
+			</div>
 
+			<h2 class="sub-header">Projects Overview</h2>
+			<div class="table-responsive">
+			  <table class="table table-striped">
+			    <thead>
+			      <tr>
+			        <th>ID</th>
+			        <th>Titel</th>
+			        <th>Abstract</th>
+			        <th>Beschreibung</th>
+			        <th>Bearbeiten</th>
+			      </tr>
+			    </thead>
+			    <tbody>
+			      {{#projects}}
+			      <tr>
+			        <th scope="row">{{id}}</th>
+			        <td>{{name}}</td>
+			        <td>{{abst}}</td>
+			        <td>{{desc}}</td>
+			        <td>
+			          <a href="/backend/projects/{{language}}/edit/{{id}}">
+			            <i class="fa fa-pencil" aria-hidden="true"></i>
+			          </a>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<!-- Latest compiled and minified JavaScript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
-	<div class="panel panel-default">
-		<div class="panel-heading">Projekte</div>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>Titel</th>
-					<th>Abstract</th>
-					<th>Beschreibung</th>
-					<th>Bearbeiten</th>
-				</tr>
-			</thead>
-			<tbody>
-				{{#projects}}
-				<tr>
-					<th scope="row">{{id}}</th>
-					<td>{{name}}</td>
-					<td>{{abst}}</td>
-					<td>{{desc}}</td>
-					<td>
-						<a href="/backend/projects/{{language}}/edit/{{id}}">
-							<i class="fa fa-pencil" aria-hidden="true"></i>
-						</a>
-					</td>
-				</tr>
-				{{/projects}}
-			</tbody>
-		</table>
-	</div>
+			          <a class="delete" href="/rest/project/remove/{{id}}">
+			            <i class="fa fa-trash" aria-hidden="true"></i>
+			          </a>
+			        </td>
+			      </tr>
+			      {{/projects}}
+			    </tbody>
+			  </table>
+			</div>
+        </div>
+      </div>
   </body>
 </html>
