@@ -4,6 +4,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
 
+import org.weitblicker.RestApi;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -83,6 +85,11 @@ public class PersistenceHelper
         TypedQuery<Project> query = em.createQuery(
                 "SELECT c FROM Project c", Project.class);
         List<Project> projects = query.getResultList();
+        for(Project p: projects){
+        	// adds all not listed (manual inserted) images to the database and the project
+        	scanProjectImageFolder(p, em);
+        }
+        
         em.getTransaction().commit();
         em.close();
         return projects;
@@ -96,13 +103,22 @@ public class PersistenceHelper
     {
     	EntityManager em = persistenceManager.getEntityManager();
     	em.getTransaction().begin();
-
         TypedQuery<Long> query = em.createQuery(
                 "SELECT c.id FROM Project c", Long.class);
         List<Long> ids = query.getResultList();
         em.getTransaction().commit();
         em.close();
         return ids;
+    }
+    
+    private static void scanProjectImageFolder(Project p, EntityManager em){
+    	List<Image> notListedImages = p.scanFolder();
+    	for(Image image: notListedImages){
+    		image.setUri( "http://localhost:8180/rest/project/" + p.getId() + "/image/" + image.getName());
+    		p.addImage(image);
+    		em.persist(image);
+    	}
+    	em.persist(p);
     }
 
     /**
@@ -115,6 +131,8 @@ public class PersistenceHelper
     	EntityManager em = persistenceManager.getEntityManager();
     	em.getTransaction().begin();
         Project project = em.find(Project.class, projectId);
+    	// adds all not listed (manual inserted) images to the database and the project
+        scanProjectImageFolder(project, em); 
         em.getTransaction().commit();
         em.close();
         return project;
@@ -123,7 +141,13 @@ public class PersistenceHelper
     public static Long createOrUpdateProject(Project project){
     	EntityManager em = persistenceManager.getEntityManager();
     	em.getTransaction().begin();
+    	// first persist -> get an id
         em.persist(project);
+    	em.getTransaction().commit();
+    	
+    	em.getTransaction().begin();
+    	// adds all not listed (manual inserted) images to the database and the project
+        scanProjectImageFolder(project, em);
         em.getTransaction().commit();
         em.close();
         

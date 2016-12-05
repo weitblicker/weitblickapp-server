@@ -1,8 +1,7 @@
 package org.weitblicker.database;
 
+import java.io.File;
 import java.io.Serializable;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Locale;
 
 import javax.persistence.CascadeType;
@@ -19,23 +18,42 @@ import javax.persistence.Transient;
 
 import org.weitblicker.Options;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "images")
-public class Image implements Serializable {
+public class Image implements Serializable, Comparable<Image> {
 	
 	public Image(){}
+	
+	public Image(File file){
+		setFile(file);
+	}
 	
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CUST_SEQ")
 	@Column(name = "id")
-    Long id;
+    Long imageId;
     
-    public Long getId(){
-		return id;
+    public Long getImageId(){
+		return imageId;
     }
 	
 	@Transient
 	Locale currentLanguage = Options.DEFAULT_LANGUAGE;
+	
+	@Column(name = "file")
+	private File file;
+	
+	@JsonIgnore
+	public File getFile(){
+		return file;
+	}
+	
+	@JsonIgnore
+	public void setFile(File file){
+		this.file = file;
+	}
 	
 	public void setCurrentLanguage(Locale language){
 		currentLanguage = language;
@@ -43,16 +61,6 @@ public class Image implements Serializable {
 	
 	@Column(name = "uri")
 	private String uri;
-
-	@Transient
-	public URI getURIObject(){
-		try {
-			return new URI(uri);
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
 	
 	public String getUri(){
 		return uri;
@@ -110,7 +118,25 @@ public class Image implements Serializable {
 		return desc != null ? desc : (desc = new LanguageString());
 	}
 	
+	public long getSize(){
+		return file.length();
+	}
+	
 	public String toString(){
 		return getName() + " – " + getUri();
 	}
+
+	public int compareTo(Image o) {
+		return getFile().getPath().compareTo(o.getFile().getPath());
+	}
+	
+	@Override 
+	public boolean equals(Object o) {
+		if(!(o instanceof Image)) return false;
+		
+		Image image = (Image) o;
+		return getFile().getPath().equals(image.getFile().getPath());
+	}
+	
+	
 }

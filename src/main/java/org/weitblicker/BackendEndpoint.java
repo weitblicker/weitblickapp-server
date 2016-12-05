@@ -25,6 +25,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.tika.Tika;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.weitblicker.database.Image;
 import org.weitblicker.database.PersistenceHelper;
 import org.weitblicker.database.Project;
 
@@ -37,12 +38,6 @@ import com.github.mustachejava.MustacheFactory;
 @Path("backend/")
 public class BackendEndpoint {
 	
-    class BackendInfo{
-		List<Project> projects;
-		Project project;
-		String language;
-	}
-
         
     @POST
     @Path("/upload/{filename}")
@@ -114,19 +109,38 @@ public class BackendEndpoint {
         	return Response.status(Response.Status.BAD_REQUEST).build();
         }
 			
-		BackendInfo info = new BackendInfo();
-		info.projects = PersistenceHelper.getAllProjects();
-		info.language = currentLanguage.getLanguage();
+		List<Project> projects = PersistenceHelper.getAllProjects();
+		
 		// set language for response
-		for(Project project : info.projects){
+		for(Project project : projects){
 			project.setCurrentLanguage(currentLanguage);
 		}
 
+		class BackendInfo{
+			public BackendInfo(
+					List<Project> projects,
+					Locale language
+					){
+				this.projects = projects;
+				this.language = language;
+			}
+			List<Project> projects;
+			Locale language;	
+			
+			public List<Project>getProjects(){
+				return projects;
+			}
+
+			public String getLanguage(){
+				return language.getLanguage();
+			}
+		}
+		
 	    MustacheFactory mf = new DefaultMustacheFactory();
 	    Mustache mustache = mf.compile("files/projects.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
-			mustache.execute(stringWriter, info).flush();
+			mustache.execute(stringWriter, new BackendInfo(projects, currentLanguage)).flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

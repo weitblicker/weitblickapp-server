@@ -64,7 +64,7 @@ public class RestApi
     private ObjectMapper jsonMapper = new ObjectMapper();
     
     @Context
-    UriInfo uri;
+	UriInfo uri;
     
 
     @GET
@@ -180,11 +180,13 @@ public class RestApi
 		return Response.ok().build();
 	}
 	
-	@DELETE
+	@GET
 	@Path("project/{projectId}/remove-image/{imageId}")
+    @Produces(MediaType.APPLICATION_JSON)
 	public Response removeProjectImage(
 			@PathParam("projectId") final Long projectId,
 			@PathParam("imageId") final Long imageId){
+		System.out.println("called delete action for image id:\""+imageId+"\" of the project:\""+projectId+"\"");
 		EntityManager em =PersistenceHelper.getPersistenceManager().getEntityManager();
 		em.getTransaction().begin();
 		try{
@@ -196,6 +198,7 @@ public class RestApi
 				throw new IllegalArgumentException("The image id \"" + imageId 
 					+ "\" is not referenced in the project with the id \"" + projectId + "\"!");
 			}
+			image.getFile().delete();
 			em.remove(image);
 			System.out.println("remove project image: " + image);
 
@@ -213,7 +216,14 @@ public class RestApi
 		em.close();
 		System.out.println("removed project image succefully!");
 		
-		return Response.ok().build();
+		String ret;
+		try {
+			ret = jsonMapper.writeValueAsString("removed project image succefully!");
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+		return Response.ok(ret).build();
 	}	
 	
 	    
@@ -262,10 +272,10 @@ public class RestApi
 
 			EntityManager em =PersistenceHelper.getPersistenceManager().getEntityManager();
 			em.getTransaction().begin();
-			Image image = new Image();
+			Image image = new Image(file);
 			image.setName(fileMetaData.getFileName());
 			
-
+			
 			image.setUri( uri.getBaseUri().toString() + "rest/project/" + id + "/image/" + image.getName());
 			Project project = em.find(Project.class, id);
 			project.addImage(image);

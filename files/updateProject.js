@@ -56,23 +56,4 @@ $(document).ready(function() {
         }
     });
 
-    $("#input-24").fileinput({
-    	//uploadUrl: '/backend/upload/test2.jpg',
-    	uploadAsync: true,
-    	maxFileCount: 5,
-        initialPreview: [
-            'http://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/631px-FullMoon2010.jpg',
-            'http://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Earth_Eastern_Hemisphere.jpg/600px-Earth_Eastern_Hemisphere.jpg'
-        ],
-        initialPreviewAsData: true,
-        initialPreviewConfig: [
-            {caption: "Moon.jpg", size: 930321, width: "120px", key: 1},
-            {caption: "Earth.jpg", size: 1218822, width: "120px", key: 2}
-        ],
-        deleteUrl: "/site/file-delete",
-        overwriteInitial: false,
-        maxFileSize: 1000,
-        initialCaption: "The Moon and the Earth"
-    });
-
 });

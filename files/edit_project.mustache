@@ -63,7 +63,38 @@
 						<h3 class="panel-title">Images</h3>
 					</div>
 					<div class="panel-body">
-						<input id="input-24" name="file" type="file" data-upload-url="/rest/project/{{id}}/upload-image" multiple class="file-loading">
+						<input id="upload-images" name="file" type="file" multiple class="file-loading">
+
+						<script type="text/javascript">
+							$(document).ready(function() {
+								$("#upload-images").fileinput({
+									uploadUrl: '/rest/project/{{id}}/upload-image',
+									uploadAsync: true,
+									maxFileCount: 20,
+									initialPreview: [
+										{{#images}}
+										'{{uri}}',
+										{{/images}}
+									],
+									initialPreviewAsData: true,
+									initialPreviewConfig: [
+										{{#images}}
+										{
+											caption: "{{name}}",
+											size: {{size}},
+											width: "120px",
+											key: {{id}},
+											url: "http://localhost:8180/rest/project/{{id}}/remove-image/{{imageId}}"
+										},
+										{{/images}}
+									],
+									ajaxDeleteSettings : {method: "GET"},
+									overwriteInitial: false,
+									maxFileSize: 1000,
+									initialCaption: "Please select images to upload!"
+							    });
+							});
+						</script>
 
 					</div>
 				</div>

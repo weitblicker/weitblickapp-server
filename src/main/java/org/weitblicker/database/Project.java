@@ -1,5 +1,6 @@
 package org.weitblicker.database;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -157,6 +158,64 @@ public class Project implements Serializable{
 		return images;
 	}
 	
+	@JoinColumn(name = "preview_image")
+	Image previewImage;
+	
+	public Image getPreviewImage(){
+		if(previewImage != null){
+			return previewImage;
+		}
+		if(!images.isEmpty()){
+			return images.get(0);
+		}
+		return null;
+	}
+	
+	public void setPreviewImage(Image image){
+		if(images.contains(image)){
+			
+		}
+	}
+	
+	// returns and adds a list of images are not in the database yet
+	public List<Image> scanFolder(){
+		String folderPath = "project-images/" + getId() + "/";
+		File folder = new File(folderPath);
+		
+		// create directory if necessary 
+		if(!folder.exists()){
+			folder.mkdirs();
+		}
+		
+		// check if the directory has been created successfully
+		if(!folder.isDirectory()){
+			System.out.println("Can not scan the prpject image folder for id: " + id + "!\n"
+						+ "\"" + folderPath + "\" is not a directory!");
+			throw new IllegalArgumentException("Can not scan the prpject image folder for id: " + id + "!\n"
+						+ "\"" + folderPath + "\" is not a directory!");
+		}
+		
+		List<Image> list = new LinkedList<Image>();
+		
+		System.out.println("Scan folder:\"" + folder.getPath() + "\"");
+
+		for(File file : folder.listFiles()){
+
+			Image image = new Image(file);
+			image.setName(file.getName());
+			if(!images.contains(image)){
+				System.out.println("Found:\"" + file.getName() + "\" as not listed!");
+				list.add(image);
+			}else{
+				System.out.println("Found:\"" + file.getName() + "\" as already listed.");
+			}
+		}
+		if(list.isEmpty()){
+			System.out.println("No unlisted images found!");
+		}
+		return list;
+	}
+	
 	public void addImage(Image image){
 		images.add(image);
 	}
@@ -167,7 +226,7 @@ public class Project implements Serializable{
 		Iterator<Image> iter = images.iterator();
 		while(iter.hasNext()){
 			Image image = iter.next();
-			if(image.getId().equals(id)){
+			if(image.getImageId().equals(id)){
 				System.out.println("remove project image from project - image: " + image);
 				iter.remove();
 				return image;
