@@ -32,6 +32,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
@@ -491,14 +492,14 @@ public class RestApi
     @Path("authentication")
     @Produces("application/json")
     @Consumes("application/x-www-form-urlencoded")
-    public Response authenticateUser(@FormParam("username") String username, 
+    public Response authenticateUser(@FormParam("email") String email, 
                                      @FormParam("password") String password) {
 
     	System.out.println("Authentication");
         try {
         	
             // Authenticate the user using the credentials provided
-            User user = authenticate(username, password);
+            User user = authenticate(email, password);
         	System.out.println("login user: " + user);
 
             // Issue a token for the user
@@ -507,16 +508,32 @@ public class RestApi
             // Remember token
             AuthenticationFilter.login(token, user);
             
-            // Return the token on the response
-            return Response.ok(token).build();
+            // the maximum age of the the cookie in seconds
+            int maxAge = AuthenticationFilter.getSession(token).getExpiringTime(); 
+            System.out.println("maxAge: " + maxAge);
+            
+            // the URI path for which the cookie is valid.
+            String path = "/"; // every path in the domain
+            
+            // whether the cookie will only be sent over a secure connection
+            boolean secure = false;
+            
+            String domain = uri.getBaseUri().getHost();
+            
+            String comment = "";
+            
+            String cookieName = AuthenticationFilter.TOKEN_NAME;
+            
+            NewCookie newCookie = new NewCookie(cookieName, token, path, domain, comment, maxAge, secure); 
+            return Response.ok().cookie(newCookie).build();
 
         } catch(NotAuthorizedException e){
         	System.out.println("login failed: " + e.getLocalizedMessage());
         	return Response.status(Response.Status.UNAUTHORIZED).entity("wrong password!").build();
             
         } catch(NoResultException e) {
-        	System.out.println("no user for the given name \"" + username + "\" found!");
-            return Response.status(Response.Status.UNAUTHORIZED).entity("no user for the given name \"" + username + "\" found!").build();
+        	System.out.println("no user for the given email \"" + email + "\" found!");
+            return Response.status(Response.Status.UNAUTHORIZED).entity("no user for the given email \"" + email + "\" found!").build();
         } catch(Exception e){
         	// TODO Error logging
         	e.printStackTrace();
@@ -524,10 +541,10 @@ public class RestApi
         }
     }
 
-    private User authenticate(String username, String password) throws Exception {
+    private User authenticate(String email, String password) throws Exception {
         // Authenticate against a database, LDAP, file or whatever
         // Throw an Exception if the credentials are invalid
-    	User user = PersistenceHelper.getUserByName(username);
+    	User user = PersistenceHelper.getUserByEmail(email);
     	if(!user.getPassword().equals(password)){
     		throw new NotAuthorizedException("Not authorized, wrong password for user: " + user);
     	}

@@ -38,7 +38,22 @@ import com.github.mustachejava.MustacheFactory;
 @Path("backend/")
 public class BackendEndpoint {
 	
-        
+
+    @GET
+    @Path("/login")
+	@Produces("text/html")
+    public Response loginForm(){
+	    MustacheFactory mf = new DefaultMustacheFactory();
+	    Mustache mustache = mf.compile("files/login.mustache");
+	    StringWriter stringWriter = new StringWriter();
+	    try {
+			mustache.execute(stringWriter, new Object()).flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return Response.ok(stringWriter.getBuffer().toString()).build();	
+    }
+    
     @POST
     @Path("/upload/{filename}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -92,7 +107,7 @@ public class BackendEndpoint {
     }
         
        
-    
+    @Secured
 	@GET
 	@Path("projects/{language}")
 	@Produces("text/html")

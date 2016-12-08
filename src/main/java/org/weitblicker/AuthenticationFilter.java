@@ -10,6 +10,7 @@ import javax.annotation.Priority;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -25,6 +26,8 @@ import javax.ws.rs.Priorities;
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
 
+	public static String TOKEN_NAME = "wb-server-session";
+	
 	private static Map<String, Session> loggedin = new HashMap<>();
 	private static Calendar calendar = Calendar.getInstance();
 
@@ -54,6 +57,13 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 					+ "\n The session is granted with the token: " + token;
 		}
 		
+		int getExpiringTime(){
+			if(!isExpired()){
+				return (int) ((expire.getTime() - stamp.getTime()) / 1000.0);
+			}
+			return 0;
+		}
+		
 		String token;
 		User user;
 		Date stamp;
@@ -72,10 +82,22 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     public static User getUser(String token){
     	return loggedin.get(token).user;
     }
+    public static Session getSession(String token){
+    	return loggedin.get(token);
+    }
 	
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {	
-
+    	
+    	System.out.println("cookies...");
+    	Cookie sessionCookie = requestContext.getCookies().get(TOKEN_NAME);
+    	requestContext.getCookies();
+    	for(Map.Entry<String, Cookie> entry: requestContext.getCookies().entrySet()){
+    		System.out.println("key:" + entry.getKey() + " value:" + entry.getValue().getValue());
+    	}
+    	
+    	
+    	
     	
     	System.out.println("Authentication with token");
 
@@ -83,17 +105,14 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         String authorizationHeader = 
             requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 
-        // Check if the HTTP Authorization header is present and formatted correctly 
-        if (authorizationHeader == null) {
-        	System.out.println(authorizationHeader);
-            throw new NotAuthorizedException("Authorization header must be provided");
+        if(sessionCookie == null){
+        	throw new NotAuthorizedException("Authorization cookie must be provided");
         }
-
+        
         // Extract the token from the HTTP Authorization header
-        String token = authorizationHeader.substring("Bearer".length()).trim();
+        String token = sessionCookie.getValue();
 
         try {
-
             // Validate the token
             Session session = validateToken(token);
             
@@ -122,19 +141,27 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     		    }
     		});
 
-        } catch (Exception e) {
+        } catch (NotAuthorizedException e) {
+        	System.out.println(e.getMessage());
             requestContext.abortWith(
                 Response.status(Response.Status.UNAUTHORIZED).build());
+        } catch (Exception e) {
+        	e.printStackTrace();
+            requestContext.abortWith(
+                Response.status(Response.Status.INTERNAL_SERVER_ERROR).build());
         }
         
     }
     
 
-    private Session validateToken(String token) throws Exception {
-        // Check if it was issued by the server and if it's not expired
+    private Session validateToken(String token) throws NotAuthorizedException {
+        // Check if it was issued by the server and if it's not expired or unknown
         // Throw an Exception if the token is invalid
-    	if(!loggedin.containsKey(token) || loggedin.get(token).isExpired()){
-            throw new NotAuthorizedException("Authorization header must be provided");
+    	if(!loggedin.containsKey(token)){
+            throw new NotAuthorizedException("Token is unknown!");
+    	}
+    	if(loggedin.get(token).isExpired()){
+            throw new NotAuthorizedException("Token is is expired!");
     	}
     	return loggedin.get(token);
     }
