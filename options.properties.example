@@ -1,0 +1,9 @@
+weitblickapp-server.BASE_URI=https://weitblick-server:443/
+weitblickapp-server.DB.url.jpa-weitblick=jdbc:mysql://localhost/weitblick
+weitblickapp-server.DB.user=weitblick
+weitblickapp-server.DB.password=weitblick
+weitblickapp-server.DB.ddl-generation=create-or-extend-tables
+weitblickapp-server.DEFAULT_LANGUAGE=en
+weitblickapp-server.keystore.location=/keystore/location
+weitblickapp-server.keystore.password=password
+weitblickapp-server.use_ssl=true
