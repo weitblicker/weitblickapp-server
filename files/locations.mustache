@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{>header}}
+
+  <body>
+      {{>navbar}}
+      <div class="row">
+        {{>sidebar}}
+
+        <script type="text/javascript" src="/backend/file/locations.js"></script>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+			<h1 class="page-header">Weitblick Projects</h1>
+
+			<div class="row">
+			  {{#locations}}
+			  <a href="/backend/locations/{{language}}/edit/{{id}}">
+			  <div class="col-xs-6 col-sm-3 previewImage">
+			  	<div class="cropcycle">
+			  	  	<div id="map"></div>
+			    </div>
+			    <script>
+					function initMap() {
+      					var uluru = {lat: {{latitude}}, lng: {{longitude}}};
+						var map = new google.maps.Map(document.getElementById('map'), {
+							zoom: 12,
+							center: uluru,
+							disableDefaultUI: true,
+							draggable: false,
+							zoomControl: false,
+							scrollwheel: false,
+							disableDoubleClickZoom: true
+						});
+						var marker = new google.maps.Marker({
+							position: uluru,
+							map: map
+						});
+					}
+				</script>
+				<script async defer
+					src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWPjFx14--lD8Ws597M_TXWWKCUlK3z-A&callback=initMap">
+				</script>
+			    <h4>{{street}} {{number}}, {{postalCode}} {{town}}, {{country}}</h4>
+			    <span class="text-muted">{{abst}}</span>
+			  </div>
+			  </a>
+			  {{/locations}}
+			</div>
+
+			<h2 class="sub-header">Projects Overview</h2>
+			<div class="table-responsive">
+			  <table class="table table-striped">
+			    <thead>
+			      <tr>
+			        <th>ID</th>
+			        <th>Titel</th>
+			        <th>Abstract</th>
+			        <th>Beschreibung</th>
+			        <th>Bearbeiten</th>
+			      </tr>
+			    </thead>
+			    <tbody>
+			      {{#projects}}
+			      <tr>
+			        <th scope="row">{{id}}</th>
+			        <td>{{name}}</td>
+			        <td>{{abst}}</td>
+			        <td>{{desc}}</td>
+			        <td>
+			          <a href="/backend/projects/{{language}}/edit/{{id}}">
+			            <i class="fa fa-pencil" aria-hidden="true"></i>
+			          </a>
+
+			          <a class="delete" href="/rest/project/remove/{{id}}">
+			            <i class="fa fa-trash" aria-hidden="true"></i>
+			          </a>
+			        </td>
+			      </tr>
+			      {{/projects}}
+			    </tbody>
+			  </table>
+			</div>
+        </div>
+      </div>
+  </body>
+</html>

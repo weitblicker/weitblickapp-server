@@ -1,10 +1,12 @@
 package org.weitblicker;
 
 import java.io.IOException;
+import java.net.URI;
 import java.security.Principal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Priority;
 import javax.ws.rs.NotAuthorizedException;
@@ -91,28 +93,21 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     	
     	System.out.println("cookies...");
     	Cookie sessionCookie = requestContext.getCookies().get(TOKEN_NAME);
-    	requestContext.getCookies();
+
     	for(Map.Entry<String, Cookie> entry: requestContext.getCookies().entrySet()){
     		System.out.println("key:" + entry.getKey() + " value:" + entry.getValue().getValue());
     	}
-    	
-    	
-    	
-    	
-    	System.out.println("Authentication with token");
-
-        // Get the HTTP Authorization header from the request
-        String authorizationHeader = 
-            requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
-
-        if(sessionCookie == null){
-        	throw new NotAuthorizedException("Authorization cookie must be provided");
-        }
-        
-        // Extract the token from the HTTP Authorization header
-        String token = sessionCookie.getValue();
-
         try {
+ 	
+        	System.out.println("Authentication with token");
+
+        	if(sessionCookie == null){
+        		throw new NotAuthorizedException("Authorization cookie must be provided");
+        	}
+        
+        	// Extract the token from the HTTP Authorization header
+        	String token = sessionCookie.getValue();
+
             // Validate the token
             Session session = validateToken(token);
             
@@ -143,6 +138,14 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
         } catch (NotAuthorizedException e) {
         	System.out.println(e.getMessage());
+        	List<String> matchedUri = requestContext.getUriInfo().getMatchedURIs();
+        	if(matchedUri.contains("backend")){
+        		URI seeOther = requestContext.getUriInfo().getBaseUri();
+        		seeOther = seeOther.resolve("backend/login");
+        		System.out.println(seeOther);
+        		requestContext.abortWith(Response.seeOther(seeOther).build());
+        		return;
+        	}
             requestContext.abortWith(
                 Response.status(Response.Status.UNAUTHORIZED).build());
         } catch (Exception e) {

@@ -7,16 +7,18 @@
       <div class="row">
         {{>sidebar}}
 
-        <script type="text/javascript" src="/backend/file/projectList.js"></script>
+        <script type="text/javascript" src="/backend/file/projects.js"></script>
 
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 			<h1 class="page-header">Weitblick Projects</h1>
 
-			<div class="row placeholders">
+			<div class="row">
 			  {{#projects}}
 			  <a href="/backend/projects/{{language}}/edit/{{id}}">
-			  <div class="col-xs-6 col-sm-3 placeholder">
-			    <img src="{{#previewImage}}{{uri}}{{/previewImage}}" width="200" height="200" class="img-responsive" alt="{{name}}">
+			  <div class="col-xs-6 col-sm-3 previewImage">
+			  	<div class="cropcycle">
+			    	<img src="{{#previewImage}}{{uri}}{{/previewImage}}" class="portrait" alt="{{name}}">
+			    </div>
 			    <h4>{{name}}</h4>
 			    <span class="text-muted">{{abst}}</span>
 			  </div>

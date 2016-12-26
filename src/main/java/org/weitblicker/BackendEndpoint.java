@@ -26,6 +26,7 @@ import org.apache.tika.Tika;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.weitblicker.database.Image;
+import org.weitblicker.database.Location;
 import org.weitblicker.database.PersistenceHelper;
 import org.weitblicker.database.Project;
 
@@ -285,4 +286,60 @@ public class BackendEndpoint {
 		}
 		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
+	
+    @Secured
+	@GET
+	@Path("locations/{language}")
+	@Produces("text/html")
+	public Response locations(@PathParam("language") final String language){
+		System.out.println("All locations...");
+		
+		Locale currentLanguage = Options.DEFAULT_LANGUAGE;
+		
+		try{
+			currentLanguage = RestApi.getLanguage(language);
+			System.out.println("language: " + currentLanguage.getLanguage());			
+		} catch(IllformedLocaleException e){
+        	e.printStackTrace();
+        	return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+			
+		List<Location> locations = PersistenceHelper.getAllLocations();
+		
+		// set language for response
+		for(Location location : locations){
+			location.setCurrentLanguage(currentLanguage);
+		}
+
+		class BackendInfo{
+			public BackendInfo(
+					List<Location> locations,
+					Locale language
+					){
+				this.locations = locations;
+				this.language = language;
+			}
+			List<Location> locations;
+			Locale language;	
+			
+			public List<Location>getLocations(){
+				return locations;
+			}
+
+			public String getLanguage(){
+				return language.getLanguage();
+			}
+		}
+		
+	    MustacheFactory mf = new DefaultMustacheFactory();
+	    Mustache mustache = mf.compile("files/locations.mustache");
+	    StringWriter stringWriter = new StringWriter();
+	    try {
+			mustache.execute(stringWriter, new BackendInfo(locations, currentLanguage)).flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return Response.ok(stringWriter.getBuffer().toString()).build();
+	}
+	
 }

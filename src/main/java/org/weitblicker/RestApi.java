@@ -43,6 +43,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.security.Key;
 import java.util.HashSet;
 import java.util.IllformedLocaleException;
@@ -524,8 +525,18 @@ public class RestApi
             
             String cookieName = AuthenticationFilter.TOKEN_NAME;
             
+            class AuthenticationResponse implements Serializable{
+            	public String token;
+            	public String message;
+            	public AuthenticationResponse(String token, String message){
+            		this.token = token;
+            		this.message = message;
+            	}
+            }
+            AuthenticationResponse response = new AuthenticationResponse(token, "Authentication was successful!");
+            String jsonResponse = jsonMapper.writeValueAsString(response);
             NewCookie newCookie = new NewCookie(cookieName, token, path, domain, comment, maxAge, secure); 
-            return Response.ok().cookie(newCookie).build();
+            return Response.ok(jsonResponse).cookie(newCookie).build();
 
         } catch(NotAuthorizedException e){
         	System.out.println("login failed: " + e.getLocalizedMessage());
@@ -537,7 +548,7 @@ public class RestApi
         } catch(Exception e){
         	// TODO Error logging
         	e.printStackTrace();
-        	return Response.status(Response.Status.UNAUTHORIZED).build();
+        	return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
