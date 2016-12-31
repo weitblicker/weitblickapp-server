@@ -18,12 +18,34 @@ import java.util.List;
 
 public class PersistenceHelper
 {
+	public final static String ADMIN_ROLE_NAME = "admin";
+	
     public static PersistenceManager persistenceManager = new PersistenceManager();
 
     public static PersistenceManager getPersistenceManager(){
     	return persistenceManager;
     }
     
+    public static void addUser(User user){
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+    	em.persist(user);
+    	em.getTransaction().commit();
+        em.close();
+    }   
+    
+    public static List<User> getAdmins(){
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        TypedQuery<User> query = em.createQuery(
+                "SELECT u FROM User u WHERE u.role = :role", User.class);
+        query.setParameter("role", ADMIN_ROLE_NAME);
+        List<User> admins = query.getResultList();
+        em.getTransaction().commit();
+        em.close();
+
+        return admins;
+    }
 
     public static User getUserByEmail(String email){
     	EntityManager em = persistenceManager.getEntityManager();
@@ -141,7 +163,6 @@ public class PersistenceHelper
     public static Long createOrUpdateProject(Project project){
     	EntityManager em = persistenceManager.getEntityManager();
     	em.getTransaction().begin();
-    	// first persist -> get an id
         em.persist(project);
     	em.getTransaction().commit();
     	
@@ -152,6 +173,15 @@ public class PersistenceHelper
         em.close();
         
         return project.getId();
+    }
+    
+    public static Long createOrUpdateLocation(Location location){
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        em.persist(location);
+    	em.getTransaction().commit();
+        em.close();
+        return location.getId();
     }
 
     public static Need getNeed(Long id)

@@ -84,6 +84,119 @@ public class RestApi
         return "";
     }
     
+	@POST
+	@Path("location/new")
+    @Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createLocation(@QueryParam("language") String language, String jsonLocation){
+		
+		System.out.println("create new location...");
+		
+		Locale currentLanguage = Options.DEFAULT_LANGUAGE;
+		
+		// read language
+		if(language != null){
+			Locale.Builder languageBuilder = new Locale.Builder();
+			try{
+				languageBuilder.setLanguage(language);
+				currentLanguage = languageBuilder.build();
+			}catch(IllformedLocaleException e){
+				// TODO maybe response bad request
+				e.printStackTrace();
+			}
+		}
+		
+		// set current language
+		Location location = new Location();
+		location.setCurrentLanguage(currentLanguage);
+		System.out.println("language: " + currentLanguage.getLanguage());
+		System.out.println("json:" + jsonLocation);
+		
+		// parse json 
+		try {
+			location = jsonMapper.readerForUpdating(location).readValue(jsonLocation);
+			System.out.println(location);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if(location.getId() == null){
+			System.out.println("no id given, location is new...");
+			try{
+				long id = PersistenceHelper.createOrUpdateLocation(location);
+				System.out.println("created new location with id: " + id);
+
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			try {
+				String jsonResponse = jsonMapper.writeValueAsString(location);
+				return Response.ok(jsonResponse).build();
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			}
+		}else{
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		
+	}
+	
+	@PUT
+	@Path("location/update/{language}")
+    @Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateLocation(@PathParam("language") final String language, String jsonLocation){
+		
+		System.out.println("update location...");
+
+		try{		
+			Locale currentLanguage = getLanguage(language);
+			System.out.println("language: " + currentLanguage.getLanguage());
+		
+			Location receivedLocation = jsonMapper.readValue(jsonLocation, Location.class);
+			Long id = receivedLocation.getId();
+			
+			// no id given -> bad request
+			if(id == null) 
+				return Response.status(Response.Status.BAD_REQUEST).build();
+			
+			// get project from database
+			EntityManager em = PersistenceHelper.getPersistenceManager().getEntityManager();
+			em.getTransaction().begin();
+			Location dbLocation = em.find(Location.class, id);
+			
+			// set current language
+			dbLocation.setCurrentLanguage(currentLanguage);
+			
+			// merge project with changes
+			dbLocation = jsonMapper.readerForUpdating(dbLocation).readValue(jsonLocation);
+
+		
+			// update location in database
+			System.out.println("Location: " + dbLocation);
+			em.persist(dbLocation);
+			em.getTransaction().commit();
+			em.close();
+			System.out.println("updated location with id: " + dbLocation.getId());
+			
+			// return the updated project as json
+			String jsonResponse = jsonMapper.writeValueAsString(dbLocation);
+			return Response.ok(jsonResponse).build();
+			
+		} catch(IllformedLocaleException e){
+			e.printStackTrace();
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		} 
+	}
+
+    
     @GET
     @Path("project/list{noop: (/)?}{language : ((?<=/)\\w+)?}")
     @Produces(MediaType.APPLICATION_JSON)

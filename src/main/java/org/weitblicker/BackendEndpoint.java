@@ -162,6 +162,37 @@ public class BackendEndpoint {
 		}
 		return Response.ok(stringWriter.getBuffer().toString()).build();
 	}
+    
+	
+	@GET
+	@Path("locations/{language}/edit/{id}")
+	@Produces("text/html")
+	public Response editLocation(@PathParam("id") Long id, @PathParam("language") final String language){
+
+		Locale currentLanguage = Options.DEFAULT_LANGUAGE;
+		
+		try{
+			currentLanguage = RestApi.getLanguage(language);
+			System.out.println("language: " + currentLanguage.getLanguage());			
+		} catch(IllformedLocaleException e){
+        	e.printStackTrace();
+        	return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+		
+		System.out.println("Location with id:" + id);
+		Location location = PersistenceHelper.getLocation(id);
+		location.setCurrentLanguage(currentLanguage);
+		
+	    MustacheFactory mf = new DefaultMustacheFactory();
+	    Mustache mustache = mf.compile("files/editLocation.mustache");
+	    StringWriter stringWriter = new StringWriter();
+	    try {
+			mustache.execute(stringWriter, location).flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return Response.ok(stringWriter.getBuffer().toString()).build();
+	}	
 	
 	@GET
 	@Path("projects/{language}/edit/{id}")
@@ -184,7 +215,7 @@ public class BackendEndpoint {
 		project.setCurrentLanguage(currentLanguage);
 		
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/edit_project.mustache");
+	    Mustache mustache = mf.compile("files/editProject.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, project).flush();
@@ -210,11 +241,26 @@ public class BackendEndpoint {
 	}	
 	
 	@GET
+	@Path("locations/add")
+	@Produces("text/html")
+	public Response addLocation(){
+	    MustacheFactory mf = new DefaultMustacheFactory();
+	    Mustache mustache = mf.compile("files/addLocation.mustache");
+	    StringWriter stringWriter = new StringWriter();
+	    try {
+			mustache.execute(stringWriter, new Object()).flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return Response.ok(stringWriter.getBuffer().toString()).build();
+	}
+	
+	@GET
 	@Path("projects/add")
 	@Produces("text/html")
 	public Response addProject(){
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/add_project.mustache");
+	    Mustache mustache = mf.compile("files/addProject.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, new Object()).flush();

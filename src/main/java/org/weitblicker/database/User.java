@@ -105,4 +105,15 @@ public class User implements Comparable<User>, Principal {
 		else
 			return "User is undefined!";
 	}
+	
+	
+	@Column(name = "role")
+	private String role;
+	public String getRole(){
+		return role;
+	}
+	
+	public void setRole(String role){
+		this.role = role;
+	}
 }

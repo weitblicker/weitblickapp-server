@@ -28,20 +28,17 @@ import java.io.IOException;
 import java.net.URI;
 import java.security.AccessController;
 import java.util.Locale;
+import java.util.Scanner;
 
 /**
  * Main Class for Weitblick App Server
- * @author benedikt, nizzke, Janis
+ * @author Sebastian Pütz <spuetz@uos.de>, benedikt, nizzke, Janis
  * @since 14.10.2016
  */
 
 public class Main
 {
 
-    /**
-     * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
-     * @return Grizzly HTTP server.
-     */
     public static HttpServer startServer()
     {
         // create a resource config that scans for JAX-RS resources and providers
@@ -104,6 +101,33 @@ public class Main
 
         return grizzlyServer;
     }
+    
+    private static void createInitialAdmin(){
+    	// TODO verify the inputs.
+    	Scanner scanner = new Scanner(System.in);
+    	System.out.println("In the following you have to create an admin account:");
+    	System.out.println("user name:");
+    	String username = scanner.next();
+    	System.out.println("email:");
+    	String email = scanner.next();
+    	System.out.println("password");
+    	String password = scanner.next();
+    	scanner.close();
+    	
+    	System.out.println("username: " + username);
+    	System.out.println("email: " + email);
+    	System.out.println("password: " + password);
+    	
+    	User admin = new User();
+    	admin.setName(username);
+    	admin.setEmail(email);
+    	admin.setPassword(password);
+    	admin.setRole(PersistenceHelper.ADMIN_ROLE_NAME);
+    	PersistenceHelper.addUser(admin);
+    	
+    	System.out.println("The admin account has been created.");
+    	
+    }
 
     public static void main(String[] args) throws IOException
     {
@@ -116,18 +140,25 @@ public class Main
         	server.start();
         }
         
-        if(!redirector.isStarted()){
+        if(redirector != null && !redirector.isStarted()){
         	System.out.println("start redirector to https...");
         	server.start();
         }
         
+        if(PersistenceHelper.getAdmins().isEmpty()){
+        	createInitialAdmin();
+        }
+        
         System.out.println(String.format("Jersey app started with WADL available at "
                 + "%sapplication.wadl\nHit enter to stop it...", Options.BASE_URI));
-        System.in.read();
+    	Scanner scanner = new Scanner(System.in);
+    	scanner.next();
         server.shutdown();
         if(redirector != null){
+        	System.out.println("shutdown redirector to https");
         	redirector.shutdown();
         }
+        scanner.close();
     }
 }
 

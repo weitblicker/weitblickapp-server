@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{>header}}
+
+  <body>
+      {{>navbar}}
+      <div class="row">
+        {{>sidebar}}
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <script type="text/javascript" src="/backend/file/addLocation.js"></script>
+
+          <h1 class="page-header">Add New Location</h1>
+
+          <div id="msg" class="alert"></div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Town</h3>
+              <p class="msg town"></p>
+            </div>
+            <div class="panel-body">
+              <a href="#" class="editable town" id="town" data-type="text" data-pk="{{town}}" data-title="Enter town">{{name}}</a>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Postal Code</h3>
+              <p class="msg postalCode"></p>
+            </div>
+            <div class="panel-body">
+              <a href="#" class="editable postalCode" id="postalCode" data-type="text" data-pk="{{postalCode}}" data-title="Enter postal code">{{postalCode}}</a>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Street</h3>
+              <p class="msg street"></p>
+            </div>
+            <div class="panel-body">
+              <a href="#" class="editable street" id="street" data-type="text" data-pk="{{street}}" data-title="Enter street">{{desc}}</a>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Number</h3>
+              <p class="msg number"></p>
+            </div>
+            <div class="panel-body">
+              <a href="#" class="editable number" id="number" data-type="text" data-pk="{{number}}" data-title="Enter number">{{number}}</a>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Longitude</h3>
+              <p class="msg longitude"></p>
+            </div>
+            <div class="panel-body">
+              <a href="#" class="editable longitude" id="longitude" data-type="text" data-pk="{{longitude}}" data-title="Enter longitude">{{longitude}}</a>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Latitude</h3>
+              <p class="msg latitude"></p>
+            </div>
+            <div class="panel-body">
+              <a href="#" class="editable latitude" id="latitude" data-type="text" data-pk="{{latitude}}" data-title="Enter latitude">{{country}}</a>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Country</h3>
+              <p class="msg country"></p>
+            </div>
+            <div class="panel-body">
+              <a href="#" class="editable country" id="country" data-type="text" data-pk="{{country}}" data-title="Enter country">{{country}}</a>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Addition</h3>
+              <p class="msg addition"></p>
+            </div>
+            <div class="panel-body">
+              <a href="#" class="editable addition" id="addition" data-type="text" data-pk="{{country}}" data-title="Enter addition">{{addition}}</a>
+            </div>
+          </div>
+
+
+          <button id="save-btn" class="btn btn-primary" style="display: inline-block;">Save new project!</button>
+          <button id="reset-btn" class="btn pull-right">Reset</button>
+	    </div>
+      </div>
+  </body>
+</html>
