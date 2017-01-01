@@ -47,6 +47,9 @@ public class Location {
     	this.currentLanguage = language;
     }
     
+    public String getLanguage(){
+    	return this.currentLanguage.toString();
+    }
 	
 	@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
 	@JoinColumn(name = "key_town")

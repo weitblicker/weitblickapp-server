@@ -2,6 +2,7 @@ package org.weitblicker;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -166,6 +167,11 @@ public class RestApi
 			em.getTransaction().begin();
 			Location dbLocation = em.find(Location.class, id);
 			
+			if(dbLocation == null){
+				System.out.println("Can not find a location for the given id \"" + id + "\"!");
+				return Response.status(Status.BAD_REQUEST).build();
+			}
+			
 			// set current language
 			dbLocation.setCurrentLanguage(currentLanguage);
 			
@@ -193,7 +199,10 @@ public class RestApi
 		} catch (IOException e) {
 			e.printStackTrace();
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-		} 
+		} catch(Exception e){
+			e.printStackTrace();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
     

@@ -181,6 +181,11 @@ public class BackendEndpoint {
 		
 		System.out.println("Location with id:" + id);
 		Location location = PersistenceHelper.getLocation(id);
+		if(location == null){
+			System.out.println("No location for the given id found!");
+			// no location for the given id found.
+			return Response.status(Status.BAD_REQUEST).build();
+		}
 		location.setCurrentLanguage(currentLanguage);
 		
 	    MustacheFactory mf = new DefaultMustacheFactory();

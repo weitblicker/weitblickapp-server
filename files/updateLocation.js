@@ -22,10 +22,10 @@ var map;
 
 function initialize() {
     geocoder = new google.maps.Geocoder();
-    var latlng = new google.maps.LatLng(-34.397, 150.644);
+    var latlng = new google.maps.LatLng(51.9510603,7.6213443);
     var mapOptions = {
-        zoom: 8,
-        center: latlng
+        zoom: 11,
+        center: latlng2
     }
     map = new google.maps.Map(document.getElementById("map"), mapOptions);
 }

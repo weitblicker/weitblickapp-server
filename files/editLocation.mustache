@@ -5,8 +5,105 @@
 		{{>navbar}}
     	<div class="row">
     		{{>sidebar}}
+    		<script type="text/javascript">
 
-    		<script type="text/javascript" src="/backend/file/updateLocation.js"></script>
+				$.fn.editable.defaults.mode = 'inline';
+
+				$(document).ready(function() {
+				    $('.editable').editable({
+				    	ajaxOptions: {
+				    		contentType: 'application/json',
+				    		dataType: 'json', 
+				    		method: 'PUT'
+				    	},
+				    	params: function(params) {
+				    		var ret = {};
+				    		ret['id'] = params.pk;
+				    		ret[params.name] = params.value;
+				    		console.log(params);
+							return JSON.stringify(ret);
+						},
+						url: '/rest/location/update/{{language}}',
+						savenochange: true
+					});
+				});
+
+				var geocoder;
+				var map;
+				var marker;
+				var updateLocation;
+
+				function initialize() {
+				    geocoder = new google.maps.Geocoder();
+				    var latlng = new google.maps.LatLng({{latitude}},{{longitude}});
+				    var mapOptions = {
+				        zoom: 11,
+				        center: latlng
+				    }
+				    map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+					marker = new google.maps.Marker({
+						map: map,
+						position: latlng
+					});
+
+					updateLocation = function() {
+						var center = map.getCenter();
+						//$('#longitude').text(center.lng());
+						//$('#latitude').text(center.lat());
+
+
+						var locationUpdate = {
+							id: {{id}},
+							longitude: center.lng(),
+							latitude: center.lat()
+						}
+
+						$.ajax({
+						    url: '/rest/location/update/{{language}}',
+						    type: 'PUT',
+						    data: JSON.stringify(locationUpdate),
+						    contentType: 'application/json; charset=utf-8',
+						    dataType: 'json',
+						    async: false,
+						    success: function(msg) {
+								$('#longitude').editable( 'setValue', center.lng(), true);
+								$('#latitude').editable( 'setValue', center.lat(), true);
+								console.log(center);
+							}
+						});
+
+				        marker.setPosition(center);
+					};
+
+				    map.addListener('dragend', updateLocation);
+
+				    map.addListener('center_changed', function(){
+				    	marker.setPosition(map.getCenter());
+				    });
+
+				}
+
+
+				function codeAddress() {
+				    var address = document.getElementById("address").value;
+				    geocoder.geocode( { 'address': address}, function(results, status) {
+				        if (status == google.maps.GeocoderStatus.OK) {
+				            console.log(results);
+				            console.log("Lng:", results[0].geometry.location.lng());
+				            console.log("Lat:", results[0].geometry.location.lat());
+
+				            map.setCenter(results[0].geometry.location);
+				            updateLocation();
+
+				        } else {
+				            alert("Geocode was not successful for the following reason: " + status);
+				        }
+				    });
+				}
+    		</script>
+    		<!--script type="text/javascript" src="/backend/file/updateLocation.js"></script-->
+
 			<script async defer
 				src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWPjFx14--lD8Ws597M_TXWWKCUlK3z-A&callback=initialize">
 			</script>
@@ -45,7 +142,7 @@
 		              <p class="msg town"></p>
 		            </div>
 		            <div class="panel-body">
-		              <a href="#" class="editable town" id="town" data-type="text" data-pk="{{town}}" data-title="Enter town">{{town}}</a>
+		              <a href="#" class="editable town" id="town" data-type="text" data-pk="{{id}}" data-title="Enter town">{{town}}</a>
 		            </div>
 		          </div>
 
@@ -55,7 +152,7 @@
 		              <p class="msg postalCode"></p>
 		            </div>
 		            <div class="panel-body">
-		              <a href="#" class="editable postalCode" id="postalCode" data-type="text" data-pk="{{postalCode}}" data-title="Enter postal code">{{postalCode}}</a>
+		              <a href="#" class="editable postalCode" id="postalCode" data-type="text" data-pk="{{id}}" data-title="Enter postal code">{{postalCode}}</a>
 		            </div>
 		          </div>
 
@@ -65,7 +162,7 @@
 		              <p class="msg street"></p>
 		            </div>
 		            <div class="panel-body">
-		              <a href="#" class="editable street" id="street" data-type="text" data-pk="{{street}}" data-title="Enter street">{{street}}</a>
+		              <a href="#" class="editable street" id="street" data-type="text" data-pk="{{id}}" data-title="Enter street">{{street}}</a>
 		            </div>
 		          </div>
 
@@ -75,7 +172,7 @@
 		              <p class="msg number"></p>
 		            </div>
 		            <div class="panel-body">
-		              <a href="#" class="editable number" id="number" data-type="text" data-pk="{{number}}" data-title="Enter number">{{number}}</a>
+		              <a href="#" class="editable number" id="number" data-type="text" data-pk="{{id}}" data-title="Enter number">{{number}}</a>
 		            </div>
 		          </div>
 
@@ -85,7 +182,7 @@
 		              <p class="msg longitude"></p>
 		            </div>
 		            <div class="panel-body">
-		              <a href="#" class="editable longitude" id="longitude" data-type="text" data-pk="{{longitude}}" data-title="Enter longitude">{{longitude}}</a>
+		              <a href="#" class="editable longitude" id="longitude" data-type="text" data-pk="{{id}}" data-title="Enter longitude">{{longitude}}</a>
 		            </div>
 		          </div>
 
@@ -95,7 +192,7 @@
 		              <p class="msg latitude"></p>
 		            </div>
 		            <div class="panel-body">
-		              <a href="#" class="editable latitude" id="latitude" data-type="text" data-pk="{{latitude}}" data-title="Enter latitude">{{country}}</a>
+		              <a href="#" class="editable latitude" id="latitude" data-type="text" data-pk="{{id}}" data-title="Enter latitude">{{latitude}}</a>
 		            </div>
 		          </div>
 
@@ -105,7 +202,7 @@
 		              <p class="msg country"></p>
 		            </div>
 		            <div class="panel-body">
-		              <a href="#" class="editable country" id="country" data-type="text" data-pk="{{country}}" data-title="Enter country">{{country}}</a>
+		              <a href="#" class="editable country" id="country" data-type="text" data-pk="{{id}}" data-title="Enter country">{{country}}</a>
 		            </div>
 		          </div>
 
@@ -115,7 +212,7 @@
 		              <p class="msg addition"></p>
 		            </div>
 		            <div class="panel-body">
-		              <a href="#" class="editable addition" id="addition" data-type="text" data-pk="{{country}}" data-title="Enter addition">{{addition}}</a>
+		              <a href="#" class="editable addition" id="addition" data-type="text" data-pk="{{id}}" data-title="Enter addition">{{addition}}</a>
 		            </div>
 		          </div>  
 			</div>
