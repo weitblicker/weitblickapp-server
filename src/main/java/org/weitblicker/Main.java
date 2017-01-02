@@ -13,21 +13,14 @@ import org.glassfish.grizzly.ssl.SSLEngineConfigurator;
 
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.server.ContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.weitblicker.database.Location;
 import org.weitblicker.database.PersistenceHelper;
-import org.weitblicker.database.PersistenceManager;
-import org.weitblicker.database.Project;
 import org.weitblicker.database.User;
 
-import javax.persistence.EntityManager;
 import javax.ws.rs.core.UriBuilder;
 
 import java.io.IOException;
 import java.net.URI;
-import java.security.AccessController;
-import java.util.Locale;
 import java.util.Scanner;
 
 /**
@@ -42,8 +35,8 @@ public class Main
     public static HttpServer startServer()
     {
         // create a resource config that scans for JAX-RS resources and providers
-        // in org.weitblicker package
-        final ResourceConfig rc = new ResourceConfig().packages("org.weitblicker");
+        // in org.weitblicker, org.weitblicker.rest, org.weitblicker.rest packages
+        final ResourceConfig rc = new ResourceConfig().packages("org.weitblicker", "org.weitblicker.rest", "org.weitblicker.backend");
         //final ResourceConfig resourceConfig = new ResourceConfig(BackendEndpoint.class);
         rc.register(MultiPartFeature.class);
         
@@ -81,7 +74,9 @@ public class Main
     
     static HttpServer startSecureServer() throws IOException
     {
-        final ResourceConfig rc = new ResourceConfig().packages("org.weitblicker");
+        // create a resource config that scans for JAX-RS resources and providers
+        // in org.weitblicker and org.weitblicker.rest packages
+        final ResourceConfig rc = new ResourceConfig().packages("org.weitblicker", "org.weitblicker.rest", "org.weitblicker.backend");
         rc.register(MultiPartFeature.class);
         
 

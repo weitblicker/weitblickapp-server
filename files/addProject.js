@@ -60,75 +60,22 @@ $(document).ready(function() {
 
 	$('#save-btn').click(function() {
 		$('.msg').hide();
-		console.log("clicked...");
-		$('.editable').editable('submit', { 
+		
+		var data = $('.editable').editable('getValue');
+
+		// TODO validate data
+
+		$.ajax({
 			url: '/rest/project/new',
-
-			params: function(params) {
-				console.log("params...");
-				console.log(params);
-        		var ret = {};
-        		ret[params.name] = params.value;
-
-        		console.log(params);
-        		console.log(ret);
-				return JSON.stringify(ret);
-			},
-
-			ajaxOptions: {
-				dataType: 'json',
-				contentType: 'application/json',
-				beforeSend: function(jqXHR,options){
-						console.log(options);
-					if ( options.contentType == "application/json") {
-						console.log("convert...");
-						var opject = JSON.parse('{"' + decodeURI(options.data).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
-						options.data = JSON.stringify(opject);
-						console.log(options.data);
-					}
-				},
-				success: function(data){
-					console.log(data);
-					window.location.replace("/backend/projects/de/edit/" + data.id);
-					console.log("success...!");
-				}
-			},
-
-			success: function(data, textStatus, jqXHR) {
-				console.log("success!");
-				
-				/*if(data && data.id) {  //record created, response like 
-					$(this).editable('option', 'pk', data.id);
-					//remove unsaved class
-					$(this).removeClass('editable-unsaved');
-					//show messages
-					var msg = 'New project created! Now editables submit individually.';
-
-					$('#msg').addClass('alert-success').removeClass('alert-error').html(msg).show();
-					$('#save-btn').hide(); 
-					$(this).off('save.newuser');
-				} else if(data && data.errors){ 
-					//server-side validation error, response like {"errors": {"username": "username already exist"} }
-					//config.error.call(this, data.errors);
-				} 
-				*/              
-       		},
-       		error: function(errors) {
-       			console.log("errors :", errors);
-				var msg = '';
-				if(errors && errors.responseText) {
-					//ajax error,errors = xhr object
-					msg = errors.responseText;
-				} else { //validation error (client-side or server-side)
-					console.log(errors);
-					$.each(errors, function(k, v) { 
-						$('.msg'+'.'+k).html(v).show();
-						console.log(k, v);
-						msg = 'You need to fill the required fields!';
-					});
-				} 
-				$('#msg').removeClass('alert-success').addClass('alert-warning').html(msg).show();
+			type: 'POST',
+			data: JSON.stringify(data),
+			contentType: 'application/json; charset=utf-8',
+			dataType: 'json',
+			async: false,
+			success: function(data) {
+				window.location.replace("/backend/projects/de/edit/" + data.id);
 			}
 		});
+
 	});
 });

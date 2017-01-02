@@ -10,7 +10,6 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -28,6 +27,7 @@ import org.weitblicker.Options;
 import javax.persistence.GenerationType;
 
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "projects")
 public class Project implements Serializable{

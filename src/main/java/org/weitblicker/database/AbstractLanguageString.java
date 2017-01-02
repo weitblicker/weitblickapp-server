@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
+@SuppressWarnings("serial")
 @MappedSuperclass
 public abstract class AbstractLanguageString implements Serializable {
 	@Id

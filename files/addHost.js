@@ -26,12 +26,7 @@ $(document).ready(function() {
 	$('#save-btn').click(function() {
 		$('.msg').hide();
 
-		var data = {};
-
-		$('.editable').each(function(index, elem){
-			var key = $(elem).attr('id');
-			data[key] = $(elem).html();
-		});
+		var data = $('.editable').editable('getValue');
 
 		// TODO validate data
 

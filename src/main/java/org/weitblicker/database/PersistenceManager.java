@@ -21,16 +21,16 @@ public class PersistenceManager
 
     public PersistenceManager()
     {
-        Map properties_jpa_weitblick = createCustomProperties();
+        Map<String, String> properties_jpa_weitblick = createCustomProperties();
         if (Options.DB_URL_JPA_WEITBLICK != null)
             properties_jpa_weitblick.put(PersistenceUnitProperties.JDBC_URL, Options.DB_URL_JPA_WEITBLICK);
 
         emFactoryWeitblick = Persistence.createEntityManagerFactory("jpa-weitblick", properties_jpa_weitblick);
     }
 
-    private Map createCustomProperties()
+    private Map<String, String> createCustomProperties()
     {
-        Map properties = new HashMap<>();
+        Map<String, String> properties = new HashMap<>();
         if (Options.DB_USER != null)
             properties.put(PersistenceUnitProperties.JDBC_USER, Options.DB_USER);
         if (Options.DB_PASSWORD != null)

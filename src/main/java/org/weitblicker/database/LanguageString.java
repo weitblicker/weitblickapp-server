@@ -14,6 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "texts")
 public class LanguageString extends AbstractLanguageString {

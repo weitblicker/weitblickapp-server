@@ -20,6 +20,7 @@ import org.weitblicker.Options;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "images")
 public class Image implements Serializable, Comparable<Image> {

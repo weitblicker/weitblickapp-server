@@ -22,6 +22,10 @@ public class User implements Comparable<User>, Principal {
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CUST_SEQ")
 	@Column(name = "id")
     Long id;
+    
+	public Long getId() {
+		return id;
+	}
 	
 	@ManyToMany(mappedBy="maintainer")
 	private Set<Host> hosts;
@@ -109,4 +113,5 @@ public class User implements Comparable<User>, Principal {
 	public void setRole(String role){
 		this.role = role;
 	}
+
 }

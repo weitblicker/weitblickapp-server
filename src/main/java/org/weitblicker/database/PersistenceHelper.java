@@ -257,5 +257,24 @@ public class PersistenceHelper
         return host;
     }
 
+	public static List<User> getUsers() {
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        TypedQuery<User> query = em.createQuery(
+                "SELECT u FROM User u", User.class);
+        List<User> users = query.getResultList();
+        em.getTransaction().commit();
+        em.close();
+        return users;
+    }
+
+	public static Long createOrUpdateUser(User user) {
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        em.persist(user);
+        em.getTransaction().commit();
+        return user.getId();
+    }
+
 }
 

@@ -18,6 +18,7 @@ import javax.persistence.Transient;
 
 import org.weitblicker.Options;
 
+@SuppressWarnings("serial")
 @Entity
 @Table( name = "needs" )
 public class Need implements Serializable{

@@ -13,7 +13,6 @@ import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
@@ -33,7 +32,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 	private static Map<String, Session> loggedin = new HashMap<>();
 	private static Calendar calendar = Calendar.getInstance();
 
-	static class Session{
+	public static class Session{
 		
 		Session(User user, String token){
 			this.user = user;
@@ -59,7 +58,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 					+ "\n The session is granted with the token: " + token;
 		}
 		
-		int getExpiringTime(){
+		public int getExpiringTime(){
 			if(!isExpired()){
 				return (int) ((expire.getTime() - stamp.getTime()) / 1000.0);
 			}
