@@ -27,7 +27,10 @@ import org.weitblicker.Options;
 @Table( name = "locations" )
 public class Location {
 
-    public Location(){}
+    public Location(){
+    	mapZoom = 10;
+    	
+    }
 	
     public static Location location(Long id){
     	return PersistenceHelper.getLocation(id);
@@ -170,5 +173,16 @@ public class Location {
 		return "id: " + getId() + " – " + getStreet() 
 			+ " " + getNumber() + ", " + getPostalCode()
 			+ " " + getTown() + ", " + getCountry();
+	}
+	
+	@Column(name = "zoom")    
+	private int mapZoom;
+	
+	public int getMapZoom(){
+		return mapZoom;
+	}
+	
+	public void setMapZoom(int mapZoom){
+		this.mapZoom = mapZoom;
 	}
 }

@@ -1,221 +1,231 @@
 <!DOCTYPE html>
 <html lang="{{language}}">
-	{{>header}}
-	<body>
-		{{>navbar}}
-    	<div class="row">
-    		{{>sidebar}}
-    		<script type="text/javascript">
+{{>header}}
+<body>
+	{{>navbar}}
+	<div class="row">
+		{{>sidebar}}
+		<script type="text/javascript">
 
-				$.fn.editable.defaults.mode = 'inline';
+			$.fn.editable.defaults.mode = 'inline';
 
-				$(document).ready(function() {
-				    $('.editable').editable({
-				    	ajaxOptions: {
-				    		contentType: 'application/json',
-				    		dataType: 'json', 
-				    		method: 'PUT'
-				    	},
-				    	params: function(params) {
-				    		var ret = {};
-				    		ret['id'] = params.pk;
-				    		ret[params.name] = params.value;
-				    		console.log(params);
-							return JSON.stringify(ret);
-						},
-						url: '/rest/location/update/{{language}}',
-						savenochange: true
-					});
+			$(document).ready(function() {
+				$('.editable').editable({
+					ajaxOptions: {
+						contentType: 'application/json',
+						dataType: 'json', 
+						method: 'PUT'
+					},
+					params: function(params) {
+						var ret = {};
+						ret['id'] = params.pk;
+						ret[params.name] = params.value;
+						console.log(params);
+						return JSON.stringify(ret);
+					},
+					url: '/rest/location/update/{{language}}',
+					savenochange: true
+				});
+			});
+
+			var geocoder;
+			var map;
+			var marker;
+			var updateLocation;
+
+			function initialize() {
+				geocoder = new google.maps.Geocoder();
+				var latlng = new google.maps.LatLng({{latitude}},{{longitude}});
+				var mapOptions = {
+					zoom: {{mapZoom}},
+					center: latlng
+				}
+				map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+				marker = new google.maps.Marker({
+					map: map,
+					position: latlng
 				});
 
-				var geocoder;
-				var map;
-				var marker;
-				var updateLocation;
+				updateLocation = function() {
+					var center = map.getCenter();
 
-				function initialize() {
-				    geocoder = new google.maps.Geocoder();
-				    var latlng = new google.maps.LatLng({{latitude}},{{longitude}});
-				    var mapOptions = {
-				        zoom: 11,
-				        center: latlng
-				    }
-				    map = new google.maps.Map(document.getElementById("map"), mapOptions);
+					var locationUpdate = {
+						id: {{id}},
+						longitude: center.lng(),
+						latitude: center.lat(),
+						mapZoom: map.getZoom()
+					}
 
-					marker = new google.maps.Marker({
-						map: map,
-						position: latlng
+					$.ajax({
+						url: '/rest/location/update/{{language}}',
+						type: 'PUT',
+						data: JSON.stringify(locationUpdate),
+						contentType: 'application/json; charset=utf-8',
+						dataType: 'json',
+						async: false,
+						success: function(msg) {
+							$('#longitude').editable( 'setValue', locationUpdate.longitude, true);
+							$('#latitude').editable( 'setValue', locationUpdate.latitude, true);
+							$('#mapZoom').editable( 'setValue', locationUpdate.mapZoom, true);
+						}
 					});
 
-					updateLocation = function() {
-						var center = map.getCenter();
-						//$('#longitude').text(center.lng());
-						//$('#latitude').text(center.lat());
+					marker.setPosition(center);
+				};
+
+				map.addListener('dragend', updateLocation);
+				map.addListener('zoom_changed', updateLocation);
+
+				map.addListener('center_changed', function(){
+					marker.setPosition(map.getCenter());
+				});
 
 
-						var locationUpdate = {
-							id: {{id}},
-							longitude: center.lng(),
-							latitude: center.lat()
-						}
-
-						$.ajax({
-						    url: '/rest/location/update/{{language}}',
-						    type: 'PUT',
-						    data: JSON.stringify(locationUpdate),
-						    contentType: 'application/json; charset=utf-8',
-						    dataType: 'json',
-						    async: false,
-						    success: function(msg) {
-								$('#longitude').editable( 'setValue', center.lng(), true);
-								$('#latitude').editable( 'setValue', center.lat(), true);
-								console.log(center);
-							}
-						});
-
-				        marker.setPosition(center);
-					};
-
-				    map.addListener('dragend', updateLocation);
-
-				    map.addListener('center_changed', function(){
-				    	marker.setPosition(map.getCenter());
-				    });
-
-				}
+			}
 
 
-				function codeAddress() {
-				    var address = document.getElementById("address").value;
-				    geocoder.geocode( { 'address': address}, function(results, status) {
-				        if (status == google.maps.GeocoderStatus.OK) {
-				            console.log(results);
-				            console.log("Lng:", results[0].geometry.location.lng());
-				            console.log("Lat:", results[0].geometry.location.lat());
+			function codeAddress() {
+				var address = document.getElementById("address").value;
+				geocoder.geocode( { 'address': address}, function(results, status) {
+					if (status == google.maps.GeocoderStatus.OK) {
+						console.log(results);
+						console.log("Lng:", results[0].geometry.location.lng());
+						console.log("Lat:", results[0].geometry.location.lat());
 
-				            map.setCenter(results[0].geometry.location);
-				            updateLocation();
+						map.setCenter(results[0].geometry.location);
+						updateLocation();
 
-				        } else {
-				            alert("Geocode was not successful for the following reason: " + status);
-				        }
-				    });
-				}
-    		</script>
-    		<!--script type="text/javascript" src="/backend/file/updateLocation.js"></script-->
+					} else {
+						alert("Geocode was not successful for the following reason: " + status);
+					}
+				});
+			}
+		</script>
+		<!--script type="text/javascript" src="/backend/file/updateLocation.js"></script-->
 
-			<script async defer
-				src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWPjFx14--lD8Ws597M_TXWWKCUlK3z-A&callback=initialize">
-			</script>
+		<script async defer
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWPjFx14--lD8Ws597M_TXWWKCUlK3z-A&callback=initialize">
+	</script>
 
-        	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-        		<span>current language:{{language}} </span><span> – switch laguage:</span>
+		<span>current language:{{language}} </span><span> – switch laguage:</span>
 
-			   	<a href="/backend/projects/de/edit/{{id}}">
-			   		<i class="flag-icon flag-icon-de"></i> DE
-				</a>
-				<a href="/backend/projects/en/edit/{{id}}">
-			   		<i class="flag-icon flag-icon-gb"></i> EN
-				</a>
-				<a href="/backend/projects/fr/edit/{{id}}">
-					<i class="flag-icon flag-icon-fr"></i> FR
-				</a>
+		<a href="/backend/locations/de/edit/{{id}}">
+			<i class="flag-icon flag-icon-de"></i> DE
+		</a>
+		<a href="/backend/locations/en/edit/{{id}}">
+			<i class="flag-icon flag-icon-gb"></i> EN
+		</a>
+		<a href="/backend/locations/fr/edit/{{id}}">
+			<i class="flag-icon flag-icon-fr"></i> FR
+		</a>
 
-				<div onload="initialize()" class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">Map</h3>
-					<p class="msg map"></p>
-				</div>
-				<div class="panel-body">
-					<div id="map" style="width: 100%; height: 400px;"></div>
-					<div>
-						<input id="address" type="textbox" value="Osnabrück, De">
-						<input type="button" value="Encode" onclick="codeAddress()">
-					</div>
-				</div>
-				</div>
-
-		          <div class="panel panel-default">
-		            <div class="panel-heading">
-		              <h3 class="panel-title">Town</h3>
-		              <p class="msg town"></p>
-		            </div>
-		            <div class="panel-body">
-		              <a href="#" class="editable town" id="town" data-type="text" data-pk="{{id}}" data-title="Enter town">{{town}}</a>
-		            </div>
-		          </div>
-
-		          <div class="panel panel-default">
-		            <div class="panel-heading">
-		              <h3 class="panel-title">Postal Code</h3>
-		              <p class="msg postalCode"></p>
-		            </div>
-		            <div class="panel-body">
-		              <a href="#" class="editable postalCode" id="postalCode" data-type="text" data-pk="{{id}}" data-title="Enter postal code">{{postalCode}}</a>
-		            </div>
-		          </div>
-
-		          <div class="panel panel-default">
-		            <div class="panel-heading">
-		              <h3 class="panel-title">Street</h3>
-		              <p class="msg street"></p>
-		            </div>
-		            <div class="panel-body">
-		              <a href="#" class="editable street" id="street" data-type="text" data-pk="{{id}}" data-title="Enter street">{{street}}</a>
-		            </div>
-		          </div>
-
-		          <div class="panel panel-default">
-		            <div class="panel-heading">
-		              <h3 class="panel-title">Number</h3>
-		              <p class="msg number"></p>
-		            </div>
-		            <div class="panel-body">
-		              <a href="#" class="editable number" id="number" data-type="text" data-pk="{{id}}" data-title="Enter number">{{number}}</a>
-		            </div>
-		          </div>
-
-		          <div class="panel panel-default">
-		            <div class="panel-heading">
-		              <h3 class="panel-title">Longitude</h3>
-		              <p class="msg longitude"></p>
-		            </div>
-		            <div class="panel-body">
-		              <a href="#" class="editable longitude" id="longitude" data-type="text" data-pk="{{id}}" data-title="Enter longitude">{{longitude}}</a>
-		            </div>
-		          </div>
-
-		          <div class="panel panel-default">
-		            <div class="panel-heading">
-		              <h3 class="panel-title">Latitude</h3>
-		              <p class="msg latitude"></p>
-		            </div>
-		            <div class="panel-body">
-		              <a href="#" class="editable latitude" id="latitude" data-type="text" data-pk="{{id}}" data-title="Enter latitude">{{latitude}}</a>
-		            </div>
-		          </div>
-
-		          <div class="panel panel-default">
-		            <div class="panel-heading">
-		              <h3 class="panel-title">Country</h3>
-		              <p class="msg country"></p>
-		            </div>
-		            <div class="panel-body">
-		              <a href="#" class="editable country" id="country" data-type="text" data-pk="{{id}}" data-title="Enter country">{{country}}</a>
-		            </div>
-		          </div>
-
-		          <div class="panel panel-default">
-		            <div class="panel-heading">
-		              <h3 class="panel-title">Addition</h3>
-		              <p class="msg addition"></p>
-		            </div>
-		            <div class="panel-body">
-		              <a href="#" class="editable addition" id="addition" data-type="text" data-pk="{{id}}" data-title="Enter addition">{{addition}}</a>
-		            </div>
-		          </div>  
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Town</h3>
+				<p class="msg town"></p>
+			</div>
+			<div class="panel-body">
+				<a href="#" class="editable town" id="town" data-type="text" data-pk="{{id}}" data-title="Enter town">{{town}}</a>
 			</div>
 		</div>
-	</body>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Postal Code</h3>
+				<p class="msg postalCode"></p>
+			</div>
+			<div class="panel-body">
+				<a href="#" class="editable postalCode" id="postalCode" data-type="text" data-pk="{{id}}" data-title="Enter postal code">{{postalCode}}</a>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Street</h3>
+				<p class="msg street"></p>
+			</div>
+			<div class="panel-body">
+				<a href="#" class="editable street" id="street" data-type="text" data-pk="{{id}}" data-title="Enter street">{{street}}</a>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Number</h3>
+				<p class="msg number"></p>
+			</div>
+			<div class="panel-body">
+				<a href="#" class="editable number" id="number" data-type="text" data-pk="{{id}}" data-title="Enter number">{{number}}</a>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Country</h3>
+				<p class="msg country"></p>
+			</div>
+			<div class="panel-body">
+				<a href="#" class="editable country" id="country" data-type="text" data-pk="{{id}}" data-title="Enter country">{{country}}</a>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Addition</h3>
+				<p class="msg addition"></p>
+			</div>
+			<div class="panel-body">
+				<a href="#" class="editable addition" id="addition" data-type="text" data-pk="{{id}}" data-title="Enter addition">{{addition}}</a>
+			</div>
+		</div>  
+
+		<div onload="initialize()" class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Map</h3>
+				<p class="msg map"></p>
+			</div>
+			<div class="panel-body">
+				<div id="map" style="width: 100%; height: 400px;"></div>
+				<div>
+					<input id="address" type="textbox" value="Osnabrück, De">
+					<input type="button" value="Encode" onclick="codeAddress()">
+				</div>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Longitude</h3>
+				<p class="msg longitude"></p>
+			</div>
+			<div class="panel-body">
+				<a href="#" class="editable longitude" id="longitude" data-type="text" data-pk="{{id}}" data-title="Enter longitude">{{longitude}}</a>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Latitude</h3>
+				<p class="msg latitude"></p>
+			</div>
+			<div class="panel-body">
+				<a href="#" class="editable latitude" id="latitude" data-type="text" data-pk="{{id}}" data-title="Enter latitude">{{latitude}}</a>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Map Zoom</h3>
+				<p class="msg mapZoom"></p>
+			</div>
+			<div class="panel-body">
+				<a href="#" class="editable mapZoom" id="mapZoom" data-type="text" data-pk="{{id}}" data-title="Enter Map Zoom">{{mapZoom}}</a>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
 </html>

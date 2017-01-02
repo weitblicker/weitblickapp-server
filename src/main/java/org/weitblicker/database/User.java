@@ -2,7 +2,6 @@ package org.weitblicker.database;
 
 import java.security.Principal;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -14,12 +13,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-/**
- *
- * @author Sebastian Pütz <spuetz@uos.de>
- * @since 01.11.16.
- */
 
 @Entity
 @Table( name = "users" )

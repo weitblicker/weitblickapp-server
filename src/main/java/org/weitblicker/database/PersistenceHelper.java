@@ -1,20 +1,9 @@
 package org.weitblicker.database;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
 
-import org.weitblicker.RestApi;
-
-import java.util.LinkedList;
 import java.util.List;
-
-/**
- * Concrete and general Helper functions with direct database access
- * @see {Persistence Manager}
- * @author
- * @since
- */
 
 public class PersistenceHelper
 {
@@ -213,6 +202,18 @@ public class PersistenceHelper
         return location;
     }
     
+    public static List<Project> getProjectsOfLocation(Long locationId){
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+
+        TypedQuery<Project> query = em.createQuery(
+                "SELECT p FROM Project p WHERE p.location.id = :locationId", Project.class);
+        query.setParameter("locationId", locationId);
+        List<Project> projects = query.getResultList();
+        em.getTransaction().commit();
+        em.close();
+        return projects;
+    }
 
 	public static List<Location> getAllLocations() {
     	EntityManager em = persistenceManager.getEntityManager();
@@ -226,14 +227,34 @@ public class PersistenceHelper
         return locations;
     }
 
-    public static Donation getDonation(Long id)
-    {
+    public static Donation getDonation(Long id) {
     	EntityManager em = persistenceManager.getEntityManager();
     	em.getTransaction().begin();
         Donation donation = em.find(Donation.class, id);
         em.getTransaction().commit();
         em.close();
         return donation;
+    }
+
+	public static List<Host> getHosts() {
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        TypedQuery<Host> query = em.createQuery(
+                "SELECT h FROM Host h", Host.class);
+        List<Host> hosts = query.getResultList();
+        em.getTransaction().commit();
+        em.close();
+        return hosts;
+    }
+
+    public static Host getHost(Long id)
+    {
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        Host host =  em.find(Host.class, id);
+        em.getTransaction().commit();
+        em.close();
+        return host;
     }
 
 }

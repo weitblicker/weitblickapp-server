@@ -11,6 +11,7 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
 import org.weitblicker.database.PersistenceHelper;
 import org.weitblicker.database.PersistenceManager;
 import org.weitblicker.database.Project;
+import org.weitblicker.database.Host;
 import org.weitblicker.database.Image;
 import org.weitblicker.database.User;
 import org.apache.tika.Tika;
@@ -20,6 +21,7 @@ import org.weitblicker.database.Location;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -204,8 +206,100 @@ public class RestApi
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-
+	
+	
+	@DELETE
+	@Path("location/remove/{id}")
+	public Response removeLocation(@PathParam("id") final Long id){
+		
+		EntityManager em =PersistenceHelper.getPersistenceManager().getEntityManager();
+		try{
+			List<Project> projects = PersistenceHelper.getProjectsOfLocation(id);
+			if(!projects.isEmpty()){
+				StringBuilder output = new StringBuilder();
+				// TODO logging
+				output.append("The location can only be deleted when no project refers to the location.\n");
+				output.append("The following projects refer to the location:\n");
+				for(Project p : projects){
+					output.append(p.toString() + "\n");
+				}
+				return Response.status(Status.CONFLICT).entity(output.toString()).build();
+			}
+			em.getTransaction().begin();
+				System.out.println("trying to remove project with the id: " + id);
+				Location location = em.find(Location.class, id);
+				if(location == null){
+					System.out.println("no location for the given id \""+id +"\"!");
+					return Response.status(Status.BAD_REQUEST).build();
+				}
+				System.out.println("remove location: " + location);
+	
+				em.remove(location);
+			
+			em.getTransaction().commit();
+		} catch(Exception e){
+			e.printStackTrace();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		} finally{
+			em.close();
+		}
+		
+		return Response.ok().build();
+	}
+	
+    @GET
+    @Path("host/list")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getHosts() {
+    	List<Host> hosts = PersistenceHelper.getHosts();
+        try {
+			return Response.ok(jsonMapper.writeValueAsString(hosts)).build();
+		} catch (JsonProcessingException e) {
+			// TODO logging
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+    }
     
+	@POST
+	@Path("host/new")
+    @Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createHost(String jsonHost){
+		
+		System.out.println("create new host...");
+		Host host = null;
+
+		// parse json 
+		try {
+			host = jsonMapper.readValue(jsonHost, Host.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+		
+		System.out.println("Host: " + host);
+		
+		if(host.getId() != null){
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		
+		try{
+			Long id = PersistenceHelper.createOrUpdateHost(host);
+			System.out.println("created new host with id: " + id);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		try {
+			String jsonResponse = jsonMapper.writeValueAsString(host);
+			return Response.ok(jsonResponse).build();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}		
+	}
+
     @GET
     @Path("project/list{noop: (/)?}{language : ((?<=/)\\w+)?}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -282,6 +376,30 @@ public class RestApi
         	return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
+    
+	@DELETE
+	@Path("host/remove/{id}")
+	public Response removeHost(@PathParam("id") final Long id){
+		EntityManager em =PersistenceHelper.getPersistenceManager().getEntityManager();
+		em.getTransaction().begin();
+		try{
+			System.out.println("trying to remove host with the id: " + id);
+			Host host = em.find(Host.class, id);
+			if(host == null){
+				System.out.println("No host for the given id \"" + id + "\".");
+				return Response.status(Status.BAD_REQUEST).build();
+			}
+			System.out.println("remove host: " + host);
+			em.remove(host);
+		} catch(Exception e){
+			e.printStackTrace();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+		em.getTransaction().commit();
+		em.close();
+		
+		return Response.ok().build();
+	}
 	
 	@DELETE
 	@Path("project/remove/{id}")
@@ -291,12 +409,17 @@ public class RestApi
 		try{
 			System.out.println("trying to remove project with the id: " + id);
 			Project project = em.find(Project.class, id);
+			if(project == null){
+				System.out.println("No project for the given id \"" + id + "\".");
+				return Response.status(Status.BAD_REQUEST).build();
+			}
+			
 			System.out.println("remove project: " + project);
 
 			em.remove(project);
 		} catch(Exception e){
 			e.printStackTrace();
-			return Response.status(Response.Status.BAD_REQUEST).build();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 		em.getTransaction().commit();
 		em.close();
@@ -544,6 +667,53 @@ public class RestApi
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 		
+	}
+	
+	
+	@PUT
+	@Path("host/update")
+    @Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateHost(String jsonHost){
+		
+		System.out.println("update host...");
+
+		try{		
+			Host receivedHost = jsonMapper.readValue(jsonHost, Host.class);
+			Long id = receivedHost.getId();
+			
+			// no id given -> bad request
+			if(id == null) {
+				return Response.status(Response.Status.BAD_REQUEST).build();
+			}
+			
+			// get project from database
+			EntityManager em = PersistenceHelper.getPersistenceManager().getEntityManager();
+			em.getTransaction().begin();
+			Host dbHost = em.find(Host.class, id);
+			
+			// merge project with changes
+			dbHost = jsonMapper.readerForUpdating(dbHost).readValue(jsonHost);
+
+			em.persist(dbHost);
+			em.getTransaction().commit();
+			em.close();
+			System.out.println("updated host with id: " + dbHost.getId());
+			
+			// return the updated host as json
+			String jsonResponse = jsonMapper.writeValueAsString(dbHost);
+			return Response.ok(jsonResponse).build();
+			
+		} catch(IllformedLocaleException e){
+			e.printStackTrace();
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		} 
 	}
 	
 	@PUT

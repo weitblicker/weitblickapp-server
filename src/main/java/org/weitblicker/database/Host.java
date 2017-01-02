@@ -1,11 +1,7 @@
 package org.weitblicker.database;
 
 
-
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -17,12 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.weitblicker.Options;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Weitblick-DB Host Table Object, Lists Weitblick cities
@@ -39,27 +29,21 @@ public class Host
 	@Column(name = "id")
     Long id;
     
-	@JoinColumn(name = "key_name")
-    private LanguageString name;
+    public Long getId(){
+    	return id;
+    }
+    
+	@Column(name = "name")
+    private String name;
 	
 	public void setName(String name) {
-		name().addText(currentLanguage, name);
+		this.name = name;
 	}
 	
 	public String getName(){
-		return getName(currentLanguage);
-	}
-
-	public String getName(final Locale language) {
-		return name().getText(language);
+		return name;
 	}
     
-    LanguageString name(){
-		return name != null ? name : (name = new LanguageString());
-    }
-    
-    
-	
 	@Column(name = "email")
     private String email;
 	
@@ -77,17 +61,20 @@ public class Host
 	@JoinColumn(name = "key_location")
     private Location location;
 
-    public Location getLocationId()
+    public Location getLocation()
     {
         return location;
     }
+    
+	public void setLocation(long id){
+		this.location = Location.location(id);
+	}
 
     public void setLocation(Location location)
     {
         this.location = location;
     }
     
-	
     @ManyToMany
     @JoinTable(
         name="host_maintainer",
@@ -102,18 +89,9 @@ public class Host
         inverseJoinColumns=@JoinColumn(name="host_id", referencedColumnName="id"))
     private Set<Project> projects;
     
-    @Transient
-    public Locale currentLanguage = Options.DEFAULT_LANGUAGE;
+    public Host() { }
     
-    void setCurrentLanguage(Locale language){
-    	currentLanguage = language;
-    }
-    
-    public Host(){
-    	
-    }
-    
-    public Host( LanguageString name, String email, Location location) {
+    public Host(String name, String email, Location location) {
         this.name = name;
         this.email = email;
         this.location = location;

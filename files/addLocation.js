@@ -50,7 +50,7 @@ $(document).ready(function() {
 				},
 				success: function(data){
 					console.log(data);
-					window.location.replace("/backend/location/en/edit/" + data.id);
+					window.location.replace("/backend/locations/en/edit/" + data.id);
 					console.log("success...!");
 				}
 			},
