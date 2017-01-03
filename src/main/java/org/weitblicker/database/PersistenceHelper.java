@@ -41,7 +41,7 @@ public class PersistenceHelper
     	em.getTransaction().begin();
     	System.out.println("email:" + email);
         TypedQuery<User> query = em.createQuery(
-                "SELECT u FROM User u WHERE u.email = :email", User.class);
+                "SELECT u FROM User u WHERE u.email = ':emai'", User.class);
         query.setParameter("email", email);
         User user = query.getSingleResult();
         System.out.println("user: " + user);
