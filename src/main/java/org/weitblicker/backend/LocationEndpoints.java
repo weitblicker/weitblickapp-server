@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.weitblicker.Options;
 import org.weitblicker.Secured;
+import org.weitblicker.UserRole;
 import org.weitblicker.Utility;
 import org.weitblicker.database.Location;
 import org.weitblicker.database.PersistenceHelper;
@@ -23,10 +24,10 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
+@Secured({UserRole.admin, UserRole.maintainer})
 @Path("backend/locations")
 public class LocationEndpoints {
 	
-    @Secured
 	@GET
 	@Path("{language}")
 	@Produces("text/html")

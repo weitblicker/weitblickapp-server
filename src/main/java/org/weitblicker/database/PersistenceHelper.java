@@ -3,10 +3,7 @@ package org.weitblicker.database;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 public class PersistenceHelper
 {
@@ -42,10 +39,12 @@ public class PersistenceHelper
     public static User getUserByEmail(String email){
     	EntityManager em = persistenceManager.getEntityManager();
     	em.getTransaction().begin();
+    	System.out.println("email:" + email);
         TypedQuery<User> query = em.createQuery(
                 "SELECT u FROM User u WHERE u.email = :email", User.class);
         query.setParameter("email", email);
         User user = query.getSingleResult();
+        System.out.println("user: " + user);
         em.getTransaction().commit();
         em.close();
 
@@ -291,5 +290,15 @@ public class PersistenceHelper
         return user;
     }
 
+	public static List<Need> getNeeds() {
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        TypedQuery<Need> query = em.createQuery(
+                "SELECT n FROM Need n", Need.class);
+        List<Need> needs = query.getResultList();
+        em.getTransaction().commit();
+        em.close();
+        return needs;
+    }
 }
 

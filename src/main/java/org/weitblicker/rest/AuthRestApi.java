@@ -104,6 +104,9 @@ public class AuthRestApi
         // Authenticate against a database, LDAP, file or whatever
         // Throw an Exception if the credentials are invalid
     	User user = PersistenceHelper.getUserByEmail(email);
+    	if(user == null){
+    		throw new NotAuthorizedException("Not authorized, no user for the given email: \""+ email + "\"");
+    	}
     	if(!user.getPassword().equals(password)){
     		throw new NotAuthorizedException("Not authorized, wrong password for user: " + user);
     	}
