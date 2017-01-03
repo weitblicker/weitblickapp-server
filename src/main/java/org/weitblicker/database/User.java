@@ -2,6 +2,8 @@ package org.weitblicker.database;
 
 import java.security.Principal;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -41,7 +43,7 @@ public class User implements Comparable<User>, Principal {
 	private String password;
     
     public User(){
-    	
+		this.hosts = new HashSet<Host>();
     }
 	
 	public User(String email, String name, String password){
@@ -52,14 +54,37 @@ public class User implements Comparable<User>, Principal {
 	}
 	
 	public void addToHost(Host host){
-		hosts.add(host);
+		if(!hosts.contains(host)){
+			hosts.add(host);
+		}
 		if(!host.maintains(this)){
 			host.addUserAsMaintainer(this);
 		}
 	}
 	
+	@JsonIgnore
+	public List<Host> getHosts(){
+		return new LinkedList<Host>(hosts);
+	}
+	
+	public List<Long> getHostIds(){
+		List<Long> ids = new LinkedList<Long>();
+		for(Host host : hosts){
+			ids.add(host.getId());
+		}
+		return ids;
+	}
+	
+	public void setHostIds(List<Long> hostIds){
+		hosts.clear();
+		for(Long id : hostIds){
+			Host host = PersistenceHelper.getHost(id);
+			addToHost(host);
+		}
+	}
+	
 	public boolean maintains(Host host){	
-		return this.hosts.contains(host);
+		return hosts.contains(host);
 	}
 	
     @JsonIgnore
@@ -93,7 +118,11 @@ public class User implements Comparable<User>, Principal {
 	}
 	
 	public int hashCode(){
-		return name.hashCode();
+		if(name != null)
+			return name.hashCode();
+		else{
+			return super.hashCode();
+		}
 	}
 	
 	public String toString(){

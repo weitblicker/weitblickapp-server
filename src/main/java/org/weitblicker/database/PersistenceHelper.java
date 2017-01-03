@@ -3,7 +3,10 @@ package org.weitblicker.database;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class PersistenceHelper
 {
@@ -105,6 +108,8 @@ public class PersistenceHelper
         em.close();
         return projects;
     }
+    
+
 
     /**
      * Gets the project list from DB
@@ -274,6 +279,16 @@ public class PersistenceHelper
         em.persist(user);
         em.getTransaction().commit();
         return user.getId();
+    }
+
+    public static User getUser(Long id)
+    {
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        User user =  em.find(User.class, id);
+        em.getTransaction().commit();
+        em.close();
+        return user;
     }
 
 }

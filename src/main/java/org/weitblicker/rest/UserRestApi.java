@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.weitblicker.database.Host;
 import org.weitblicker.database.PersistenceHelper;
 import org.weitblicker.database.User;
 
@@ -135,6 +136,15 @@ public class UserRestApi {
 			em.getTransaction().commit();
 			em.close();
 			System.out.println("updated user with id: " + dbUser.getId());
+			
+			for(Host host: dbUser.getHosts()){
+				em = PersistenceHelper.getPersistenceManager().getEntityManager();
+				em.getTransaction().begin();
+				em.persist(host);
+				em.getTransaction().commit();
+				em.close();
+			}
+			
 			
 			// return the updated user as json
 			String jsonResponse = jsonMapper.writeValueAsString(dbUser);

@@ -1,8 +1,12 @@
 package org.weitblicker;
 
 import java.io.IOException;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,6 +16,8 @@ import javax.annotation.Priority;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -27,6 +33,9 @@ import javax.ws.rs.Priorities;
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
 
+    @Context
+    private ResourceInfo resourceInfo;
+	
 	public static String TOKEN_NAME = "wb-server-session";
 	
 	private static Map<String, Session> loggedin = new HashMap<>();
@@ -86,9 +95,34 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     public static Session getSession(String token){
     	return loggedin.get(token);
     }
+    
+    // Extract the roles from the annotated element
+    private List<UserRole> extractRoles(AnnotatedElement annotatedElement) {
+        if (annotatedElement == null) {
+            return new ArrayList<UserRole>();
+        } else {
+            Secured secured = annotatedElement.getAnnotation(Secured.class);
+            if (secured == null) {
+                return new ArrayList<UserRole>();
+            } else {
+                UserRole[] allowedRoles = secured.value();
+                return Arrays.asList(allowedRoles);
+            }
+        }
+    }
 	
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {	
+    	
+        // Get the resource class which matches with the requested URL
+        // Extract the roles declared by it
+        Class<?> resourceClass = resourceInfo.getResourceClass();
+        List<UserRole> classRoles = extractRoles(resourceClass);
+
+        // Get the resource method which matches with the requested URL
+        // Extract the roles declared by it
+        Method resourceMethod = resourceInfo.getResourceMethod();
+        List<UserRole> methodRoles = extractRoles(resourceMethod);
     	
     	System.out.println("cookies...");
     	Cookie sessionCookie = requestContext.getCookies().get(TOKEN_NAME);
@@ -121,7 +155,12 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     		
     		    @Override
     		    public boolean isUserInRole(String role) {
-    		        return true; // TODO
+    		    	// admin has grand access regardless of the given role
+    		    	if(session.user.getRole().equals(UserRole.admin.name())){
+    		    		return true;
+    		    	}
+    		    	
+    		    	return session.user.getRole().equals(role);
     		    }
     		
     		    @Override
@@ -134,17 +173,42 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     		        return null; // TODO
     		    }
     		});
+    		
+            // Check if the user is allowed to execute the method
+            // The method annotations override the class annotations
+    		
+    		boolean hasPermissions = false;
+            if (methodRoles.isEmpty()) {
+            	hasPermissions = hasPermissions(requestContext.getSecurityContext(), classRoles);
+            } else {
+            	hasPermissions = hasPermissions(requestContext.getSecurityContext(), methodRoles);
+            }
+            
+            // if the user has the permissions do nothing
+            if(hasPermissions){
+            	System.out.println(session.user + " has permissions for " + requestContext.getUriInfo().getPath());
+            }
+            // if not abort with UNAUTHORIZED status.
+            else{
+                System.out.println("Permission denied for user: \"" + session.user + "\" for \"" + requestContext.getUriInfo().getPath() + "\" with the role \"" + session.user.getRole() + "\"");
 
+                requestContext.abortWith(
+                        Response.status(Response.Status.UNAUTHORIZED).build());
+                return;
+            }
         } catch (NotAuthorizedException e) {
         	System.out.println(e.getMessage());
         	List<String> matchedUri = requestContext.getUriInfo().getMatchedURIs();
-        	if(matchedUri.contains("backend")){
-        		URI seeOther = requestContext.getUriInfo().getBaseUri();
-        		seeOther = seeOther.resolve("backend/login");
-        		System.out.println(seeOther);
-        		requestContext.abortWith(Response.seeOther(seeOther).build());
-        		return;
+        	for(String uri : matchedUri){
+            	if(uri.contains("backend")){
+            		URI seeOther = requestContext.getUriInfo().getBaseUri();
+            		seeOther = seeOther.resolve("backend/login");
+            		System.out.println(seeOther);
+            		requestContext.abortWith(Response.seeOther(seeOther).build());
+            		return;
+            	}
         	}
+
             requestContext.abortWith(
                 Response.status(Response.Status.UNAUTHORIZED).build());
         } catch (Exception e) {
@@ -154,6 +218,15 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         }
         
     }
+    
+    private boolean hasPermissions(SecurityContext context, List<UserRole> classRoles) {
+    	for(UserRole role:classRoles){
+    		if(context.isUserInRole(role.name())){
+    			return true;
+    		}
+    	}
+    	return false;
+	}
     
 
     private Session validateToken(String token) throws NotAuthorizedException {

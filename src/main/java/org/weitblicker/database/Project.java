@@ -239,7 +239,54 @@ public class Project implements Serializable{
 		this.images = images;
 	}
 	
-	@ManyToMany(mappedBy="projects")
-	private Set<Host> hosts;
+	@ManyToMany(mappedBy="projects") Set<Host> hosts;
+	
+	public boolean hasHost(Host host){
+		return hosts.contains(host);
+	}
+	
+	public void addHost(Host host){
+		if(!hasHost(host)){
+			hosts.add(host);
+		}
+		if(host.hasProject(this)){
+			host.addProject(this);
+		}
+	}
+
+	public void removeHost(Host host) {
+		if(hasHost(host)){
+			hosts.remove(host);
+		}
+		if(host.hasProject(this)){
+			host.removeProject(this);
+		}
+	}
+	
+	// removes connections from both sides
+	public void clearHost(){
+		Iterator<Host> hIter = hosts.iterator();
+		while(hIter.hasNext()){
+			Host host = hIter.next();
+			Iterator<Project> pIter = host.projects.iterator();
+			while(pIter.hasNext()){
+				Project project = pIter.next();
+				if(project == this){
+					pIter.remove();
+					break;
+				}
+			}
+			hIter.remove();
+		}
+	}
+	
+	public void setHostIds(List<Long> ids){
+		for(Long id:ids){
+			Host host = PersistenceHelper.getHost(id);
+			if(host != null){
+				addHost(host);
+			}
+		}
+	}
 		
 }

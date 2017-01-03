@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="{{language}}">
+	{{>header}}
+	<body>
+		{{>navbar}}
+    	<div class="row">
+    		{{>sidebar}}
+
+    		<script type="text/javascript" src="/backend/file/updateUser.js"></script>
+
+        	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Name</h3>
+					</div>
+					<div class="panel-body">
+						<a href="#" class="editable" id="name" data-type="text" data-pk="{{id}}" data-title="Enter name" data-url="/rest/user/update">{{name}}</a>
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">E-Mail</h3>
+					</div>
+					<div class="panel-body">
+						<a href="#" class="editable" id="email" data-type="email" data-pk="{{id}}" data-title="Enter email" data-url="/rest/user/update">{{email}}</a>
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Hosts</h3>
+					</div>
+					<div class="panel-body">
+						<a href="#" class="editable hostIds" id="hostIds" data-value="{{hostIds}}" data-type="checklist" data-pk="{{id}}" data-title="Select host" data-url="/rest/user/update"></a>
+					</div>
+				</div>
+				        
+			</div>
+		</div>
+	</body>
+</html>

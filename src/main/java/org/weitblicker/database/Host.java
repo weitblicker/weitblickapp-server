@@ -2,6 +2,9 @@ package org.weitblicker.database;
 
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -13,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Weitblick-DB Host Table Object, Lists Weitblick cities
@@ -86,10 +91,12 @@ public class Host
     @JoinTable(
         name="host_projects",
         joinColumns=@JoinColumn(name="project_id", referencedColumnName="id"),
-        inverseJoinColumns=@JoinColumn(name="host_id", referencedColumnName="id"))
-    private Set<Project> projects;
+        inverseJoinColumns=@JoinColumn(name="host_id", referencedColumnName="id")) Set<Project> projects;
     
-    public Host() { }
+    public Host() {
+    	maintainer = new HashSet<User>();
+    	projects = new HashSet<Project>();
+    }
     
     public Host(String name, String email, Location location) {
         this.name = name;
@@ -99,7 +106,9 @@ public class Host
     }
     
     public void addUserAsMaintainer(User user){
-		maintainer.add(user);
+    	if(!maintains(user)){
+    		maintainer.add(user);
+    	}
 		if(!user.maintains(this)){
 			user.addToHost(this);
     	}
@@ -108,5 +117,63 @@ public class Host
     public boolean maintains(User user){
     	return maintainer.contains(user);
     }
+    
+    @JsonIgnore
+    public List<User> getMaintainers(){
+    	return new LinkedList<User>(maintainer);
+    }
+    
+    public List<Project> getProjects(){
+    	return new LinkedList<Project>(projects);
+    }
+
+	public boolean hasProject(Project project) {
+		return projects.contains(project);
+	}
+	
+	public void addProject(Project project){
+		if(!hasProject(project)){
+			projects.add(project);
+		}
+		if(!project.hasHost(this)){
+			project.addHost(this);
+		}
+	}
+	
+	
+	// removes connections from both sides
+	public void clearProjects(){
+		Iterator<Project> pIter = projects.iterator();
+		while(pIter.hasNext()){
+			Project project = pIter.next();
+			Iterator<Host>hIter = project.hosts.iterator();
+			while(hIter.hasNext()){
+				Host host = hIter.next();
+				if(host == this){
+					hIter.remove();
+				}
+			}
+			pIter.remove();
+		}
+	}
+	
+	public void removeProject(Project project){
+		if(project.hasHost(this)){
+			project.removeHost(this);
+		}
+		if(hasProject(project)){
+			projects.remove(project);
+		}
+	}
+	
+	public void setProjectIds(List<Long> ids){
+		clearProjects();
+		for(Long id:ids){
+			Project project = PersistenceHelper.getProject(id);
+			if(project != null)
+				addProject(project);
+			// TODO throw error if null
+		}
+	}
     
 }

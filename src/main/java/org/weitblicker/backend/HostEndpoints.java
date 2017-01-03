@@ -30,37 +30,41 @@ public class HostEndpoints {
 	@Produces("text/html")
 	public Response projects(){
 		System.out.println("All hosts...");
-					
-		List<Host> hosts = PersistenceHelper.getHosts();
-		
-		class BackendInfo{
-			public BackendInfo(List<Host> hosts){
-				this.hosts = hosts;
-				this.language = Options.DEFAULT_LANGUAGE;
-			}
-			List<Host> hosts;
-			Locale language;	
+		try{			
+			List<Host> hosts = PersistenceHelper.getHosts();
 			
-			@SuppressWarnings("unused")
-			public List<Host>getHosts(){
-				return hosts;
+			class BackendInfo{
+				public BackendInfo(List<Host> hosts){
+					this.hosts = hosts;
+					this.language = Options.DEFAULT_LANGUAGE;
+				}
+				List<Host> hosts;
+				Locale language;	
+				
+				@SuppressWarnings("unused")
+				public List<Host>getHosts(){
+					return hosts;
+				}
+	
+				@SuppressWarnings("unused")
+				public String getLanguage(){
+					return language.getLanguage();
+				}
 			}
-
-			@SuppressWarnings("unused")
-			public String getLanguage(){
-				return language.getLanguage();
+			
+		    MustacheFactory mf = new DefaultMustacheFactory();
+		    Mustache mustache = mf.compile("files/hosts.mustache");
+		    StringWriter stringWriter = new StringWriter();
+		    try {
+				mustache.execute(stringWriter, new BackendInfo(hosts)).flush();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		}
-		
-	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/hosts.mustache");
-	    StringWriter stringWriter = new StringWriter();
-	    try {
-			mustache.execute(stringWriter, new BackendInfo(hosts)).flush();
-		} catch (IOException e) {
+			return Response.ok(stringWriter.getBuffer().toString()).build();
+		} catch(Exception e){
 			e.printStackTrace();
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
-		return Response.ok(stringWriter.getBuffer().toString()).build();
 	}
 	
 	@GET
