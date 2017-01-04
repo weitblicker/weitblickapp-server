@@ -123,10 +123,20 @@ public class PersistenceHelper
         return ids;
     }
     
+    private static void scanProjectImageFolder(Meeting m, EntityManager em){
+    	List<Image> notListedImages = m.scanFolder();
+    	for(Image image: notListedImages){
+    		image.setUri( "/rest/meeting/" + m.getId() + "/image/" + image.getName());
+    		m.addImage(image);
+    		em.persist(image);
+    	}
+    	em.persist(m);
+    }
+    
     private static void scanProjectImageFolder(Project p, EntityManager em){
     	List<Image> notListedImages = p.scanFolder();
     	for(Image image: notListedImages){
-    		image.setUri( "http://localhost:8180/rest/project/" + p.getId() + "/image/" + image.getName());
+    		image.setUri( "/rest/project/" + p.getId() + "/image/" + image.getName());
     		p.addImage(image);
     		em.persist(image);
     	}
@@ -297,5 +307,40 @@ public class PersistenceHelper
         em.close();
         return needs;
     }
+
+	public static List<Meeting> getMeetings() {
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        TypedQuery<Meeting> query = em.createQuery(
+                "SELECT m FROM Meeting m", Meeting.class);
+        List<Meeting> meetings = query.getResultList();
+        em.getTransaction().commit();
+        em.close();
+        return meetings;
+	}
+
+	public static Meeting getMeeting(Long meetingId) {
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        Meeting meeting =  em.find(Meeting.class, meetingId);
+        em.getTransaction().commit();
+        em.close();
+        return meeting;
+	}
+
+	public static long createOrUpdateMeeting(Meeting meeting) {
+    	EntityManager em = persistenceManager.getEntityManager();
+    	em.getTransaction().begin();
+        em.persist(meeting);
+    	em.getTransaction().commit();
+    	
+    	em.getTransaction().begin();
+    	// adds all not listed (manual inserted) images to the database and the project
+        scanProjectImageFolder(meeting, em);
+        em.getTransaction().commit();
+        em.close();
+        
+        return meeting.getId();
+	}
 }
 

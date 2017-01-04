@@ -29,6 +29,8 @@
 							<th>Name</th>
 							<th>E-Mail</th>
 							<th>Maintainers</th>
+							<th>Projects</th>
+
 						</tr>
 					</thead>
 					<tbody>
@@ -41,6 +43,11 @@
 								{{#maintainers}}
 								<p><a href="/backend/users/edit/{{id}}">{{name}} – {{email}} </a></p>
 								{{/maintainers}}
+							</td>
+							<td>
+								{{#projects}}
+								<p><a href="/backend/projects/en/edit/{{id}}">{{name}}</a></p>
+								{{/projects}}
 							</td>
 							<td>
 								<a href="/backend/hosts/edit/{{id}}">

@@ -33,18 +33,17 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.weitblicker.Options;
 import org.weitblicker.Utility;
-import org.weitblicker.database.Host;
 import org.weitblicker.database.Image;
 import org.weitblicker.database.Location;
+import org.weitblicker.database.Meeting;
 import org.weitblicker.database.PersistenceHelper;
-import org.weitblicker.database.Project;
 import org.weitblicker.database.User;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Path("rest/project")
-public class ProjectRestApi {
+@Path("rest/meeting")
+public class MeetingRestApi {
 	
     @Context
 	UriInfo uri;
@@ -54,7 +53,7 @@ public class ProjectRestApi {
     @GET
     @Path("list{noop: (/)?}{language : ((?<=/)\\w+)?}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProjects(@PathParam("language") final String language) {
+    public Response getMeetings(@PathParam("language") final String language) {
 
     	// TODO put this to the config 
     	Set<Locale> languages = new HashSet<Locale>();
@@ -81,13 +80,13 @@ public class ProjectRestApi {
 	        	}
         	}
         	
-            List<Project> list = PersistenceHelper.getAllProjects();
-            for(Project project : list){
-            	project.setCurrentLanguage(currentLanguage);
+            List<Meeting> meetings = PersistenceHelper.getMeetings();
+            for(Meeting meeting : meetings){
+            	meeting.setCurrentLanguage(currentLanguage);
             }
 
             // response ok with json content
-            return Response.ok(jsonMapper.writeValueAsString(list)).build();
+            return Response.ok(jsonMapper.writeValueAsString(meetings)).build();
         } catch(IllformedLocaleException e){
         	e.printStackTrace();
         	return Response.status(Response.Status.BAD_REQUEST).build();
@@ -101,7 +100,7 @@ public class ProjectRestApi {
     @GET
     @Path("{id}/{language}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProject(@PathParam("id") final String id, @PathParam("language") final String language, @Context SecurityContext securityContext)
+    public Response getMeeting(@PathParam("id") final String id, @PathParam("language") final String language, @Context SecurityContext securityContext)
     {
         try
         {
@@ -114,10 +113,10 @@ public class ProjectRestApi {
         	// if in a specific role 
         	boolean inRole = securityContext.isUserInRole("some role");
         	
-            Long projectId = Long.valueOf(id);
-            Project project = PersistenceHelper.getProject(projectId);
-            project.setCurrentLanguage(currentLanguage);
-            return Response.ok(jsonMapper.writeValueAsString(project)).build();
+            Long meetingId = Long.valueOf(id);
+            Meeting meeting = PersistenceHelper.getMeeting(meetingId);
+            meeting.setCurrentLanguage(currentLanguage);
+            return Response.ok(jsonMapper.writeValueAsString(meeting)).build();
         } catch(IllformedLocaleException e){
         	e.printStackTrace();
         	return Response.status(Response.Status.BAD_REQUEST).build();
@@ -132,20 +131,20 @@ public class ProjectRestApi {
 	
 	@DELETE
 	@Path("remove/{id}")
-	public Response removeProject(@PathParam("id") final Long id){
+	public Response removeMeeting(@PathParam("id") final Long id){
 		EntityManager em =PersistenceHelper.getPersistenceManager().getEntityManager();
 		em.getTransaction().begin();
 		try{
-			System.out.println("trying to remove project with the id: " + id);
-			Project project = em.find(Project.class, id);
-			if(project == null){
-				System.out.println("No project for the given id \"" + id + "\".");
+			System.out.println("trying to remove meeting with the id: " + id);
+			Meeting meeting = em.find(Meeting.class, id);
+			if(meeting == null){
+				System.out.println("No meeting for the given id \"" + id + "\".");
 				return Response.status(Status.BAD_REQUEST).build();
 			}
 			
-			System.out.println("remove project: " + project);
+			System.out.println("remove meeting: " + meeting);
 
-			em.remove(project);
+			em.remove(meeting);
 		} catch(Exception e){
 			e.printStackTrace();
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -157,30 +156,31 @@ public class ProjectRestApi {
 	}
 	
 	@GET
-	@Path("{projectId}/remove-image/{imageId}")
+	@Path("{meetingId}/remove-image/{imageId}")
     @Produces(MediaType.APPLICATION_JSON)
-	public Response removeProjectImage(
-			@PathParam("projectId") final Long projectId,
+	public Response removeMeetingImage(
+			@PathParam("meetingId") final Long meetingId,
 			@PathParam("imageId") final Long imageId){
-		System.out.println("called delete action for image id:\""+imageId+"\" of the project:\""+projectId+"\"");
+		System.out.println("called delete action for image id:\""+imageId+"\" of the meeting:\""+meetingId+"\"");
 		EntityManager em =PersistenceHelper.getPersistenceManager().getEntityManager();
 		em.getTransaction().begin();
 		try{
-			System.out.println("trying to remove project image with the id: " +
-					imageId + " of the project with the id: " + projectId);
-			Project project = em.find(Project.class, projectId);
-			Image image = project.removeImage(imageId);
+			System.out.println("trying to remove meeting image with the id: " +
+					imageId + " of the meeting with the id: " + meetingId);
+			Meeting meeting = em.find(Meeting.class, meetingId);
+			Image image = meeting.removeImage(imageId);
 			if(image == null){
 				throw new IllegalArgumentException("The image id \"" + imageId 
-					+ "\" is not referenced in the project with the id \"" + projectId + "\"!");
+					+ "\" is not referenced in the meeting with the id \"" + meetingId + "\"!");
 			}
 			image.getFile().delete();
 			em.remove(image);
-			System.out.println("remove project image: " + image);
+			System.out.println("remove meeting image: " + image);
 
-			em.persist(project);
-			System.out.println("update project: " + project);
+			em.persist(meeting);
+			System.out.println("update meeting: " + meeting);
 		} catch(Exception e){
+			// TODO is this necessary? if yes -> should do this also at the other places
 			e.printStackTrace();
 			if(em.getTransaction().isActive()){
 				em.getTransaction().rollback();
@@ -190,11 +190,11 @@ public class ProjectRestApi {
 		}
 		em.getTransaction().commit();
 		em.close();
-		System.out.println("removed project image succefully!");
+		System.out.println("removed meeting image succefully!");
 		
 		String ret;
 		try {
-			ret = jsonMapper.writeValueAsString("removed project image succefully!");
+			ret = jsonMapper.writeValueAsString("removed meeting image succefully!");
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -216,9 +216,9 @@ public class ProjectRestApi {
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		
 		System.out.println("upload file with filename \"" 
-				+ fileMetaData.getFileName() + "\" for project \"" + id + "\".");
+				+ fileMetaData.getFileName() + "\" for meeting \"" + id + "\".");
 		
-		String uploadFileLocation = "project-images/"+ id + "/" + fileMetaData.getFileName();
+		String uploadFileLocation = "meeting-images/"+ id + "/" + fileMetaData.getFileName();
 		
 		// two dots are not allowed, because of path traversal attacks
 		if(uploadFileLocation.contains("..")){
@@ -252,11 +252,11 @@ public class ProjectRestApi {
 			image.setName(fileMetaData.getFileName());
 			
 			
-			image.setUri( uri.getBaseUri().toString() + "rest/project/" + id + "/image/" + image.getName());
-			Project project = em.find(Project.class, id);
-			project.addImage(image);
+			image.setUri( uri.getBaseUri().toString() + "rest/meeting/" + id + "/image/" + image.getName());
+			Meeting meeting = em.find(Meeting.class, id);
+			meeting.addImage(image);
 			em.persist(image);
-			em.persist(project);
+			em.persist(meeting);
 			em.getTransaction().commit();
 			//Long imageId = image.getId();
 			
@@ -309,7 +309,7 @@ public class ProjectRestApi {
 			Response.status(Status.BAD_REQUEST).build();
 		}
 		
-		File file = new File("project-images/" + id + "/" + fileName);
+		File file = new File("meeting-images/" + id + "/" + fileName);
 		
 		if(!file.exists()){
 			System.out.println("file does not exist!");
@@ -332,9 +332,9 @@ public class ProjectRestApi {
 	@Path("new")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createProject(@QueryParam("language") String language, String jsonProject){
+	public Response createMeeting(@QueryParam("language") String language, String jsonMeeting){
 		
-		System.out.println("create new project...");
+		System.out.println("create new meeting...");
 		
 		Locale currentLanguage = Options.DEFAULT_LANGUAGE;
 		
@@ -351,42 +351,43 @@ public class ProjectRestApi {
 		}
 		
 		// set current language
-		Project project = new Project();
-		project.setCurrentLanguage(currentLanguage);
+		Meeting meeting = new Meeting();
+		meeting.setCurrentLanguage(currentLanguage);
 		System.out.println("language: " + currentLanguage.getLanguage());
-		System.out.println("json:" + jsonProject);
+		System.out.println("json:" + jsonMeeting);
 		
 		// parse json 
 		try {
-			project = jsonMapper.readerForUpdating(project).readValue(jsonProject);
-			System.out.println(project);
+			meeting = jsonMapper.readerForUpdating(meeting).readValue(jsonMeeting);
+			System.out.println(meeting);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		// set location by id - the location has to be exist already.
-		Location location = project.getLocation();
+		Location location = meeting.getLocation();
 		
 		if(location == null || location.getId() == null){
+			System.out.println("location is not defined!");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 		
 		location = PersistenceHelper.getLocation(location.getId());
-		project.setLocation(location);
+		meeting.setLocation(location);
 		
-		System.out.println("Project: " + project);
-		System.out.println("Location: " + project.getLocation());
-		if(project.getId() == null){
-			System.out.println("no id given, project is new...");
+		System.out.println("Meeting: " + meeting);
+		System.out.println("Location: " + meeting.getLocation());
+		if(meeting.getId() == null){
+			System.out.println("no id given, meeting is new...");
 			try{
-				long id = PersistenceHelper.createOrUpdateProject(project);
-				System.out.println("created new project with id: " + id);
+				long id = PersistenceHelper.createOrUpdateMeeting(meeting);
+				System.out.println("created new meeting with id: " + id);
 
 			}catch(Exception e){
 				e.printStackTrace();
 			}
 			try {
-				String jsonResponse = jsonMapper.writeValueAsString(project);
+				String jsonResponse = jsonMapper.writeValueAsString(meeting);
 				return Response.ok(jsonResponse).build();
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -403,59 +404,51 @@ public class ProjectRestApi {
 	@Path("update/{language}")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateProject(@PathParam("language") final String language, String jsonProject){
+	public Response updateMeeting(@PathParam("language") final String language, String jsonMeeting){
 		
-		System.out.println("update project...");
+		System.out.println("update meeting...");
 
 		try{		
 			Locale currentLanguage = Utility.getLanguage(language);
 			System.out.println("language: " + currentLanguage.getLanguage());
 		
-			Project receivedProject = jsonMapper.readValue(jsonProject, Project.class);
-			Long id = receivedProject.getId();
+			Meeting receivedMeeting = jsonMapper.readValue(jsonMeeting, Meeting.class);
+			Long id = receivedMeeting.getId();
 			
 			// no id given -> bad request
 			if(id == null) 
 				return Response.status(Response.Status.BAD_REQUEST).build();
 			
-			// get project from database
+			// get meeting from database
 			EntityManager em = PersistenceHelper.getPersistenceManager().getEntityManager();
 			em.getTransaction().begin();
-			Project dbProject = em.find(Project.class, id);
+			Meeting dbMeeting = em.find(Meeting.class, id);
 			
 			// set current language
-			dbProject.setCurrentLanguage(currentLanguage);
+			dbMeeting.setCurrentLanguage(currentLanguage);
 			
-			// merge project with changes
-			dbProject = jsonMapper.readerForUpdating(dbProject).readValue(jsonProject);
+			// merge meeting with changes
+			dbMeeting = jsonMapper.readerForUpdating(dbMeeting).readValue(jsonMeeting);
 
 			// set location by id - the location has to be exist already.
-			Long locationId = dbProject.getLocation().getId();
+			Long locationId = dbMeeting.getLocation().getId();
 			if(locationId == null)
 				return Response.status(Response.Status.BAD_REQUEST).build();
 			
 			// get location object by id
 			Location location = em.find(Location.class, locationId);
-			dbProject.setLocation(location);
+			dbMeeting.setLocation(location);
 
-			// update project in database
-			System.out.println("Project: " + dbProject);
-			System.out.println("Location: " + dbProject.getLocation());
-			em.persist(dbProject);
+			// update meeting in database
+			System.out.println("Meeting: " + dbMeeting);
+			System.out.println("Location: " + dbMeeting.getLocation());
+			em.persist(dbMeeting);
 			em.getTransaction().commit();
 			em.close();
-			System.out.println("updated project with id: " + dbProject.getId());
+			System.out.println("updated meeting with id: " + dbMeeting.getId());
 			
-			for(Host host: dbProject.getHosts()){
-				em = PersistenceHelper.getPersistenceManager().getEntityManager();
-				em.getTransaction().begin();
-				em.merge(host);
-				em.getTransaction().commit();
-				em.close();
-			}
-			
-			// return the updated project as json
-			String jsonResponse = jsonMapper.writeValueAsString(dbProject);
+			// return the updated meeting as json
+			String jsonResponse = jsonMapper.writeValueAsString(dbMeeting);
 			return Response.ok(jsonResponse).build();
 			
 		} catch(IllformedLocaleException e){

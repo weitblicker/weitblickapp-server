@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{>header}}
+
+  <body>
+      {{>navbar}}
+      <div class="row">
+        {{>sidebar}}
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <script type="text/javascript" src="/backend/file/addMeeting.js"></script>
+
+          <h1 class="page-header">Add New Meeting</h1>
+
+          <div id="msg" class="alert"></div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Title</h3>
+              <p class="msg name"></p>
+            </div>
+            <div class="panel-body">
+              <a href="#" class="editable title" id="name" data-type="text" data-pk="{{id}}" data-title="Enter title">{{name}}</a>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Abstract</h3>
+              <p class="msg abst"></p>
+            </div>
+            <div class="panel-body">
+              <a href="#" class="editable abstract" id="abst" data-type="textarea" data-pk="{{id}}" data-title="Enter abstract">{{abst}}</a>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Description</h3>
+              <p class="msg desc"></p>
+            </div>
+            <div class="panel-body">
+              <a href="#" class="editable description" id="desc" data-type="textarea" data-pk="{{id}}" data-title="Enter description">{{desc}}</a>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Location</h3>
+              <p class="msg location"></p>
+            </div>
+            <div class="panel-body">
+              <a href="#" class="editable location" id="location" value="{{location.id}}" data-type="select" data-pk="{{id}}" data-title="Select location"></a>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Host</h3>
+              <p class="msg location"></p>
+            </div>
+            <div class="panel-body">
+              <a href="#" class="editable host" id="host" value="{{host.id}}" data-type="select" data-pk="{{id}}" data-title="Select host"></a>
+            </div>
+          </div>
+
+          <button id="save-btn" class="btn btn-primary" style="display: inline-block;">Save new host!</button>
+          <button id="reset-btn" class="btn pull-right">Reset</button>
+	    </div>
+      </div>
+  </body>
+</html>

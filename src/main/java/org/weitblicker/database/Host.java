@@ -118,12 +118,14 @@ public class Host
     	return maintainer.contains(user);
     }
     
-    @JsonIgnore
+    @JsonIgnore // break the loop
     public List<User> getMaintainers(){
     	return new LinkedList<User>(maintainer);
     }
     
+    @JsonIgnore // break the loop
     public List<Project> getProjects(){
+    	System.out.println("getProjects... count" + projects.size());
     	return new LinkedList<Project>(projects);
     }
 

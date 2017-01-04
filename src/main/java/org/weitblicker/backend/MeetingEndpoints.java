@@ -2,13 +2,9 @@ package org.weitblicker.backend;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.HashSet;
 import java.util.IllformedLocaleException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -21,25 +17,22 @@ import org.weitblicker.Options;
 import org.weitblicker.Secured;
 import org.weitblicker.UserRole;
 import org.weitblicker.Utility;
-import org.weitblicker.database.Host;
+import org.weitblicker.database.Meeting;
 import org.weitblicker.database.PersistenceHelper;
-import org.weitblicker.database.Project;
-import org.weitblicker.database.User;
-
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
-@Path("backend/meeting")
+@Path("backend/meetings")
 @Secured({UserRole.admin, UserRole.maintainer})
-public class ProjectEndpoints {
+public class MeetingEndpoints {
 	
     @Secured
 	@GET
 	@Path("{language}")
 	@Produces("text/html")
-	public Response projects(@Context SecurityContext securityContext, @PathParam("language") final String language){
-		System.out.println("All projects...");
+	public Response meetings(@Context SecurityContext securityContext, @PathParam("language") final String language){
+		System.out.println("All meetings...");
 		
 		Locale currentLanguage = Options.DEFAULT_LANGUAGE;
 		
@@ -51,38 +44,27 @@ public class ProjectEndpoints {
         	return Response.status(Response.Status.BAD_REQUEST).build();
         }
 		
-		/*
-		// load projects connected to the user
-		User user = (User) securityContext.getUserPrincipal();
-		
-		Set<Project> projectsSet = new HashSet<Project>();
-		List<Host> hosts = user.getHosts();
-		for(Host host: hosts){
-			projectsSet.addAll(host.getProjects());
-		
-		List<Project> projects = new LinkedList<Project>(projects);
-		*/
-		List<Project> projects = PersistenceHelper.getAllProjects();
+		List<Meeting> meetings = PersistenceHelper.getMeetings();
 
 		// set language for response
-		for(Project project : projects){
-			project.setCurrentLanguage(currentLanguage);
+		for(Meeting meeting : meetings){
+			meeting.setCurrentLanguage(currentLanguage);
 		}
 
 		class BackendInfo{
 			public BackendInfo(
-					List<Project> projects,
+					List<Meeting> meetings,
 					Locale language
 					){
-				this.projects = projects;
+				this.meetings = meetings;
 				this.language = language;
 			}
-			List<Project> projects;
+			List<Meeting> meetings;
 			Locale language;	
 			
 			@SuppressWarnings("unused")
-			public List<Project>getProjects(){
-				return projects;
+			public List<Meeting>getMeetings(){
+				return meetings;
 			}
 
 			@SuppressWarnings("unused")
@@ -92,10 +74,10 @@ public class ProjectEndpoints {
 		}
 		
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/projects.mustache");
+	    Mustache mustache = mf.compile("files/meetings.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
-			mustache.execute(stringWriter, new BackendInfo(projects, currentLanguage)).flush();
+			mustache.execute(stringWriter, new BackendInfo(meetings, currentLanguage)).flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -105,9 +87,9 @@ public class ProjectEndpoints {
 	@GET
 	@Path("add")
 	@Produces("text/html")
-	public Response addProject(){
+	public Response addMeeting(){
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/addProject.mustache");
+	    Mustache mustache = mf.compile("files/addMeeting.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, new Object()).flush();
@@ -120,7 +102,7 @@ public class ProjectEndpoints {
 	@GET
 	@Path("{language}/edit/{id}")
 	@Produces("text/html")
-	public Response editProject(@PathParam("id") Long id, @PathParam("language") final String language){
+	public Response editMeeting(@PathParam("id") Long id, @PathParam("language") final String language){
 
 
 		Locale currentLanguage = Options.DEFAULT_LANGUAGE;
@@ -133,15 +115,15 @@ public class ProjectEndpoints {
         	return Response.status(Response.Status.BAD_REQUEST).build();
         }
 		
-		System.out.println("Project with id:" + id);
-		Project project = PersistenceHelper.getProject(id);
-		project.setCurrentLanguage(currentLanguage);
+		System.out.println("Meeting with id:" + id);
+		Meeting meeting = PersistenceHelper.getMeeting(id);
+		meeting.setCurrentLanguage(currentLanguage);
 		
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/editProject.mustache");
+	    Mustache mustache = mf.compile("files/editMeeting.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
-			mustache.execute(stringWriter, project).flush();
+			mustache.execute(stringWriter, meeting).flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

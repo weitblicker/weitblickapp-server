@@ -25,17 +25,17 @@ import javax.persistence.Transient;
 
 import org.weitblicker.Options;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.GenerationType;
 
 
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "projects")
-public class Project implements Serializable{
+@Table(name = "meetings")
+public class Meeting implements Serializable{
 	
-	public Project(){
-		hosts = new HashSet<Host>();
-	}
+	public Meeting(){ }
 	
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CUST_SEQ")
@@ -154,7 +154,7 @@ public class Project implements Serializable{
 	
 	@ManyToMany
     @JoinTable(
-            name="project_images",
+            name="meeting_images",
             joinColumns=@JoinColumn(name="image_id", referencedColumnName="id"),
             inverseJoinColumns=@JoinColumn(name="project_id", referencedColumnName="id"))
 	private List<Image> images = new LinkedList<Image>();
@@ -184,7 +184,7 @@ public class Project implements Serializable{
 	
 	// returns and adds a list of images are not in the database yet
 	public List<Image> scanFolder(){
-		String folderPath = "project-images/" + getId() + "/";
+		String folderPath = "meeting-images/" + getId() + "/";
 		File folder = new File(folderPath);
 		
 		// create directory if necessary 
@@ -194,9 +194,9 @@ public class Project implements Serializable{
 		
 		// check if the directory has been created successfully
 		if(!folder.isDirectory()){
-			System.out.println("Can not scan the project image folder for id: " + id + "!\n"
+			System.out.println("Can not scan the meeting image folder for id: " + id + "!\n"
 						+ "\"" + folderPath + "\" is not a directory!");
-			throw new IllegalArgumentException("Can not scan the projet image folder for id: " + id + "!\n"
+			throw new IllegalArgumentException("Can not scan the meeting image folder for id: " + id + "!\n"
 						+ "\"" + folderPath + "\" is not a directory!");
 		}
 		
@@ -232,7 +232,7 @@ public class Project implements Serializable{
 		while(iter.hasNext()){
 			Image image = iter.next();
 			if(image.getImageId().equals(id)){
-				System.out.println("remove project image from project - image: " + image);
+				System.out.println("remove meeting image from meeting - image: " + image);
 				iter.remove();
 				return image;
 			}
@@ -244,68 +244,20 @@ public class Project implements Serializable{
 		this.images = images;
 	}
 	
-	@ManyToMany(mappedBy="projects")
-	Set<Host> hosts;
+	@ManyToOne
+	@JoinColumn(name = "key_host")
+	Host host;
 	
-	public boolean hasHost(Host host){
-		return hosts.contains(host);
+	public void setHost(Host host){
+		this.host = host;
 	}
 	
-	public void addHost(Host host){
-		if(!hasHost(host)){
-			hosts.add(host);
-		}
-		if(!host.hasProject(this)){
-			host.addProject(this);
-		}
+	public void setHost(long id){
+		this.host = PersistenceHelper.getHost(id);
 	}
 
-	public void removeHost(Host host) {
-		if(hasHost(host)){
-			hosts.remove(host);
-		}
-		if(host.hasProject(this)){
-			host.removeProject(this);
-		}
-	}
-	
-	// removes connections from both sides
-	public void clearHost(){
-		Iterator<Host> hIter = hosts.iterator();
-		while(hIter.hasNext()){
-			Host host = hIter.next();
-			Iterator<Project> pIter = host.projects.iterator();
-			while(pIter.hasNext()){
-				Project project = pIter.next();
-				if(project == this){
-					pIter.remove();
-					break;
-				}
-			}
-			hIter.remove();
-		}
-	}
-	
-	public List<Long> getHostIds(){
-		List<Long> ids = new LinkedList<Long>();
-		for(Host host : hosts){
-			ids.add(host.getId());
-		}
-		return ids;
-	}
-	
-	public void setHostIds(List<Long> ids){
-		clearHost();
-		for(Long id:ids){
-			Host host = PersistenceHelper.getHost(id);
-			if(host != null){
-				addHost(host);
-			}
-		}
-	}
-
-	public List<Host> getHosts() {
-		return new LinkedList<Host>(hosts);
+	public Host getHost(){
+		return this.host;
 	}
 		
 }

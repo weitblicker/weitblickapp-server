@@ -1,7 +1,7 @@
 $.fn.editable.defaults.mode = 'inline';
 
 $(document).ready(function() {
-    $('.editable').not('#location').not('#hostIds').editable({
+    $('.editable').not('#location').not('#host').editable({
         ajaxOptions: {
             contentType: 'application/json',
             dataType: 'json', 
@@ -56,7 +56,7 @@ $(document).ready(function() {
         }
     });
 
-    $('#hostIds').editable({
+    $('#host').editable({
         ajaxOptions: {
             contentType: 'application/json',
             dataType: 'json',

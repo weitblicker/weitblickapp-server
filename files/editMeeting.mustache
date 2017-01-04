@@ -6,19 +6,19 @@
 	<div class="row">
 		{{>sidebar}}
 
-		<script type="text/javascript" src="/backend/file/updateProject.js"></script>
+		<script type="text/javascript" src="/backend/file/updateMeeting.js"></script>
 
 		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
 			<span>current language:{{language}} </span><span> – switch laguage:</span>
 
-			<a href="/backend/projects/de/edit/{{id}}">
+			<a href="/backend/meetings/de/edit/{{id}}">
 				<i class="flag-icon flag-icon-de"></i> DE
 			</a>
-			<a href="/backend/projects/en/edit/{{id}}">
+			<a href="/backend/meetings/en/edit/{{id}}">
 				<i class="flag-icon flag-icon-gb"></i> EN
 			</a>
-			<a href="/backend/projects/fr/edit/{{id}}">
+			<a href="/backend/meetings/fr/edit/{{id}}">
 				<i class="flag-icon flag-icon-fr"></i> FR
 			</a>
 
@@ -28,7 +28,7 @@
 					<h3 class="panel-title">Title</h3>
 				</div>
 				<div class="panel-body">
-					<a href="#" class="editable" id="name" data-type="text" data-pk="{{id}}" data-title="Enter username" data-url="/rest/project/update/{{language}}">{{name}}</a>
+					<a href="#" class="editable" id="name" data-type="text" data-pk="{{id}}" data-title="Enter username" data-url="/rest/meeting/update/{{language}}">{{name}}</a>
 				</div>
 			</div>
 
@@ -37,7 +37,7 @@
 					<h3 class="panel-title">Abstract</h3>
 				</div>
 				<div class="panel-body">
-					<a href="#" class="editable" id="abst" data-type="textarea" data-pk="{{id}}" data-title="Enter username" data-url="/rest/project/update/{{language}}">{{abst}}</a>
+					<a href="#" class="editable" id="abst" data-type="textarea" data-pk="{{id}}" data-title="Enter username" data-url="/rest/meeting/update/{{language}}">{{abst}}</a>
 				</div>
 			</div>
 
@@ -46,16 +46,16 @@
 					<h3 class="panel-title">Description</h3>
 				</div>
 				<div class="panel-body">
-					<a href="#" class="editable" id="desc" data-type="textarea" data-pk="{{id}}" data-title="Enter username" data-url="/rest/project/update/{{language}}">{{desc}}</a>
+					<a href="#" class="editable" id="desc" data-type="textarea" data-pk="{{id}}" data-title="Enter username" data-url="/rest/meeting/update/{{language}}">{{desc}}</a>
 				</div>
 			</div>
 
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h3 class="panel-title">Hosts</h3>
+					<h3 class="panel-title">Host</h3>
 				</div>
 				<div class="panel-body">
-					<a href="#" class="editable hostIds" id="hostIds" data-value="{{hostIds}}" data-type="checklist" data-pk="{{id}}" data-title="Select host" data-url="/rest/project/update/{{language}}"></a>
+					<a href="#" class="editable host" id="host" data-value="{{host.id}}" data-type="select" data-pk="{{id}}" data-title="Select host" data-url="/rest/meeting/update/{{language}}"></a>
 				</div>
 			</div>
 
@@ -64,7 +64,7 @@
 					<h3 class="panel-title">Location</h3>
 				</div>
 				<div class="panel-body">
-					<a href="#" class="editable location" id="location" data-value="{{location.id}}" data-type="select" data-pk="{{id}}" data-title="Select location" data-url="/rest/project/update/{{language}}"></a>
+					<a href="#" class="editable location" id="location" data-value="{{location.id}}" data-type="select" data-pk="{{id}}" data-title="Select location" data-url="/rest/meeting/update/{{language}}"></a>
 				</div>
 			</div>
 			<div class="panel panel-default">
@@ -76,9 +76,8 @@
 
 					<script type="text/javascript">
 						$(document).ready(function() {
-							console.log(window.location.hostname + "/rest/project/{{id}}/remove-image/{{imageId}}");
 							$("#upload-images").fileinput({
-								uploadUrl: '/rest/project/{{id}}/upload-image',
+								uploadUrl: '/rest/meeting/{{id}}/upload-image',
 								uploadAsync: true,
 								maxFileCount: 20,
 								initialPreview: [
@@ -94,7 +93,7 @@
 									size: {{size}},
 									width: "120px",
 									key: {{id}},
-									url: "/rest/project/{{id}}/remove-image/{{imageId}}"
+									url: "/rest/meeting/{{id}}/remove-image/{{imageId}}"
 								},
 								{{/images}}
 								],
