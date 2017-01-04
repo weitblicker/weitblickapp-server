@@ -2,6 +2,10 @@ package org.weitblicker.database;
 
 import java.io.File;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -21,6 +25,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.weitblicker.Options;
@@ -258,6 +264,25 @@ public class Meeting implements Serializable{
 
 	public Host getHost(){
 		return this.host;
+	}
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "datetime")
+	private Date datetime;
+	
+	@Transient
+    static DateFormat dateformat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+
+	public void setDatetime(String datetime) throws ParseException{
+		this.datetime = dateformat.parse(datetime);
+	}
+	
+	public void setDatetime(Date datetime){
+		this.datetime = datetime;
+	}
+	
+	public String getDatetime(){
+		return dateformat.format(datetime);
 	}
 		
 }

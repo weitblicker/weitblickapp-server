@@ -1,7 +1,7 @@
 $.fn.editable.defaults.mode = 'inline';
 
 $(document).ready(function() {
-    $('.editable').not('#location').not('#host').editable({
+    $('.editable').not('#location').not('#host').not('#datetime').editable({
         ajaxOptions: {
             contentType: 'application/json',
             dataType: 'json', 
@@ -88,6 +88,28 @@ $(document).ready(function() {
             var ret = JSON.stringify(list);
             return ret;
         },
+    });
+
+    $('#datetime').editable({
+        ajaxOptions: {
+            contentType: 'application/json',
+            dataType: 'json',
+            method: 'PUT'
+        },
+        params: function(params) {
+            var ret = {};
+            ret['id'] = params.pk;
+            ret[params.name] = params.value;
+            return JSON.stringify(ret);
+        },
+        format: 'DD.MM.YYYY hh:mm:ss',    
+        viewformat: 'DD.MM.YYYY hh:mm',    
+        template: 'DD  MMMM  YYYY – hh  mm',    
+        combodate: {
+            minYear: 2008,
+            maxYear: 2025,
+            minuteStep: 5
+        }
     });
 
 });
