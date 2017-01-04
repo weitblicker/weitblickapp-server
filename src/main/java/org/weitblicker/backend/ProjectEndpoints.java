@@ -30,7 +30,7 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 
-@Path("backend/meeting")
+@Path("backend/projects")
 @Secured({UserRole.admin, UserRole.maintainer})
 public class ProjectEndpoints {
 	

@@ -98,12 +98,12 @@ public class HostRestApi {
 				return Response.status(Response.Status.BAD_REQUEST).build();
 			}
 			
-			// get project from database
+			// get host from database
 			EntityManager em = PersistenceHelper.getPersistenceManager().getEntityManager();
 			em.getTransaction().begin();
 			Host dbHost = em.find(Host.class, id);
 			
-			// merge project with changes
+			// merge host with changes
 			dbHost = jsonMapper.readerForUpdating(dbHost).readValue(jsonHost);
 
 			em.persist(dbHost);
