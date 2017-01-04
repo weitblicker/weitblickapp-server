@@ -34,7 +34,7 @@ $(document).ready(function() {
 			url: '/rest/user/new',
 			type: 'POST',
 			data: JSON.stringify(data),
-			contentType: 'application/json; charset=utf-8',
+			contentType: 'application/json;',
 			dataType: 'json',
 			async: false,
 			success: function(data) {

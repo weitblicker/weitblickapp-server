@@ -140,11 +140,10 @@ public class UserRestApi {
 			for(Host host: dbUser.getHosts()){
 				em = PersistenceHelper.getPersistenceManager().getEntityManager();
 				em.getTransaction().begin();
-				em.persist(host);
+				em.merge(host);
 				em.getTransaction().commit();
 				em.close();
 			}
-			
 			
 			// return the updated user as json
 			String jsonResponse = jsonMapper.writeValueAsString(dbUser);

@@ -1,6 +1,16 @@
 $.fn.editable.defaults.mode = 'inline';
 
 $(document).ready(function() {
+
+    var showUpdatedMsg = function(response, newValue) {
+        console.log("success.");
+        if(response.status == 'error')
+            return response.msg;
+        $('#msg').html("user has been updated.");
+        $('#msg').show().delay(2000).fadeOut();
+    } 
+
+
     $('.editable').not('#hostIds').editable({
         ajaxOptions: {
             contentType: 'application/json',
@@ -12,7 +22,8 @@ $(document).ready(function() {
             ret['id'] = params.pk;
             ret[params.name] = params.value;
             return JSON.stringify(ret);
-        }
+        },
+        success: showUpdatedMsg,
     });
 
     $('#hostIds').editable({
@@ -46,7 +57,8 @@ $(document).ready(function() {
 
             var ret = JSON.stringify(list);
             return ret;
-        }
+        },
+        success: showUpdatedMsg,
     });
 
 });

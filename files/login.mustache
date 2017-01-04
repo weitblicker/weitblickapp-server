@@ -1,48 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-	{{>header}}
+{{>header}}
 
-	<body>
-    	<div class="container">
-    		<form class="form-signin">
-    			<h3 class="form-signin-heading">Weitsurf Login</h3>
-				<label for="inputEmail" class="sr-only">Email address</label>
-				<input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-				<label for="inputPassword" class="sr-only">Password</label>
-				<input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
-				<button id="submit" class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
-			</form>
-			<script type="text/javascript">
-				$(document).ready(function() {
+<body>
+	<div class="container">
 
-					$('#submit').click(function(event){
-						event.preventDefault();
-						var getUrl = window.location;
-						var baseUrl = getUrl .protocol + "//" + getUrl.host;
-						console.log(baseUrl.concat('/rest/authentication/'));
 
-						$.ajax({
-							method: 'POST',
-							url: baseUrl.concat('/rest/authentication/'),
-							data: {
-								email: $('#inputEmail').val(),
-								password: $('#inputPassword').val()
-							},
-							dataType: 'json',
-							success: function(data){
-								console.log('successfully logged in!');
-								window.location = '/backend/projects/en';
-							},
-							error: function(error){
-								console.log(error);
-								console.log('login failed!');
-							}
-						});
+		<form class="form-signin">
+			<div id="msg" class="alert"></div>
 
+			<h3 class="form-signin-heading">Weitsurf Login</h3>
+			<label for="inputEmail" class="sr-only">Email address</label>
+			<input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+			<label for="inputPassword" class="sr-only">Password</label>
+			<input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+			<button id="submit" class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+		</form>
+		<script type="text/javascript">
+			$(document).ready(function() {
+
+				$('#submit').click(function(event){
+					event.preventDefault();
+					var getUrl = window.location;
+					var baseUrl = getUrl .protocol + "//" + getUrl.host;
+					console.log(baseUrl.concat('/rest/authentication/'));
+
+					$.ajax({
+						method: 'POST',
+						url: baseUrl.concat('/rest/authentication/'),
+						data: {
+							email: $('#inputEmail').val(),
+							password: $('#inputPassword').val()
+						},
+						dataType: 'json',
+						success: function(data){
+							console.log('successfully logged in!');
+							window.location = '/backend/projects/en';
+						},
+						error: function(error){
+							console.log(error);
+							console.log('login failed!');
+							$('#msg').html("Sorry. Email or password are not correct!");
+							$('#msg').show().delay(2000).fadeOut();
+						} 
 					});
 				});
+			});
 
-			</script>
-		</div>
-	</body>
+		</script>
+	</div>
+</body>
 </html>

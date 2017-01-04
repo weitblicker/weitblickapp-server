@@ -198,6 +198,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             }
         } catch (NotAuthorizedException e) {
         	System.out.println(e.getMessage());
+
         	List<String> matchedUri = requestContext.getUriInfo().getMatchedURIs();
         	for(String uri : matchedUri){
             	if(uri.contains("backend")){
@@ -220,6 +221,11 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     }
     
     private boolean hasPermissions(SecurityContext context, List<UserRole> classRoles) {
+    	// if no role is specified all logged in users have access
+    	if(classRoles.isEmpty()){
+    		return true;
+    	}
+    	// check if user is in specified role
     	for(UserRole role:classRoles){
     		if(context.isUserInRole(role.name())){
     			return true;

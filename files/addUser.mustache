@@ -1,40 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-  {{>header}}
+{{>header}}
 
-  <body>
-      {{>navbar}}
-      <div class="row">
-        {{>sidebar}}
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <script type="text/javascript" src="/backend/file/addUser.js"></script>
+<body>
+  {{>navbar}}
+  <div class="row">
+    {{>sidebar}}
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      <script type="text/javascript" src="/backend/file/addUser.js"></script>
 
-          <h1 class="page-header">Add New Host</h1>
+      <h1 class="page-header">Add New Host</h1>
 
-          <div id="msg" class="alert"></div>
+      <div id="msg" class="alert"></div>
 
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h3 class="panel-title">Name</h3>
-              <p class="msg name"></p>
-            </div>
-            <div class="panel-body">
-              <a href="#" class="editable name" id="name" data-type="text" data-pk="{{id}}" data-title="Enter name">{{name}}</a>
-            </div>
-          </div>
-
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h3 class="panel-title">E-Mail</h3>
-              <p class="msg email"></p>
-            </div>
-            <div class="panel-body">
-              <a href="#" class="editable email" id="email" data-escape="false" data-type="email" data-pk="{{id}}" data-title="Enter email">{{email}}</a>
-            </div>
-          </div>
-
-          <button id="save-btn" class="btn btn-primary" style="display: inline-block;">Save new user!</button>
-	    </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Name</h3>
+          <p class="msg name"></p>
+        </div>
+        <div class="panel-body">
+          <a href="#" class="editable name" id="name" data-type="text" data-pk="{{id}}" data-title="Enter name">{{name}}</a>
+        </div>
       </div>
-  </body>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">E-Mail</h3>
+          <p class="msg email"></p>
+        </div>
+        <div class="panel-body">
+          <a href="#" class="editable email" id="email" data-escape="false" data-type="email" data-pk="{{id}}" data-title="Enter email">{{email}}</a>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+        <h3 class="panel-title">Password</h3>
+          <p class="msg password"></p>
+        </div>
+        <div class="panel-body">
+          <a href="#" class="editable password" id="password" data-escape="false" data-type="password" data-pk="{{id}}" data-title="Enter password"></a>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+        <h3 class="panel-title">Role</h3>
+          <p class="msg role"></p>
+        </div>
+        <div class="panel-body">
+          <a href="#" class="editable role" id="role" data-escape="false" data-type="select" data-pk="{{id}}" data-source="[{value: 'admin', text: 'Admin'}, {value: 'maintainer', text: 'Maintainer'}]" data-title="Select role"></a>
+        </div>
+      </div>
+
+      <button id="save-btn" class="btn btn-primary" style="display: inline-block;">Save new user!</button>
+    </div>
+  </div>
+</body>
 </html>

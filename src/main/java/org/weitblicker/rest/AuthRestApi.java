@@ -107,7 +107,7 @@ public class AuthRestApi
     	if(user == null){
     		throw new NotAuthorizedException("Not authorized, no user for the given email: \""+ email + "\"");
     	}
-    	if(!user.getPassword().equals(password)){
+    	if(!user.equalsPassword(password)){
     		throw new NotAuthorizedException("Not authorized, wrong password for user: " + user);
     	}
 		return user;

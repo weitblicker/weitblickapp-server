@@ -1,43 +1,67 @@
 <!DOCTYPE html>
 <html lang="{{language}}">
-	{{>header}}
-	<body>
-		{{>navbar}}
-    	<div class="row">
-    		{{>sidebar}}
+{{>header}}
+<body>
+	{{>navbar}}
+	<div class="row">
+		{{>sidebar}}
 
-    		<script type="text/javascript" src="/backend/file/updateUser.js"></script>
+		<script type="text/javascript" src="/backend/file/updateUser.js"></script>
 
-        	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">Name</h3>
-					</div>
-					<div class="panel-body">
-						<a href="#" class="editable" id="name" data-type="text" data-pk="{{id}}" data-title="Enter name" data-url="/rest/user/update">{{name}}</a>
-					</div>
+		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      
+      		<div id="msg" class="alert"></div>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Name</h3>
 				</div>
-
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">E-Mail</h3>
-					</div>
-					<div class="panel-body">
-						<a href="#" class="editable" id="email" data-type="email" data-pk="{{id}}" data-title="Enter email" data-url="/rest/user/update">{{email}}</a>
-					</div>
+				<div class="panel-body">
+					<a href="#" class="editable" id="name" data-type="text" data-pk="{{id}}" data-title="Enter name" data-url="/rest/user/update">{{name}}</a>
 				</div>
-
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">Hosts</h3>
-					</div>
-					<div class="panel-body">
-						<a href="#" class="editable hostIds" id="hostIds" data-value="{{hostIds}}" data-type="checklist" data-pk="{{id}}" data-title="Select host" data-url="/rest/user/update"></a>
-					</div>
-				</div>
-				        
 			</div>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">E-Mail</h3>
+				</div>
+				<div class="panel-body">
+					<a href="#" class="editable" id="email" data-type="email" data-pk="{{id}}" data-title="Enter email" data-url="/rest/user/update">{{email}}</a>
+				</div>
+			</div>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Hosts</h3>
+				</div>
+				<div class="panel-body">
+					<a href="#" class="editable hostIds" id="hostIds" data-value="{{hostIds}}" data-type="checklist" data-pk="{{id}}" data-title="Select host" data-url="/rest/user/update"></a>
+				</div>
+			</div>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+				<h3 class="panel-title">Change Password</h3>
+					<p class="msg password"></p>
+				</div>
+				<div class="panel-body">
+					<a href="#" class="editable password" id="password" data-escape="false" data-type="password" data-pk="{{id}}" data-title="Enter password" pattern=".{0}|.{8,}" required title="Either 0 OR (8 chars minimum)" data-url="/rest/user/update"></a>
+
+				</div>
+			</div>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Role</h3>
+					<p class="msg role"></p>
+				</div>
+				<div class="panel-body">
+					<a href="#" class="editable role" id="role" data-escape="false" data-type="select" data-pk="{{id}}" data-source="[{value: 'admin', text: 'Admin'}, {value: 'maintainer', text: 'Maintainer'}]" data-title="Select role" data-url="/rest/user/update">{{role}}</a>
+				</div>
+			</div>
+
 		</div>
-	</body>
+	</div>
+</body>
 </html>

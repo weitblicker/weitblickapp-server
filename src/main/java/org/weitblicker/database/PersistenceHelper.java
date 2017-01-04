@@ -39,15 +39,12 @@ public class PersistenceHelper
     public static User getUserByEmail(String email){
     	EntityManager em = persistenceManager.getEntityManager();
     	em.getTransaction().begin();
-    	System.out.println("email:" + email);
         TypedQuery<User> query = em.createQuery(
-                "SELECT u FROM User u WHERE u.email = ':emai'", User.class);
+                "SELECT u FROM User u WHERE u.email = :email", User.class);
         query.setParameter("email", email);
         User user = query.getSingleResult();
-        System.out.println("user: " + user);
         em.getTransaction().commit();
         em.close();
-
         return user;
     }
     

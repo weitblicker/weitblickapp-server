@@ -13,6 +13,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.weitblicker.SecurePasswordUtility;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -20,6 +23,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table( name = "users" )
 public class User implements Comparable<User>, Principal {
 	
+    @Transient
+	SecurePasswordUtility securePwUtil = new SecurePasswordUtility();
+
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CUST_SEQ")
 	@Column(name = "id")
@@ -38,9 +44,9 @@ public class User implements Comparable<User>, Principal {
 	@Column(name = "email", unique=true)
 	private String email;
 	
-    @JsonIgnore	
 	@Column(name = "password")
-	private String password;
+    @JsonIgnore	
+	private String passwordToken;
     
     public User(){
 		this.hosts = new HashSet<Host>();
@@ -50,7 +56,7 @@ public class User implements Comparable<User>, Principal {
 		this.email = email;
 		this.name = name;
 		this.hosts = new HashSet<Host>();
-		this.password = password;
+		this.passwordToken = password;
 	}
 	
 	public void addToHost(Host host){
@@ -86,14 +92,13 @@ public class User implements Comparable<User>, Principal {
 	public boolean maintains(Host host){	
 		return hosts.contains(host);
 	}
-	
-    @JsonIgnore
-	public String getPassword(){
-		return password;
-    }
     
     public void setPassword(String password){
-    	this.password = password;
+    	passwordToken = securePwUtil.hash(password);
+    }
+    
+    public boolean equalsPassword(String password){
+    	return securePwUtil.authenticate(password, passwordToken);
     }
     
     public String getName(){
@@ -117,21 +122,12 @@ public class User implements Comparable<User>, Principal {
 		return name.compareTo(o.getName());
 	}
 	
-	public int hashCode(){
-		if(name != null)
-			return name.hashCode();
-		else{
-			return super.hashCode();
-		}
-	}
-	
 	public String toString(){
-		if(name != null && email != null && password != null)
+		if(name != null && email != null && passwordToken != null)
 			return name + "<"+ email +">";
 		else
 			return "User is undefined!";
 	}
-	
 	
 	@Column(name = "role")
 	private String role;
