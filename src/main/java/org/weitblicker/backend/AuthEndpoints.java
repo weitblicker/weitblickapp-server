@@ -21,7 +21,7 @@ public class AuthEndpoints {
 	@Produces("text/html")
     public Response loginForm(){
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/login.mustache");
+	    Mustache mustache = mf.compile("files/mustache/login.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, new Object()).flush();

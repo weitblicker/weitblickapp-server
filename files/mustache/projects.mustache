@@ -7,14 +7,14 @@
       <div class="row">
         {{>sidebar}}
 
-        <script type="text/javascript" src="/backend/file/meetings.js"></script>
+        <script type="text/javascript" src="/backend/file/js/projects.js"></script>
 
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-			<h1 class="page-header">Weitblick Meetings</h1>
+			<h1 class="page-header">Weitblick Projects</h1>
 
 			<div class="row">
 				<div class="col-xs-6 col-sm-3">
-					<a href="/backend/meetings/add">Add new Meeting</a>
+					<a href="/backend/projects/add">Add new Project</a>
 				</div>
 			</div>
 
@@ -32,7 +32,7 @@
 			  {{/projects}}
 			</div>
 
-			<h2 class="sub-header">Meetings Overview</h2>
+			<h2 class="sub-header">Projects Overview</h2>
 			<div class="table-responsive">
 			  <table class="table table-striped">
 			    <thead>
@@ -45,26 +45,28 @@
 			      </tr>
 			    </thead>
 			    <tbody>
-			      {{#meetings}}
+			      {{#projects}}
 			      <tr>
 			        <th scope="row">{{id}}</th>
 			        <td>{{name}}</td>
 			        <td>	
-						{{#host}}<a href="/backend/hosts/edit/{{id}}">{{name}}</a>{{/host}}
+						{{#hosts}}
+						<p><a href="/backend/hosts/edit/{{id}}">{{name}}</a></p>
+						{{/hosts}}
 			        </td>
 			        <td>{{#location}}<a href="/backend/locations/en/edit/{{id}}">{{name}}</a>{{/location}}
 			        </td>
 			        <td>
-			          <a href="/backend/meetings/{{language}}/edit/{{id}}">
+			          <a href="/backend/projects/{{language}}/edit/{{id}}">
 			            <i class="fa fa-pencil" aria-hidden="true"></i>
 			          </a>
 
-			          <a class="delete" href="/rest/meeting/remove/{{id}}">
+			          <a class="delete" href="/rest/project/remove/{{id}}">
 			            <i class="fa fa-trash" aria-hidden="true"></i>
 			          </a>
 			        </td>
 			      </tr>
-			      {{/meetings}}
+			      {{/projects}}
 			    </tbody>
 			  </table>
 			</div>

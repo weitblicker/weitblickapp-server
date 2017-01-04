@@ -74,7 +74,7 @@ public class LocationEndpoints {
 		}
 		
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/locations.mustache");
+	    Mustache mustache = mf.compile("files/mustache/locations.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, new BackendInfo(locations, currentLanguage)).flush();
@@ -89,7 +89,7 @@ public class LocationEndpoints {
 	@Produces("text/html")
 	public Response addLocation(){
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/addLocation.mustache");
+	    Mustache mustache = mf.compile("files/mustache/addLocation.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, new Object()).flush();
@@ -126,7 +126,7 @@ public class LocationEndpoints {
 		location.setCurrentLanguage(currentLanguage);
 		
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/editLocation.mustache");
+	    Mustache mustache = mf.compile("files/mustache/editLocation.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, location).flush();

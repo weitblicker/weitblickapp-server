@@ -74,7 +74,7 @@ public class MeetingEndpoints {
 		}
 		
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/meetings.mustache");
+	    Mustache mustache = mf.compile("files/mustache/meetings.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, new BackendInfo(meetings, currentLanguage)).flush();
@@ -89,7 +89,7 @@ public class MeetingEndpoints {
 	@Produces("text/html")
 	public Response addMeeting(){
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/addMeeting.mustache");
+	    Mustache mustache = mf.compile("files/mustache/addMeeting.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, new Object()).flush();
@@ -120,7 +120,7 @@ public class MeetingEndpoints {
 		meeting.setCurrentLanguage(currentLanguage);
 		
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/editMeeting.mustache");
+	    Mustache mustache = mf.compile("files/mustache/editMeeting.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, meeting).flush();

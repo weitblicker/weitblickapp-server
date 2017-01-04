@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringWriter;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -21,9 +20,6 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.mustachejava.DefaultMustacheFactory;
-import com.github.mustachejava.Mustache;
-import com.github.mustachejava.MustacheFactory;
 
 @Path("backend")
 public class BackendEndpoint {
@@ -79,22 +75,7 @@ public class BackendEndpoint {
             e.printStackTrace();
         }
 
-    }
-        
-	@GET
-	@Path("upload/form")
-	@Produces("text/html")
-	public Response uploadForm(){
-	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/upload_file.mustache");
-	    StringWriter stringWriter = new StringWriter();
-	    try {
-			mustache.execute(stringWriter, new Object()).flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return Response.ok(stringWriter.getBuffer().toString()).build();
-	}	
+    }	
 
 	@GET
 	@Path("download/{file:.*}")

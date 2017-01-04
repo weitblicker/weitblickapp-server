@@ -9,18 +9,18 @@
 		{{>sidebar}}
 
 
-		<script type="text/javascript" src="/backend/file/users.js"></script>
+		<script type="text/javascript" src="/backend/file/js/projects.js"></script>
 
 		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-			<h1 class="page-header">Weitblick Users</h1>
+			<h1 class="page-header">Weitblick Hosts</h1>
 
 			<div class="row">
 				<div class="col-xs-6 col-sm-3">
-					<a href="/backend/users/add">Add new User</a>
+					<a href="/backend/hosts/add">Add new Host</a>
 				</div>
 			</div>
 
-			<h2 class="sub-header">Users Overview</h2>
+			<h2 class="sub-header">Hosts Overview</h2>
 			<div class="table-responsive">
 				<table class="table table-striped">
 					<thead>
@@ -28,25 +28,38 @@
 							<th>ID</th>
 							<th>Name</th>
 							<th>E-Mail</th>
+							<th>Maintainers</th>
+							<th>Projects</th>
+
 						</tr>
 					</thead>
 					<tbody>
-						{{#users}}
+						{{#hosts}}
 						<tr>
 							<th scope="row">{{id}}</th>
 							<td>{{name}}</td>
 							<td>{{email}}</td>
 							<td>
-								<a href="/backend/users/edit/{{id}}">
+								{{#maintainers}}
+								<p><a href="/backend/users/edit/{{id}}">{{name}} – {{email}} </a></p>
+								{{/maintainers}}
+							</td>
+							<td>
+								{{#projects}}
+								<p><a href="/backend/projects/en/edit/{{id}}">{{name}}</a></p>
+								{{/projects}}
+							</td>
+							<td>
+								<a href="/backend/hosts/edit/{{id}}">
 									<i class="fa fa-pencil" aria-hidden="true"></i>
 								</a>
 
-								<a class="delete" href="/rest/user/remove/{{id}}">
+								<a class="delete" href="/rest/host/remove/{{id}}">
 									<i class="fa fa-trash" aria-hidden="true"></i>
 								</a>
 							</td>
 						</tr>
-						{{/users}}
+						{{/hosts}}
 					</tbody>
 				</table>
 			</div>

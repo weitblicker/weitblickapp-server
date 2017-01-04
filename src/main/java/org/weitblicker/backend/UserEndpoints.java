@@ -55,7 +55,7 @@ public class UserEndpoints {
 		}
 		
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/users.mustache");
+	    Mustache mustache = mf.compile("files/mustache/users.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, new BackendInfo(users)).flush();
@@ -70,7 +70,7 @@ public class UserEndpoints {
 	@Produces("text/html")
 	public Response addUser(){
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/addUser.mustache");
+	    Mustache mustache = mf.compile("files/mustache/addUser.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, new Object()).flush();
@@ -95,7 +95,7 @@ public class UserEndpoints {
 		}
 		
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/editUser.mustache");
+	    Mustache mustache = mf.compile("files/mustache/editUser.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, user).flush();

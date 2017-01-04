@@ -2,13 +2,9 @@ package org.weitblicker.backend;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.HashSet;
 import java.util.IllformedLocaleException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -21,11 +17,8 @@ import org.weitblicker.Options;
 import org.weitblicker.Secured;
 import org.weitblicker.UserRole;
 import org.weitblicker.Utility;
-import org.weitblicker.database.Host;
 import org.weitblicker.database.PersistenceHelper;
 import org.weitblicker.database.Project;
-import org.weitblicker.database.User;
-
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
@@ -92,7 +85,7 @@ public class ProjectEndpoints {
 		}
 		
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/projects.mustache");
+	    Mustache mustache = mf.compile("files/mustache/projects.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, new BackendInfo(projects, currentLanguage)).flush();
@@ -107,7 +100,7 @@ public class ProjectEndpoints {
 	@Produces("text/html")
 	public Response addProject(){
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/addProject.mustache");
+	    Mustache mustache = mf.compile("files/mustache/addProject.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, new Object()).flush();
@@ -138,7 +131,7 @@ public class ProjectEndpoints {
 		project.setCurrentLanguage(currentLanguage);
 		
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/editProject.mustache");
+	    Mustache mustache = mf.compile("files/mustache/editProject.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, project).flush();

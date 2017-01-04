@@ -53,7 +53,7 @@ public class HostEndpoints {
 			}
 			
 		    MustacheFactory mf = new DefaultMustacheFactory();
-		    Mustache mustache = mf.compile("files/hosts.mustache");
+		    Mustache mustache = mf.compile("files/mustache/hosts.mustache");
 		    StringWriter stringWriter = new StringWriter();
 		    try {
 				mustache.execute(stringWriter, new BackendInfo(hosts)).flush();
@@ -72,7 +72,7 @@ public class HostEndpoints {
 	@Produces("text/html")
 	public Response addHost(){
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/addHost.mustache");
+	    Mustache mustache = mf.compile("files/mustache/addHost.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, new Object()).flush();
@@ -97,7 +97,7 @@ public class HostEndpoints {
 		}
 		
 	    MustacheFactory mf = new DefaultMustacheFactory();
-	    Mustache mustache = mf.compile("files/editHost.mustache");
+	    Mustache mustache = mf.compile("files/mustache/editHost.mustache");
 	    StringWriter stringWriter = new StringWriter();
 	    try {
 			mustache.execute(stringWriter, host).flush();
