@@ -40,6 +40,7 @@
 			        <th>ID</th>
 			        <th>Titel</th>
 			        <th>Hosts</th>
+			        <th>Date & Time</th>
 			        <th>Location</th>
 			        <th>Bearbeiten</th>
 			      </tr>
@@ -52,6 +53,7 @@
 			        <td>	
 						{{#host}}<a href="/backend/hosts/edit/{{id}}">{{name}}</a>{{/host}}
 			        </td>
+			        <td>{{datetime}}</td>
 			        <td>{{#location}}<a href="/backend/locations/en/edit/{{id}}">{{name}}</a>{{/location}}
 			        </td>
 			        <td>

@@ -106,7 +106,7 @@ $(document).ready(function() {
         viewformat: 'DD.MM.YYYY HH:mm',    
         template: 'DD  MMMM  YYYY   –   HH  mm',    
         combodate: {
-            minYear: 2008,
+            minYear: 2017,
             maxYear: 2025,
             minuteStep: 5
         }
