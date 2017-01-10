@@ -102,9 +102,9 @@ $(document).ready(function() {
             ret[params.name] = params.value;
             return JSON.stringify(ret);
         },
-        format: 'DD.MM.YYYY hh:mm:ss',    
-        viewformat: 'DD.MM.YYYY hh:mm',    
-        template: 'DD  MMMM  YYYY – hh  mm',    
+        format: 'DD.MM.YYYY HH:mm:ss',    
+        viewformat: 'DD.MM.YYYY HH:mm',    
+        template: 'DD  MMMM  YYYY   –   HH  mm',    
         combodate: {
             minYear: 2008,
             maxYear: 2025,
