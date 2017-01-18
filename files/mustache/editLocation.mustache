@@ -74,8 +74,8 @@
 					marker.setPosition(center);
 				};
 
-				map.addListener('dragend', updateLocation);
-				map.addListener('zoom_changed', updateLocation);
+				//map.addListener('dragend', updateLocation);
+				//map.addListener('zoom_changed', updateLocation);
 
 				map.addListener('center_changed', function(){
 					marker.setPosition(map.getCenter());
@@ -84,6 +84,20 @@
 
 			}
 
+			function saveGeoCoords(){
+				console.log("save geo coords!");
+				updateLocation();
+			}
+
+			function resetGeoCoords(){
+				console.log("reset geo coords");
+				var location = $('.editable').editable( 'getValue' );
+				var center = new google.maps.LatLng(location.latitude, location.longitude);
+				console.log(location);
+				marker.setPosition(center);
+				map.setCenter(center);
+				map.setZoom(parseInt(location.mapZoom));
+			}
 
 			function codeAddress() {
 				var address = document.getElementById("address").value;
@@ -192,6 +206,9 @@
 				<div>
 					<input id="address" type="textbox" value="Osnabrück, De">
 					<input type="button" value="Encode" onclick="codeAddress()">
+					<input type="button" value="Save Geo Coords" onclick="saveGeoCoords()">
+					<input type="button" value="Reset Geo Coords" onclick="resetGeoCoords()">
+
 				</div>
 			</div>
 		</div>
