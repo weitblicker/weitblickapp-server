@@ -42,6 +42,7 @@ import javax.persistence.GenerationType;
 public class Meeting implements Serializable{
 	
 	public Meeting(){ }
+
 	
     @Id
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="CUST_SEQ")
@@ -50,6 +51,12 @@ public class Meeting implements Serializable{
     
     public Long getId(){
 		return id;
+    }
+
+    // First used for cloning: Detach meeting to clone from persistent manager,
+    // reset id (setting it to null) and do normal inserting procedure.
+    public void resetId() {
+    	this.id = null;
     }
     
     @Transient

@@ -10,7 +10,9 @@ in the directory of the project. Further, a running `MySQL` server is required.
 
 ## Building the webserver
 
-### Edit the `options.properties`. An example is given below. Basically, all you need is to modify paths and ports.
+### Edit the `options.properties`
+
+An example is given below. Basically, all you need is to modify paths and ports.
 
 ```
 weitblickapp-server.BASE_URI=https://weitblick-server:443/
@@ -22,6 +24,13 @@ weitblickapp-server.DEFAULT_LANGUAGE=en
 weitblickapp-server.keystore.location=/keystore/location
 weitblickapp-server.keystore.password=password
 weitblickapp-server.use_ssl=true
+
+```
+
+### Compiling the project
+
+```
+
 
 ```
 

@@ -127,7 +127,12 @@ $(document).ready(function() {
 			dataType: 'json',
 			async: false,
 			success: function(data) {
-				window.location.replace("/backend/meetings/de/edit/" + data.id);
+                // TODO Guide to right language page or even to an overview where
+                // one can choose between keeping or editing the meeting.
+                var lang = data.language;
+                console.log(lang);
+				//window.location.replace("/backend/meetings/en/edit/" + data.id);
+                window.location.replace("/backend/meetings/"+lang+"/edit/" + data.id);
 			}
 		});
 

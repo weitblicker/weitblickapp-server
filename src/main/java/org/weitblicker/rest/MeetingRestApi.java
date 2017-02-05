@@ -154,6 +154,59 @@ public class MeetingRestApi {
 		
 		return Response.ok().build();
 	}
+
+	@POST
+	@Path("clone/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response cloneMeeting(@PathParam("id") final Long id){
+		
+		try{
+			EntityManager em =PersistenceHelper.getPersistenceManager().getEntityManager();
+			em.getTransaction().begin();
+			System.out.println("trying to clone meeting with the id: " + id);
+			
+			Meeting meeting_old = em.find(Meeting.class, id);
+			em.detach(meeting_old);
+			meeting_old.resetId();
+
+			if(meeting_old.getId() == null){
+				System.out.println("no id given, meeting is new...");
+				try{
+								//em.persist(meeting_old);
+			
+					long id_new = PersistenceHelper.createOrUpdateMeeting(meeting_old);
+					System.out.println("created new meeting with id: " + id_new);
+
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+				
+				try {
+					String jsonResponse = jsonMapper.writeValueAsString(meeting_old);
+					em.getTransaction().commit();
+					em.close();
+					System.out.println("Cloned...");
+					return Response.ok(jsonResponse).build();
+				} catch (JsonProcessingException e) {
+					em.close();
+					e.printStackTrace();
+					return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+				}
+			}else{
+				return Response.status(Response.Status.BAD_REQUEST).build();
+			}
+
+
+		} catch(Exception e){
+			
+			e.printStackTrace();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+
+	}
+
+
 	
 	@GET
 	@Path("{meetingId}/remove-image/{imageId}")
