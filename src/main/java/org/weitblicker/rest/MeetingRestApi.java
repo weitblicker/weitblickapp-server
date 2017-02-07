@@ -79,7 +79,6 @@ public class MeetingRestApi {
 	            	return Response.status(Response.Status.BAD_REQUEST).build();
 	        	}
         	}
-        	
             List<Meeting> meetings = PersistenceHelper.getMeetings();
             for(Meeting meeting : meetings){
             	meeting.setCurrentLanguage(currentLanguage);

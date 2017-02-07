@@ -308,16 +308,18 @@ public class PersistenceHelper
         return needs;
     }
 
-	public static List<Meeting> getMeetings() {
-    	EntityManager em = persistenceManager.getEntityManager();
-    	em.getTransaction().begin();
+    public static List<Meeting> getMeetings() {
+        
+        EntityManager em = persistenceManager.getEntityManager();
+        em.getTransaction().begin();
         TypedQuery<Meeting> query = em.createQuery(
-                "SELECT m FROM Meeting m", Meeting.class);
+        "SELECT m FROM Meeting m", Meeting.class);
         List<Meeting> meetings = query.getResultList();
         em.getTransaction().commit();
         em.close();
         return meetings;
-	}
+    }
+
 
 	public static Meeting getMeeting(Long meetingId) {
     	EntityManager em = persistenceManager.getEntityManager();

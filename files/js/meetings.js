@@ -21,8 +21,6 @@ $(document).ready(function() {
         event.preventDefault();
         var data = $('.editable').editable('getValue');
 
-        // TODO validate data
-
         $.ajax({
             url: $(this).attr('href'),
             type: 'POST',
@@ -32,25 +30,9 @@ $(document).ready(function() {
             async: false,
             success: function(data) {
                 console.log("Meeting cloned");
-                window.location.replace("/backend/meetings/en/edit/" + data.id);
+                window.location.replace("/backend/meetings/"+data.language+"/edit/" + data.id);
             }
         });
-
-        /*
-        event.preventDefault();
-        $.ajax({
-            url: $(this).attr('href'),
-            method: 'POST',
-            success: function(){
-                //location.reload();
-                window.location.replace("/backend/meetings/en/edit/" + data.id);
-                console.log("Cloned meeting!");
-            },
-            error: function(){
-                console.log("An error occurred!")
-            }
-
-        });*/
     });
 
 });
