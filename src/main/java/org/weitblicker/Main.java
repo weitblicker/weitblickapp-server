@@ -128,7 +128,7 @@ public class Main
     {
     	
         final HttpServer server = Options.USE_SSL ? startSecureServer() : startServer();
-        final HttpServer redirector = Options.USE_SSL ? startRedirectToHttpsServer() : null;
+        final HttpServer redirector = Options.USE_SSL && Options.USE_HTTP_REDIRECTOR ? startRedirectToHttpsServer() : null;
 
         if(!server.isStarted()){
         	System.out.println("start server...");

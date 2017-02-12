@@ -92,4 +92,8 @@ public class Options
     private static final String USE_SSL_STR = getString(USE_SSL_KEY, "false");
     public static final boolean USE_SSL = Boolean.valueOf(USE_SSL_STR);
 
+    private static final String USE_HTTP_REDIRECTOR_KEY = "weitblickapp-server.use_http_redirector";
+    private static final String USE_HTTP_REDIRECTOR_STR = getString(USE_HTTP_REDIRECTOR_KEY, "false");
+    public static final boolean USE_HTTP_REDIRECTOR = Boolean.valueOf(USE_HTTP_REDIRECTOR_STR);
+
 }
