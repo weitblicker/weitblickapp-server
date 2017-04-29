@@ -17,6 +17,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.weitblicker.Secured;
+import org.weitblicker.UserRole;
 import org.weitblicker.database.Host;
 import org.weitblicker.database.PersistenceHelper;
 
@@ -41,7 +43,8 @@ public class HostRestApi {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
     }
-    
+
+	@Secured({UserRole.admin})
 	@POST
 	@Path("new")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -80,8 +83,9 @@ public class HostRestApi {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}		
 	}
-	
-	@PUT
+
+	@Secured({UserRole.admin})
+	@POST
 	@Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -126,9 +130,9 @@ public class HostRestApi {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		} 
 	}
-	
-	
-	@DELETE
+
+	@Secured({UserRole.admin})
+	@POST
 	@Path("remove/{id}")
 	public Response removeHost(@PathParam("id") final Long id){
 		EntityManager em =PersistenceHelper.getPersistenceManager().getEntityManager();

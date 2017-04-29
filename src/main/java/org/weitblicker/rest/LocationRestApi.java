@@ -20,6 +20,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.weitblicker.Options;
+import org.weitblicker.Secured;
+import org.weitblicker.UserRole;
 import org.weitblicker.Utility;
 import org.weitblicker.database.Location;
 import org.weitblicker.database.PersistenceHelper;
@@ -48,7 +50,8 @@ public class LocationRestApi {
         }
         return "";
     }
-    
+
+	@Secured({UserRole.admin, UserRole.maintainer})
 	@POST
 	@Path("new")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -106,8 +109,9 @@ public class LocationRestApi {
 		}
 		
 	}
-	
-	@PUT
+
+	@Secured({UserRole.admin, UserRole.maintainer})
+	@POST
 	@Path("update/{language}")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -168,9 +172,9 @@ public class LocationRestApi {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	
-	
-	@DELETE
+
+	@Secured({UserRole.admin, UserRole.maintainer})
+	@POST
 	@Path("remove/{id}")
 	public Response removeLocation(@PathParam("id") final Long id){
 		
