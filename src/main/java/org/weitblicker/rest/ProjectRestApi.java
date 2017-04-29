@@ -33,6 +33,7 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.weitblicker.Options;
 import org.weitblicker.Secured;
+import org.weitblicker.UserRole;
 import org.weitblicker.Utility;
 import org.weitblicker.database.Host;
 import org.weitblicker.database.Image;
@@ -129,8 +130,7 @@ public class ProjectRestApi {
         }
     }
 
-
-	@Secured
+	@Secured({UserRole.admin, UserRole.maintainer})
 	@DELETE
 	@Path("remove/{id}")
 	public Response removeProject(@PathParam("id") final Long id){
@@ -143,7 +143,7 @@ public class ProjectRestApi {
 				System.out.println("No project for the given id \"" + id + "\".");
 				return Response.status(Status.BAD_REQUEST).build();
 			}
-			
+
 			System.out.println("remove project: " + project);
 
 			em.remove(project);
@@ -153,11 +153,11 @@ public class ProjectRestApi {
 		}
 		em.getTransaction().commit();
 		em.close();
-		
+
 		return Response.ok().build();
 	}
 
-	@Secured
+	@Secured({UserRole.admin, UserRole.maintainer})
 	@GET
 	@Path("{projectId}/remove-image/{imageId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -173,7 +173,7 @@ public class ProjectRestApi {
 			Project project = em.find(Project.class, projectId);
 			Image image = project.removeImage(imageId);
 			if(image == null){
-				throw new IllegalArgumentException("The image id \"" + imageId 
+				throw new IllegalArgumentException("The image id \"" + imageId
 					+ "\" is not referenced in the project with the id \"" + projectId + "\"!");
 			}
 			image.getFile().delete();
@@ -193,7 +193,7 @@ public class ProjectRestApi {
 		em.getTransaction().commit();
 		em.close();
 		System.out.println("removed project image succefully!");
-		
+
 		String ret;
 		try {
 			ret = jsonMapper.writeValueAsString("removed project image succefully!");
@@ -204,8 +204,7 @@ public class ProjectRestApi {
 		return Response.ok(ret).build();
 	}
 
-
-	@Secured
+	@Secured({UserRole.admin, UserRole.maintainer})
 	@POST
 	@Path("{id}/upload-image")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -329,8 +328,7 @@ public class ProjectRestApi {
 		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 
-
-	@Secured
+	@Secured({UserRole.admin, UserRole.maintainer})
 	@POST
 	@Path("new")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -401,8 +399,7 @@ public class ProjectRestApi {
 		
 	}
 
-
-	@Secured
+	@Secured({UserRole.admin, UserRole.maintainer})
 	@PUT
 	@Path("update/{language}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -473,5 +470,4 @@ public class ProjectRestApi {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		} 
 	}
-	
 }

@@ -32,6 +32,8 @@ import org.apache.tika.Tika;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.weitblicker.Options;
+import org.weitblicker.Secured;
+import org.weitblicker.UserRole;
 import org.weitblicker.Utility;
 import org.weitblicker.database.Image;
 import org.weitblicker.database.Location;
@@ -125,9 +127,8 @@ public class MeetingRestApi {
         	return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
 
-	
+	@Secured({UserRole.admin, UserRole.maintainer})
 	@DELETE
 	@Path("remove/{id}")
 	public Response removeMeeting(@PathParam("id") final Long id){
@@ -154,6 +155,7 @@ public class MeetingRestApi {
 		return Response.ok().build();
 	}
 
+	@Secured({UserRole.admin, UserRole.maintainer})
 	@POST
 	@Path("clone/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -206,7 +208,7 @@ public class MeetingRestApi {
 	}
 
 
-	
+	@Secured({UserRole.admin, UserRole.maintainer})
 	@GET
 	@Path("{meetingId}/remove-image/{imageId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -252,9 +254,9 @@ public class MeetingRestApi {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 		return Response.ok(ret).build();
-	}	
-	
-	    
+	}
+
+	@Secured({UserRole.admin, UserRole.maintainer})
 	@POST
 	@Path("{id}/upload-image")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -377,9 +379,9 @@ public class MeetingRestApi {
 		}
 		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
-		
 
-    
+
+	@Secured({UserRole.admin, UserRole.maintainer})
 	@POST
 	@Path("new")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -450,8 +452,8 @@ public class MeetingRestApi {
 		}
 		
 	}
-	
 
+	@Secured({UserRole.admin, UserRole.maintainer})
 	@PUT
 	@Path("update/{language}")
     @Consumes(MediaType.APPLICATION_JSON)

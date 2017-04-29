@@ -26,12 +26,12 @@ import org.weitblicker.database.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Secured({UserRole.admin, UserRole.maintainer})
 @Path("rest/user")
 public class UserRestApi {
 	
     private ObjectMapper jsonMapper = new ObjectMapper();
 
+	@Secured({UserRole.admin, UserRole.maintainer})
     @GET
     @Path("list")
     @Produces(MediaType.APPLICATION_JSON)
@@ -46,7 +46,7 @@ public class UserRestApi {
 		}
     }
 
-	@Secured
+	@Secured({UserRole.admin})
 	@POST
 	@Path("new")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -86,7 +86,7 @@ public class UserRestApi {
 		}		
 	}
 
-	@Secured
+	@Secured({UserRole.admin})
 	@DELETE
 	@Path("remove/{id}")
 	public Response removeUser(@PathParam("id") final Long id){
@@ -111,8 +111,7 @@ public class UserRestApi {
 		return Response.ok().build();
 	}
 
-
-	@Secured
+	@Secured({UserRole.admin})
 	@PUT
 	@Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
