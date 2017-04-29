@@ -85,7 +85,7 @@ public class HostRestApi {
 	}
 
 	@Secured({UserRole.admin})
-	@POST
+	@PUT
 	@Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -132,7 +132,7 @@ public class HostRestApi {
 	}
 
 	@Secured({UserRole.admin})
-	@POST
+	@DELETE
 	@Path("remove/{id}")
 	public Response removeHost(@PathParam("id") final Long id){
 		EntityManager em =PersistenceHelper.getPersistenceManager().getEntityManager();

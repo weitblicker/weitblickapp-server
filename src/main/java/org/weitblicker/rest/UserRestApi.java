@@ -87,7 +87,7 @@ public class UserRestApi {
 	}
 
 	@Secured({UserRole.admin})
-	@POST
+	@DELETE
 	@Path("remove/{id}")
 	public Response removeUser(@PathParam("id") final Long id){
 		EntityManager em =PersistenceHelper.getPersistenceManager().getEntityManager();
@@ -112,7 +112,7 @@ public class UserRestApi {
 	}
 
 	@Secured({UserRole.admin})
-	@POST
+	@PUT
 	@Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

@@ -111,7 +111,7 @@ public class LocationRestApi {
 	}
 
 	@Secured({UserRole.admin, UserRole.maintainer})
-	@POST
+	@PUT
 	@Path("update/{language}")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -172,9 +172,8 @@ public class LocationRestApi {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-
 	@Secured({UserRole.admin, UserRole.maintainer})
-	@POST
+	@DELETE
 	@Path("remove/{id}")
 	public Response removeLocation(@PathParam("id") final Long id){
 		

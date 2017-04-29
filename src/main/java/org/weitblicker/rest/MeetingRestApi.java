@@ -129,7 +129,7 @@ public class MeetingRestApi {
     }
 
 	@Secured({UserRole.admin, UserRole.maintainer})
-	@POST
+	@DELETE
 	@Path("remove/{id}")
 	public Response removeMeeting(@PathParam("id") final Long id){
 		EntityManager em =PersistenceHelper.getPersistenceManager().getEntityManager();
@@ -209,7 +209,7 @@ public class MeetingRestApi {
 
 
 	@Secured({UserRole.admin, UserRole.maintainer})
-	@POST
+	@GET
 	@Path("{meetingId}/remove-image/{imageId}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response removeMeetingImage(
@@ -454,7 +454,7 @@ public class MeetingRestApi {
 	}
 
 	@Secured({UserRole.admin, UserRole.maintainer})
-	@POST
+	@PUT
 	@Path("update/{language}")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

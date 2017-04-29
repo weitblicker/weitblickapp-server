@@ -131,7 +131,7 @@ public class ProjectRestApi {
     }
 
 	@Secured({UserRole.admin, UserRole.maintainer})
-	@POST
+	@DELETE
 	@Path("remove/{id}")
 	public Response removeProject(@PathParam("id") final Long id){
 		EntityManager em =PersistenceHelper.getPersistenceManager().getEntityManager();
@@ -158,7 +158,7 @@ public class ProjectRestApi {
 	}
 
 	@Secured({UserRole.admin, UserRole.maintainer})
-	@POST
+	@GET
 	@Path("{projectId}/remove-image/{imageId}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response removeProjectImage(
@@ -400,7 +400,7 @@ public class ProjectRestApi {
 	}
 
 	@Secured({UserRole.admin, UserRole.maintainer})
-	@POST
+	@PUT
 	@Path("update/{language}")
     @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
