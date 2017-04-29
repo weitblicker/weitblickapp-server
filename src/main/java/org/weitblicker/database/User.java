@@ -6,18 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.weitblicker.SecurePasswordUtility;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.weitblicker.UserRole;
 
 @Entity
 @Table( name = "users" )
@@ -128,9 +122,10 @@ public class User implements Comparable<User>, Principal {
 		else
 			return "User is undefined!";
 	}
-	
+
 	@Column(name = "role")
 	private String role;
+
 	public String getRole(){
 		return role;
 	}
@@ -138,5 +133,11 @@ public class User implements Comparable<User>, Principal {
 	public void setRole(String role){
 		this.role = role;
 	}
+	public void setRole(UserRole usrRole){
+		this.role = usrRole.name();
+	}
 
+	public boolean hasRole(UserRole otherRole){
+		return otherRole == UserRole.valueOf(role);
+	}
 }

@@ -2,9 +2,8 @@ package org.weitblicker.backend;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.IllformedLocaleException;
-import java.util.List;
-import java.util.Locale;
+import java.security.Principal;
+import java.util.*;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -19,6 +18,8 @@ import org.weitblicker.UserRole;
 import org.weitblicker.Utility;
 import org.weitblicker.database.PersistenceHelper;
 import org.weitblicker.database.Project;
+import org.weitblicker.database.User;
+import org.weitblicker.database.Host;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
@@ -32,6 +33,7 @@ public class ProjectEndpoints {
 	@Path("{language}")
 	@Produces("text/html")
 	public Response projects(@Context SecurityContext securityContext, @PathParam("language") final String language){
+
 		System.out.println("All projects...");
 		
 		Locale currentLanguage = Options.DEFAULT_LANGUAGE;
@@ -43,19 +45,25 @@ public class ProjectEndpoints {
         	e.printStackTrace();
         	return Response.status(Response.Status.BAD_REQUEST).build();
         }
-		
-		/*
-		// load projects connected to the user
-		User user = (User) securityContext.getUserPrincipal();
-		
-		Set<Project> projectsSet = new HashSet<Project>();
-		List<Host> hosts = user.getHosts();
-		for(Host host: hosts){
-			projectsSet.addAll(host.getProjects());
-		
-		List<Project> projects = new LinkedList<Project>(projects);
-		*/
-		List<Project> projects = PersistenceHelper.getAllProjects();
+
+		Principal principal = securityContext.getUserPrincipal();
+		User user = (User) principal;
+		List<Project> projects;
+
+		if(user.hasRole(UserRole.admin)){
+			projects = PersistenceHelper.getAllProjects();
+		}
+		else{
+			Set<Project> projectsSet = new HashSet<Project>();
+
+			List<Host> hosts = user.getHosts();
+
+			for (Host h : hosts) {
+				projectsSet.addAll(h.getProjects());
+			}
+
+			projects = new LinkedList<Project>(projectsSet);
+		}
 
 		// set language for response
 		for(Project project : projects){
