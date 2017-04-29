@@ -123,12 +123,6 @@ public class User implements Comparable<User>, Principal {
 			return "User is undefined!";
 	}
 
-
-
-	// the user role will internally always be saved as an enum value
-	// but you can set it with either the corresponding string value or the enum value directly
-	// the getRole() will return a string for the prersistence to work
-
 	@Column(name = "role")
 	private String role;
 

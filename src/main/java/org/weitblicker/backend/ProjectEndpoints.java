@@ -11,8 +11,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-//import javax.ws.rs.core.Principal;
-
 
 import org.weitblicker.Options;
 import org.weitblicker.Secured;
@@ -47,25 +45,11 @@ public class ProjectEndpoints {
         	e.printStackTrace();
         	return Response.status(Response.Status.BAD_REQUEST).build();
         }
-		
-		/*
-		// load projects connected to the user
-		User user = (User) securityContext.getUserPrincipal();
-		
-		Set<Project> projectsSet = new HashSet<Project>();
-		List<Host> hosts = user.getHosts();
-		for(Host host: hosts){
-			projectsSet.addAll(host.getProjects());
-		
-		List<Project> projects = new LinkedList<Project>(projects);
-		*/
-
-
 
 		Principal principal = securityContext.getUserPrincipal();
+		User user = (User) principal;
 		List<Project> projects;
 
-		User user = (User) principal;
 		if(user.hasRole(UserRole.admin)){
 			projects = PersistenceHelper.getAllProjects();
 		}
@@ -80,9 +64,6 @@ public class ProjectEndpoints {
 
 			projects = new LinkedList<Project>(projectsSet);
 		}
-
-
-//		List<Project> projects = PersistenceHelper.getAllProjects();
 
 		// set language for response
 		for(Project project : projects){

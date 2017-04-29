@@ -32,6 +32,7 @@ import org.apache.tika.Tika;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.weitblicker.Options;
+import org.weitblicker.Secured;
 import org.weitblicker.Utility;
 import org.weitblicker.database.Host;
 import org.weitblicker.database.Image;
@@ -127,9 +128,9 @@ public class ProjectRestApi {
         	return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
 
-	
+
+	@Secured
 	@DELETE
 	@Path("remove/{id}")
 	public Response removeProject(@PathParam("id") final Long id){
@@ -155,7 +156,8 @@ public class ProjectRestApi {
 		
 		return Response.ok().build();
 	}
-	
+
+	@Secured
 	@GET
 	@Path("{projectId}/remove-image/{imageId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -200,9 +202,10 @@ public class ProjectRestApi {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 		return Response.ok(ret).build();
-	}	
-	
-	    
+	}
+
+
+	@Secured
 	@POST
 	@Path("{id}/upload-image")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -325,9 +328,9 @@ public class ProjectRestApi {
 		}
 		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
-		
 
-    
+
+	@Secured
 	@POST
 	@Path("new")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -397,8 +400,9 @@ public class ProjectRestApi {
 		}
 		
 	}
-	
 
+
+	@Secured
 	@PUT
 	@Path("update/{language}")
     @Consumes(MediaType.APPLICATION_JSON)
